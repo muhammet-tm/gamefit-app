@@ -1,4 +1,4 @@
-**GameFit: Fitness Progress Through Play**
+[**GameFit: Fitness Progress Through Play**](https://gamefit-app.base44.app/)
 
 GameFit is a mobile fitness application that transforms traditional workouts into a gamified experience. Users earn XP, level up avatars, redeem rewards, and receive AI-powered coaching designed to increase workout consistency and motivation.
 
