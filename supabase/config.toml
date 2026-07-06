@@ -412,3 +412,18 @@ enabled = true
 # declarative_schema_path = "./database"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# GameFit Edge Functions
+[functions.coach-g]
+verify_jwt = true
+
+[functions.create-checkout]
+verify_jwt = true
+
+[functions.strava-auth]
+# authorize action is called pre-login on some paths; user checks happen in-function
+verify_jwt = false
+
+[functions.stripe-webhook]
+# Stripe cannot send a Supabase JWT — security comes from signature verification
+verify_jwt = false
