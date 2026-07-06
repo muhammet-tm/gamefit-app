@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 15% 7%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 15% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 15% 7%;
+    --primary: 74 100% 50%;
+    --primary-foreground: 222 15% 7%;
+    --secondary: 220 13% 92%;
+    --secondary-foreground: 222 15% 7%;
+    --muted: 220 13% 92%;
+    --muted-foreground: 220 10% 36%;
+    --accent: 74 100% 50%;
+    --accent-foreground: 222 15% 7%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 85%;
+    --input: 220 13% 85%;
+    --ring: 74 100% 50%;
+    --radius: 0.75rem;
+    --font-heading: 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: ui-monospace, monospace;
+
+    /* GameFit light mode tokens */
+    --gf-bg-primary: #F4F6FA;
+    --gf-bg-surface: #FFFFFF;
+    --gf-bg-elevated: #E8ECF4;
+    --gf-text-primary: #0D0F14;
+    --gf-text-secondary: #5A6072;
+    --gf-border: #D0D5E0;
+    --gf-green: #C8FF00;
+    --gf-amber: #FFB800;
+    --gf-purple: #7C3AED;
+    --gf-success: #22C55E;
+    --gf-error: #EF4444;
+  }
+
+  .dark {
+    --background: 222 20% 7%;
+    --foreground: 0 0% 100%;
+    --card: 222 18% 11%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 18% 11%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 74 100% 50%;
+    --primary-foreground: 222 15% 7%;
+    --secondary: 222 16% 16%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 222 16% 16%;
+    --muted-foreground: 220 8% 55%;
+    --accent: 74 100% 50%;
+    --accent-foreground: 222 15% 7%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 222 14% 18%;
+    --input: 222 14% 18%;
+    --ring: 74 100% 50%;
+
+    /* GameFit dark mode tokens */
+    --gf-bg-primary: #0D0F14;
+    --gf-bg-surface: #161A22;
+    --gf-bg-elevated: #1E2330;
+    --gf-text-primary: #FFFFFF;
+    --gf-text-secondary: #8A8F9E;
+    --gf-border: #2A2F3A;
+    --gf-green: #C8FF00;
+    --gf-amber: #FFB800;
+    --gf-purple: #7C3AED;
+    --gf-success: #22C55E;
+    --gf-error: #EF4444;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-body;
+    background-color: var(--gf-bg-primary);
+    color: var(--gf-text-primary);
+    font-family: var(--font-body);
+    overscroll-behavior-y: none;
+  }
+  div, button, span {
+    user-select: none;
+  }
+  textarea, input, [data-user-select="text"] {
+    user-select: text;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .gf-bg-primary { background-color: var(--gf-bg-primary); }
+  .gf-bg-surface { background-color: var(--gf-bg-surface); }
+  .gf-bg-elevated { background-color: var(--gf-bg-elevated); }
+  .gf-text-primary { color: var(--gf-text-primary); }
+  .gf-text-secondary { color: var(--gf-text-secondary); }
+  .gf-border { border-color: var(--gf-border); }
+  .gf-green { color: var(--gf-green); }
+  .gf-amber { color: var(--gf-amber); }
+  .gf-purple { color: var(--gf-purple); }
+  .bg-gf-green { background-color: var(--gf-green); }
+  .bg-gf-amber { background-color: var(--gf-amber); }
+  .bg-gf-purple { background-color: var(--gf-purple); }
+  .bg-gf-surface { background-color: var(--gf-bg-surface); }
+  .bg-gf-elevated { background-color: var(--gf-bg-elevated); }
+  .bg-gf-primary { background-color: var(--gf-bg-primary); }
+  .border-gf { border-color: var(--gf-border); }
+  .font-heading { font-family: var(--font-heading); }
+  .font-body { font-family: var(--font-body); }
+  .text-gf-secondary { color: var(--gf-text-secondary); }
+  .text-gf-green { color: var(--gf-green); }
+  .text-gf-amber { color: var(--gf-amber); }
+  .text-gf-purple { color: var(--gf-purple); }
+}
