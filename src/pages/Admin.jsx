@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, ShoppingBag, Bot, Trophy, BarChart2, Plus, Edit2, Trash2, Check, X } from 'lucide-react';
+import { Users, ShoppingBag, Bot, Trophy, BarChart2, Plus, Trash2, Check, X } from 'lucide-react';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';

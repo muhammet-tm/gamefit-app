@@ -10,13 +10,8 @@ import BottomNav from '@/components/gamefit/BottomNav';
 const CATEGORIES = ['All', 'Avatar Items', 'Discount Codes'];
 const REWARD_ICONS = { AvatarItem: '🎭', DiscountCode: '🏷️' };
 
-function genCode() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  return 'GAMEFIT-' + Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-}
-
 export default function Marketplace() {
-  const { user, redeemReward } = useGameFit();
+  const { user } = useGameFit();
   const [filter, setFilter] = useState('All');
   const [confirmReward, setConfirmReward] = useState(null);
   const [successCode, setSuccessCode] = useState(null);
@@ -29,21 +24,12 @@ export default function Marketplace() {
     return true;
   });
 
-  const handleRedeem = (reward) => {
-    if (reward.is_premium_only && !isPremium) return;
-    if (user.coins < reward.cost_coins) return;
-    setConfirmReward(reward);
-  };
+  // Partner rewards aren't live yet — the old build "redeemed" them with a
+  // randomly generated fake discount code and coins that came back on
+  // refresh. Until real partner deals exist, the honest state is a preview.
+  const handleRedeem = () => {};
 
-  const confirmRedeem = () => {
-    if (!confirmReward) return;
-    const ok = redeemReward(confirmReward);
-    if (ok) {
-      const code = confirmReward.reward_type === 'DiscountCode' ? genCode() : null;
-      setSuccessCode({ reward: confirmReward, code });
-      setConfirmReward(null);
-    }
-  };
+  const confirmRedeem = () => {};
 
   const copyCode = async () => {
     if (successCode?.code) {
@@ -82,6 +68,16 @@ export default function Marketplace() {
       </ScreenTransition>
 
       <div className="px-5 pt-5">
+        {/* Honest state: partner rewards are previews until real deals exist */}
+        <div className="mb-4 px-4 py-3 rounded-xl flex items-center gap-3"
+          style={{ backgroundColor: 'rgba(255,184,0,0.08)', border: '1px solid rgba(255,184,0,0.3)' }}>
+          <span className="text-xl">🚧</span>
+          <p className="font-body text-xs leading-relaxed" style={{ color: 'var(--gf-text-secondary)' }}>
+            <strong style={{ color: 'var(--gf-amber)' }}>Partner rewards are coming soon.</strong>{' '}
+            Preview what you'll be able to redeem — your coins are safe in the meantime.
+            Spend them on avatar gear in the Shop!
+          </p>
+        </div>
         <div className="grid grid-cols-2 gap-3">
           {filteredRewards.map((reward, i) => {
             const canAfford = user.coins >= reward.cost_coins;
@@ -117,18 +113,14 @@ export default function Marketplace() {
                   </div>
 
                   <button
-                    onClick={() => handleRedeem(reward)}
-                    disabled={!canAfford || isPremiumLocked}
-                    className="w-full py-2 rounded-xl font-heading font-black text-sm transition-all active:scale-95"
+                    disabled
+                    className="w-full py-2 rounded-xl font-heading font-black text-sm"
                     style={{
-                      backgroundColor: isPremiumLocked ? 'var(--gf-bg-elevated)' :
-                        canAfford ? 'var(--gf-green)' : 'var(--gf-bg-elevated)',
-                      color: isPremiumLocked ? 'var(--gf-text-secondary)' :
-                        canAfford ? '#0D0F14' : 'var(--gf-text-secondary)',
-                      border: `1px solid ${!canAfford && !isPremiumLocked ? 'var(--gf-border)' : 'transparent'}`,
+                      backgroundColor: 'var(--gf-bg-elevated)',
+                      color: 'var(--gf-text-secondary)',
+                      border: '1px solid var(--gf-border)',
                     }}>
-                    {isPremiumLocked ? '🔒 Premium Only' :
-                      canAfford ? 'Redeem' : `Need ${coinsNeeded} more 🪙`}
+                    {isPremiumLocked ? '🔒 Premium Only' : 'SOON'}
                   </button>
                 </div>
               </motion.div>

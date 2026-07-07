@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Check, Crown, Zap, Brain, Trophy, BarChart2, Shield } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
-import { base44 } from '@/api/base44Client';
+import { invokeFunction } from '@/api/supabase';
 
 const PLANS = [
   { id: 'monthly', label: 'Monthly', price: 'AED 29.99', period: '/month', priceId: null, badge: null },
@@ -31,21 +31,21 @@ export default function Premium() {
      window.scrollTo(0, 0);
    }, []);
 
-  const handleSubscribe = async () => {
-    // Check if running inside iframe (builder preview)
-    if (window.self !== window.top) {
-      alert('Checkout is only available from the published app.');
-      return;
-    }
+  const [checkoutError, setCheckoutError] = useState('');
 
+  const handleSubscribe = async () => {
     setLoading(true);
+    setCheckoutError('');
     try {
-      const res = await base44.functions.invoke('createCheckout', { plan: selectedPlan });
-      if (res.data?.url) {
-        window.location.href = res.data.url;
+      const res = await invokeFunction('create-checkout', { plan: selectedPlan });
+      if (res?.url) {
+        window.location.href = res.url;
+      } else {
+        setCheckoutError('Could not start checkout. Please try again.');
       }
     } catch (err) {
       console.error('Checkout error:', err);
+      setCheckoutError(err.message || 'Could not start checkout. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -145,6 +145,12 @@ export default function Premium() {
         </div>
 
         {/* CTA */}
+        {checkoutError && (
+          <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
+            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+            {checkoutError}
+          </div>
+        )}
         <motion.button
           onClick={handleSubscribe}
           disabled={loading}

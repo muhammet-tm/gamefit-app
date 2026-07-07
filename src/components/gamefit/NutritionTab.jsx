@@ -1,10 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, Lock, Camera, Plus, Trash2, Loader2, Crown, X } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { Lock, Camera, Plus, Trash2, Loader2, Crown, X } from 'lucide-react';
+import { supabase, updateProfile, invokeFunction } from '@/api/supabase';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 
-const today = () => new Date().toISOString().split('T')[0];
+// "today" in the user's timezone (UAE) — not UTC, so late-evening meals
+// don't land on tomorrow's log
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
 
 const MEAL_TYPES = ['Breakfast', 'Morning Snack', 'Lunch', 'Afternoon Snack', 'Dinner', 'Evening Snack'];
 const MEAL_EMOJIS = {
@@ -220,8 +225,13 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
 
   useEffect(() => {
     if (!user?.id) { setLoadingMeals(false); return; }
-    base44.entities.MealLog.filter({ user_id: user.id, logged_date: todayStr }, '-created_date', 50)
-      .then(setMeals).catch(() => setMeals([])).finally(() => setLoadingMeals(false));
+    supabase.from('meal_logs').select('*')
+      .eq('logged_date', todayStr)
+      .order('created_at', { ascending: false })
+      .limit(50)
+      .then(({ data }) => setMeals(data ?? []))
+      .then(undefined, () => setMeals([]))
+      .finally(() => setLoadingMeals(false));
   }, [user?.id]);
 
   const totals = meals.reduce((acc, m) => ({
@@ -245,20 +255,22 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
       health_score: form.health_score || null,
       logged_date: todayStr,
     };
-    const saved = await base44.entities.MealLog.create(entry);
+    const { data: saved, error } = await supabase
+      .from('meal_logs').insert(entry).select().single();
+    if (error) { console.error('Meal save failed:', error.message); return; }
     setMeals(prev => [saved, ...prev]);
     setShowAddModal(false);
     setShowSnapResult(null);
   };
 
   const handleDeleteMeal = async (id) => {
-    await base44.entities.MealLog.delete(id);
+    await supabase.from('meal_logs').delete().eq('id', id);
     setMeals(prev => prev.filter(m => m.id !== id));
   };
 
   const handleSaveGoal = () => {
     const g = Number(goalInput);
-    if (g > 0) { setCalorieGoal(g); base44.auth.updateMe({ calorie_goal: g }).catch(() => {}); }
+    if (g > 0) { setCalorieGoal(g); updateProfile({ calorie_goal: g }).catch(() => {}); }
     setEditingGoal(false);
   };
 
@@ -267,23 +279,24 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
     if (!file) return;
     setSnapLoading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a professional nutritionist. Analyze this food photo and return the nutritional breakdown. Be accurate based on visible portion sizes. Return ONLY valid JSON.`,
-        file_urls: [file_url],
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            meal_name: { type: 'string' },
-            calories: { type: 'number' },
-            protein_g: { type: 'number' },
-            carbs_g: { type: 'number' },
-            fat_g: { type: 'number' },
-            health_score: { type: 'number' },
-          },
-        },
+      // upload into the user's private folder, then let the server analyze it
+      const path = `${user.id}/${Date.now()}-${file.name.replace(/[^\w.-]/g, '_')}`;
+      const { error: upError } = await supabase.storage
+        .from('meal-photos').upload(path, file, { contentType: file.type });
+      if (upError) throw upError;
+
+      const res = await invokeFunction('coach-g', { type: 'meal_analysis', image_path: path });
+      const result = res?.analysis ?? {};
+
+      // a short-lived signed URL so the photo shows in Today's Log
+      const { data: signed } = await supabase.storage
+        .from('meal-photos').createSignedUrl(path, 60 * 60 * 24 * 7);
+
+      setShowSnapResult({
+        ...result,
+        image_url: signed?.signedUrl || null,
+        meal_type: 'Lunch',
       });
-      setShowSnapResult({ ...result, image_url: file_url, meal_type: 'Lunch' });
       incrementAIRequests?.();
     } catch (err) {
       console.error(err);

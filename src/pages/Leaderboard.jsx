@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { RefreshCw, Clock, Lock } from 'lucide-react';
+import { RefreshCw, Lock } from 'lucide-react';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import PullToRefresh from '@/components/gamefit/PullToRefresh';

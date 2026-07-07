@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Play, Square, Check } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Play, Square, Check } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { calcXP, calcCoins } from '@/lib/mockData';
 import BottomNav from '@/components/gamefit/BottomNav';
@@ -29,6 +29,7 @@ export default function Train() {
   const [phase, setPhase] = useState('setup'); // 'setup' | 'timer' | 'complete'
   const [timeLeft, setTimeLeft] = useState(0);
   const [xpGain, setXpGain] = useState(null);
+  const [saveError, setSaveError] = useState('');
   const intervalRef = useRef(null);
 
   const activeDuration = customDuration ? parseInt(customDuration) : duration;
@@ -60,7 +61,12 @@ export default function Train() {
     clearInterval(intervalRef.current);
     const xp = calcXP(activeDuration, intensity);
     const coins = calcCoins(xp);
-    const w = addWorkout({ exercise_type: exerciseType, duration_min: activeDuration, intensity_level: intensity, notes, xp_earned: xp, coins_earned: coins });
+    // optimistic preview — the server computes the real numbers and the
+    // context reconciles; if it rejects (e.g. daily cap), tell the user
+    addWorkout({
+      exercise_type: exerciseType, duration_min: activeDuration,
+      intensity_level: intensity, notes, xp_earned: xp, coins_earned: coins,
+    }).catch(err => setSaveError(err.message || 'Could not save your workout. Please try again.'));
     setXpGain({ xp, coins });
     setPhase('complete');
   };
@@ -115,17 +121,27 @@ export default function Train() {
         style={{ backgroundColor: '#0D0F14' }}>
         <motion.div className="text-center" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring' }}>
-          <div className="text-6xl mb-4">🎉</div>
-          <h2 className="font-heading font-black text-4xl text-white mb-2">Workout Complete!</h2>
+          <div className="text-6xl mb-4">{saveError ? '😕' : '🎉'}</div>
+          <h2 className="font-heading font-black text-4xl text-white mb-2">
+            {saveError ? 'Not Saved' : 'Workout Complete!'}
+          </h2>
           <p className="font-body mb-8" style={{ color: '#8A8F9E' }}>{activeDuration} min {exerciseType}</p>
-          <div className="flex gap-4 justify-center mb-8">
-            <div className="px-6 py-4 rounded-2xl" style={{ backgroundColor: '#1E2330', border: '1px solid rgba(200,255,0,0.3)' }}>
-              <p className="font-heading font-black text-3xl" style={{ color: '#C8FF00' }}>+{xpGain.xp} XP</p>
+          {saveError && (
+            <div className="mb-6 px-4 py-3 rounded-xl text-sm font-body max-w-xs mx-auto"
+              style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+              {saveError}
             </div>
-            <div className="px-6 py-4 rounded-2xl" style={{ backgroundColor: '#1E2330', border: '1px solid rgba(255,184,0,0.3)' }}>
-              <p className="font-heading font-black text-3xl" style={{ color: '#FFB800' }}>🪙 {xpGain.coins}</p>
+          )}
+          {!saveError && (
+            <div className="flex gap-4 justify-center mb-8">
+              <div className="px-6 py-4 rounded-2xl" style={{ backgroundColor: '#1E2330', border: '1px solid rgba(200,255,0,0.3)' }}>
+                <p className="font-heading font-black text-3xl" style={{ color: '#C8FF00' }}>+{xpGain.xp} XP</p>
+              </div>
+              <div className="px-6 py-4 rounded-2xl" style={{ backgroundColor: '#1E2330', border: '1px solid rgba(255,184,0,0.3)' }}>
+                <p className="font-heading font-black text-3xl" style={{ color: '#FFB800' }}>🪙 {xpGain.coins}</p>
+              </div>
             </div>
-          </div>
+          )}
           <button onClick={() => navigate('/dashboard')}
             className="w-full max-w-xs py-4 rounded-2xl font-heading font-black text-xl"
             style={{ backgroundColor: '#C8FF00', color: '#0D0F14' }}>

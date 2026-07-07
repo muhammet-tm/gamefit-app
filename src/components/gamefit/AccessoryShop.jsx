@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Coins, Check, Lock, ShoppingBag } from 'lucide-react';
+import { Coins, Check, Lock } from 'lucide-react';
 
 export const ACCESSORIES = [
   { id: 'halo',       label: 'Golden Halo',     emoji: '😇', cost: 80,  effect: 'Crown of champions', category: 'head' },

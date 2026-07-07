@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { base44 } from '@/api/base44Client';
+import { callRpc, invokeFunction } from '@/api/supabase';
 import { useGameFit } from '@/lib/GameFitContext';
 import { Send, Loader2, Swords, Wind, Zap, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -85,7 +85,6 @@ const QUICK_PROMPTS = [
 
 export default function AvatarCoach() {
   const { user, workouts } = useGameFit();
-  const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -96,37 +95,38 @@ export default function AvatarCoach() {
   const avatarCfg = user.avatar_config || { gender: 'male', skin: 'light', outfit: 'blue', hair: 'brown' };
 
   useEffect(() => {
-    // Load stats
-    base44.functions.invoke('getWorkoutStats', {}).then(res => {
-      if (res.data?.stats) setStats(res.data.stats);
+    // Load RPG stats (computed server-side from the workout history)
+    callRpc('get_workout_stats').then(res => {
+      if (res?.stats) setStats(res.stats);
     }).catch(() => {}).finally(() => setStatsLoading(false));
-
-    // Create conversation
-    base44.agents.createConversation({
-      agent_name: 'avatar_coach',
-      metadata: { name: 'Avatar Coach Session' }
-    }).then(conv => {
-      setConversation(conv);
-      const unsub = base44.agents.subscribeToConversation(conv.id, (data) => {
-        setMessages(data.messages || []);
-      });
-      return () => unsub();
-    }).catch(console.error);
   }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Chat runs through the same server-enforced coach-g function as the
+  // Coach tab (conversation state lives in this screen).
   const sendMessage = async (text) => {
-    if (!text.trim() || !conversation || loading) return;
+    if (!text.trim() || loading) return;
     const msg = text.trim();
     setInput('');
+    const updated = [...messages, { role: 'user', content: msg }];
+    setMessages(updated);
     setLoading(true);
     try {
-      await base44.agents.addMessage(conversation, { role: 'user', content: msg });
+      const res = await invokeFunction('coach-g', {
+        type: 'chat',
+        messages: updated.map(m => ({ role: m.role, content: m.content })),
+      });
+      setMessages(prev => [...prev, { role: 'assistant', content: res?.reply || 'Sorry, try again.' }]);
     } catch (e) {
-      console.error(e);
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: e.premium_required
+          ? e.message
+          : 'Sorry, I could not respond right now.',
+      }]);
     } finally {
       setLoading(false);
     }

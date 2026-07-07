@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Send, Zap, Lock } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import BottomNav from '@/components/gamefit/BottomNav';
@@ -8,7 +8,7 @@ import NutritionTab from '@/components/gamefit/NutritionTab';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
-import { base44 } from '@/api/base44Client';
+import { invokeFunction } from '@/api/supabase';
 
 const AI_LIMIT = 10;
 
@@ -69,15 +69,15 @@ export default function Coach() {
     setPlanLoading(true);
     setPlanResult('');
     const eq = equipment.length ? equipment : ['No Equipment'];
-    const res = await base44.functions.invoke('coachG', {
-      type: 'plan', days, sessionDuration, equipment: eq, injuries,
-      userProfile: {
-        gender: user.gender, age: user.age, weight_kg: user.weight_kg,
-        height_cm: user.height_cm, bmi: user.bmi,
-        fitness_goal: user.fitness_goal, fitness_level: user.fitness_level,
-      }
-    });
-    setPlanResult(res.data?.reply || 'Failed to generate plan. Please try again.');
+    try {
+      const res = await invokeFunction('coach-g', {
+        type: 'plan', days, sessionDuration, equipment: eq, injuries,
+      });
+      setPlanResult(res?.reply || 'Failed to generate plan. Please try again.');
+    } catch (err) {
+      if (err.premium_required) { setShowPremium(true); setPlanResult(''); }
+      else setPlanResult(err.message || 'Failed to generate plan. Please try again.');
+    }
     incrementAIRequests();
     setPlanLoading(false);
     setPlanRating(null);
@@ -91,19 +91,27 @@ export default function Coach() {
     const updatedMessages = [...messages, { role: 'user', content: userMsg }];
     setMessages(updatedMessages);
     setChatLoading(true);
-    const res = await base44.functions.invoke('coachG', {
-      type: 'chat',
-      messages: updatedMessages.map(m => ({ role: m.role, content: m.content })),
-      userProfile: {
-        gender: user.gender, age: user.age, weight_kg: user.weight_kg,
-        height_cm: user.height_cm, bmi: user.bmi,
-        fitness_goal: user.fitness_goal, fitness_level: user.fitness_level,
+    try {
+      const res = await invokeFunction('coach-g', {
+        type: 'chat',
+        messages: updatedMessages.map(m => ({ role: m.role, content: m.content })),
+      });
+      const reply = res?.reply || 'Sorry, I could not respond right now.';
+      setMessages(prev => [...prev, { role: 'ai', content: reply, showRating: true, rated: null }]);
+      incrementAIRequests();
+    } catch (err) {
+      if (err.premium_required) {
+        setShowPremium(true);
+        setMessages(prev => prev.slice(0, -1));
+      } else {
+        setMessages(prev => [...prev, {
+          role: 'ai',
+          content: err.message || 'Sorry, I could not respond right now.',
+        }]);
       }
-    });
-    const reply = res.data?.reply || 'Sorry, I could not respond right now.';
-    setMessages(prev => [...prev, { role: 'ai', content: reply, showRating: true, rated: null }]);
-    incrementAIRequests();
-    setChatLoading(false);
+    } finally {
+      setChatLoading(false);
+    }
   };
 
   const rateMessage = (idx, rating) => {
