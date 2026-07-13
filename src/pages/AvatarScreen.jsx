@@ -5,11 +5,13 @@ import BodyAnalysis from '@/components/gamefit/BodyAnalysis';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
-import { LEVEL_TITLES, getNextLevelXP, getCurrentLevelXP, getAvatarTier } from '@/lib/mockData';
-import HumanAvatar from '@/components/gamefit/HumanAvatar';
+import { getNextLevelXP, getCurrentLevelXP, getAvatarTier } from '@/lib/mockData';
+import Avatar from '@/components/avatar/Avatar';
+import { AVATAR_CLASSES, CLASS_LABELS, CLASS_TAGLINES, CLASS_COLORS, SKIN_TONES, HAIR_STYLES, HAIR_COLORS } from '@/components/avatar/palettes';
+import { TIER_CONFIG, TIER_BADGES } from '@/components/avatar/tiers';
+import { normalizeAvatarConfig } from '@/components/avatar/migrate';
 import BottomNav from '@/components/gamefit/BottomNav';
 import AccessoryShop, { ACCESSORIES } from '@/components/gamefit/AccessoryShop';
-import TierGearOverlay, { TIER_CONFIG, TIER_BADGES } from '@/components/gamefit/TierGearOverlay';
 
 const TABS = ['avatar', 'shop', 'connect'];
 
@@ -19,9 +21,7 @@ const HEALTH_APPS = [
   { id: 'whoop',        name: 'WHOOP',         emoji: '⚡', color: '#CDF000', desc: 'Recovery & strain data', comingSoon: true },
   { id: 'garmin',       name: 'Garmin',        emoji: '⌚', color: '#007CC3', desc: 'GPS & performance tracking', comingSoon: true },
 ];
-const SKINS = ['light', 'medium', 'dark', 'deepbrown'];
-const OUTFITS = ['blue', 'black', 'red', 'green', 'purple'];
-const HAIRS = ['brown', 'black', 'blonde', 'white', 'pink'];
+
 
 export default function AvatarScreen() {
   const { user, workouts, updateUser, purchaseAccessory, equipAccessory } = useGameFit();
@@ -59,7 +59,7 @@ export default function AvatarScreen() {
       return;
     }
   };
-  const avatarCfg = user.avatar_config || { gender: 'male', skin: 'light', outfit: 'blue', hair: 'brown' };
+  const avatarCfg = normalizeAvatarConfig(user.avatar_config);
 
   const ownedAccessories = user.owned_accessories || [];
   const equippedAccessory = user.equipped_accessory || null;
@@ -81,7 +81,6 @@ export default function AvatarScreen() {
   };
 
   const level = user.current_level;
-  const title = LEVEL_TITLES[level] || 'Recruit';
   const currentLevelXP = getCurrentLevelXP(level);
   const nextLevelXP = getNextLevelXP(level);
   const xpToNext = nextLevelXP - user.total_xp;
@@ -92,7 +91,7 @@ export default function AvatarScreen() {
   const currentTier = getAvatarTier(level);
 
   const updateAvatar = (key, val) => {
-    const newCfg = { ...avatarCfg, [key]: val };
+    const newCfg = { ...avatarCfg, version: 2, [key]: val };
     updateUser({ avatar_config: newCfg });
   };
 
@@ -256,9 +255,9 @@ export default function AvatarScreen() {
 
                 {/* Avatar with gear overlay */}
                 <div className="relative z-10 mt-2">
-                  <TierGearOverlay tier={currentTier} size={160}>
-                    <HumanAvatar {...avatarCfg} tier={currentTier} size={160} />
-                  </TierGearOverlay>
+                  <Avatar avatarClass={avatarCfg.class} tier={currentTier}
+                    skinTone={avatarCfg.skin_tone} hair={avatarCfg.hair}
+                    accessories={equippedAccessory ? [equippedAccessory] : []} size={170} />
                   {equippedItem && (
                     <motion.div className="absolute -top-3 -right-3 text-3xl"
                       initial={{ scale: 0 }} animate={{ scale: 1 }} key={equippedItem.id}
@@ -274,15 +273,15 @@ export default function AvatarScreen() {
                       style={{ backgroundColor: tierCfg.color, color: currentTier >= 4 ? '#1A1A1A' : '#0D0F14' }}>
                       LVL {level}
                     </span>
-                    <span className="font-heading font-black text-xl" style={{ color: 'var(--gf-text-primary)' }}>{title}</span>
+                    <span className="font-heading font-black text-xl" style={{ color: 'var(--gf-text-primary)' }}>{tierCfg.label}</span>
                   </div>
                   {equippedItem && <p className="font-body text-sm" style={{ color: 'var(--gf-amber)' }}>{equippedItem.label}</p>}
                   <p className="font-body text-xs mt-1" style={{ color: tierCfg.color }}>
                     {currentTier === 1 && 'Keep training to unlock your first gear upgrade! ⚔️'}
-                    {currentTier === 2 && 'Warrior gear unlocked — reach Level 5 for Champion armor 🏆'}
-                    {currentTier === 3 && 'Champion armor equipped — Level 7 unlocks Legend armor 💎'}
-                    {currentTier === 4 && 'Legend armor equipped — reach Level 10 for Titan status 👑'}
-                    {currentTier === 5 && 'MAX TIER — Legendary Titan gear unlocked! 🔥'}
+                    {currentTier === 2 && 'Silver gear unlocked — reach Level 5 for Gold gear 🥇'}
+                    {currentTier === 3 && 'Gold gear equipped — Level 7 unlocks Platinum 💠'}
+                    {currentTier === 4 && 'Platinum gear equipped — reach Level 10 for Apex 👑'}
+                    {currentTier === 5 && 'APEX — maximum evolution reached! 🔥'}
                   </p>
                 </div>
               </motion.div>
@@ -312,52 +311,76 @@ export default function AvatarScreen() {
           <div>
             <h3 className="font-heading font-black text-xl mb-3" style={{ color: 'var(--gf-text-primary)' }}>Customize</h3>
 
-            {/* Gender */}
-            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: 'var(--gf-text-secondary)' }}>Gender</p>
-            <div className="flex gap-2 mb-4">
-              {['male','female'].map(g => (
-                <button key={g} onClick={() => updateAvatar('gender', g)}
-                  className="flex-1 py-2.5 rounded-xl font-body font-medium text-sm transition-all"
-                  style={{ backgroundColor: avatarCfg.gender === g ? 'var(--gf-green)' : 'var(--gf-bg-elevated)', color: avatarCfg.gender === g ? '#0D0F14' : 'var(--gf-text-secondary)', border: `1px solid ${avatarCfg.gender === g ? 'var(--gf-green)' : 'var(--gf-border)'}` }}>
-                  {g === 'male' ? '♂ Male' : '♀ Female'}
-                </button>
-              ))}
+            {/* Class */}
+            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: 'var(--gf-text-secondary)' }}>Class</p>
+            <div className="grid grid-cols-5 gap-2 mb-1">
+              {AVATAR_CLASSES.map(cls => {
+                const selected = avatarCfg.class === cls;
+                const cc = CLASS_COLORS[cls];
+                return (
+                  <button key={cls} onClick={() => updateAvatar('class', cls)}
+                    className="flex flex-col items-center gap-1 py-2 rounded-xl transition-all"
+                    style={{
+                      backgroundColor: selected ? `${cc.glow}14` : 'var(--gf-bg-elevated)',
+                      border: `1.5px solid ${selected ? cc.glow : 'var(--gf-border)'}`,
+                    }}>
+                    <Avatar avatarClass={cls} tier={currentTier} skinTone={avatarCfg.skin_tone}
+                      hair={avatarCfg.hair} size={36} animate={false} />
+                    <span className="font-body text-[10px] font-semibold"
+                      style={{ color: selected ? cc.glow : 'var(--gf-text-secondary)' }}>
+                      {CLASS_LABELS[cls]}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
+            <p className="font-body text-xs mb-4" style={{ color: 'var(--gf-text-secondary)' }}>
+              {CLASS_TAGLINES[avatarCfg.class]}
+            </p>
 
-            {/* Skin */}
+            {/* Skin tone */}
             <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: 'var(--gf-text-secondary)' }}>Skin Tone</p>
             <div className="flex gap-3 mb-4">
-              {SKINS.map(s => (
-                <button key={s} onClick={() => updateAvatar('skin', s)}
+              {Object.keys(SKIN_TONES).map(s => (
+                <button key={s} onClick={() => updateAvatar('skin_tone', s)}
                   className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
-                  style={{ backgroundColor: { light: '#FDDBB4', medium: '#E8AC7A', dark: '#C68642', deepbrown: '#7D4C2A' }[s], border: `3px solid ${avatarCfg.skin === s ? 'var(--gf-green)' : 'transparent'}` }}>
-                  {avatarCfg.skin === s && <Check size={14} color="white" strokeWidth={3} />}
+                  style={{ backgroundColor: SKIN_TONES[s].base, border: `3px solid ${avatarCfg.skin_tone === s ? 'var(--gf-green)' : 'transparent'}` }}>
+                  {avatarCfg.skin_tone === s && <Check size={14} color="white" strokeWidth={3} />}
                 </button>
               ))}
             </div>
 
-            {/* Outfit */}
-            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: 'var(--gf-text-secondary)' }}>Outfit</p>
-            <div className="flex gap-3 mb-4">
-              {OUTFITS.map(o => (
-                <button key={o} onClick={() => updateAvatar('outfit', o)}
-                  className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
-                  style={{ backgroundColor: { blue: '#4FC3F7', black: '#37474F', red: '#EF5350', green: '#66BB6A', purple: '#AB47BC' }[o], border: `3px solid ${avatarCfg.outfit === o ? 'white' : 'transparent'}` }}>
-                  {avatarCfg.outfit === o && <Check size={14} color="white" strokeWidth={3} />}
-                </button>
-              ))}
+            {/* Hair style */}
+            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: 'var(--gf-text-secondary)' }}>Hair Style</p>
+            <div className="flex gap-2 mb-4">
+              {HAIR_STYLES.map(style => {
+                const currentStyle = avatarCfg.hair.split('_')[0] || 'short';
+                const currentColor = avatarCfg.hair.split('_')[1] || 'black';
+                const selected = currentStyle === style;
+                return (
+                  <button key={style} onClick={() => updateAvatar('hair', `${style}_${currentColor}`)}
+                    className="flex-1 py-2.5 rounded-xl font-body font-medium text-xs capitalize transition-all"
+                    style={{ backgroundColor: selected ? 'var(--gf-green)' : 'var(--gf-bg-elevated)', color: selected ? '#0D0F14' : 'var(--gf-text-secondary)', border: `1px solid ${selected ? 'var(--gf-green)' : 'var(--gf-border)'}` }}>
+                    {style}
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Hair */}
-            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: 'var(--gf-text-secondary)' }}>Hair</p>
+            {/* Hair color */}
+            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: 'var(--gf-text-secondary)' }}>Hair Color</p>
             <div className="flex gap-3">
-              {HAIRS.map(h => (
-                <button key={h} onClick={() => updateAvatar('hair', h)}
-                  className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
-                  style={{ backgroundColor: { brown: '#5D4037', black: '#212121', blonde: '#FBC02D', white: '#ECEFF1', pink: '#F48FB1' }[h], border: `3px solid ${avatarCfg.hair === h ? 'var(--gf-green)' : 'transparent'}` }}>
-                  {avatarCfg.hair === h && <Check size={14} color="white" strokeWidth={3} />}
-                </button>
-              ))}
+              {Object.keys(HAIR_COLORS).map(c => {
+                const currentStyle = avatarCfg.hair.split('_')[0] || 'short';
+                const selected = (avatarCfg.hair.split('_')[1] || 'black') === c;
+                return (
+                  <button key={c} onClick={() => updateAvatar('hair', `${currentStyle}_${c}`)}
+                    className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+                    style={{ backgroundColor: HAIR_COLORS[c].base, border: `3px solid ${selected ? 'var(--gf-green)' : 'transparent'}` }}>
+                    {selected && <Check size={14} color="white" strokeWidth={3} />}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -383,7 +406,9 @@ export default function AvatarScreen() {
                       minWidth: 76,
                     }}>
                     <div className="relative">
-                      <HumanAvatar {...avatarCfg} tier={tier} size={44} />
+                      <Avatar avatarClass={avatarCfg.class} tier={tier}
+                        skinTone={avatarCfg.skin_tone} hair={avatarCfg.hair}
+                        size={44} animate={false} />
                     </div>
                     <span className="text-sm">{TIER_BADGES[tier]}</span>
                     <span className="font-body text-[10px] font-semibold text-center leading-tight"
