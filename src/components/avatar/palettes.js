@@ -16,10 +16,10 @@ export const SKIN_TONES = {
 export const HAIR_STYLES = ['short', 'fade', 'ponytail', 'curly'];
 
 export const HAIR_COLORS = {
-  black:  { base: '#23252E', shadow: '#15161C' },
-  brown:  { base: '#5B3A24', shadow: '#402817' },
-  blonde: { base: '#C99C55', shadow: '#A57B3A' },
-  silver: { base: '#B9BFCC', shadow: '#8E95A6' },
+  black:  { base: '#23252E', shadow: '#15161C', light: '#3F4453' },
+  brown:  { base: '#5B3A24', shadow: '#402817', light: '#7E5637' },
+  blonde: { base: '#C99C55', shadow: '#A57B3A', light: '#E5BE7C' },
+  silver: { base: '#B9BFCC', shadow: '#8E95A6', light: '#DEE3EC' },
 };
 
 export function hairPreset(hairId) {

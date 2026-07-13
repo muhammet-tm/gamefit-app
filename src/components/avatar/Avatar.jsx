@@ -85,6 +85,7 @@ export default function Avatar({
     '--av-skin-shadow': skin.shadow,
     '--av-hair': hairColor.base,
     '--av-hair-shadow': hairColor.shadow,
+    '--av-hair-light': hairColor.light,
     '--av-c1': colors.c1,
     '--av-c2': colors.c2,
     '--av-metal': colors.metal,

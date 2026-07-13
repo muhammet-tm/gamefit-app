@@ -21,6 +21,7 @@ const baked = markup
   .replaceAll('var(--av-skin-shadow)', skin.shadow)
   .replaceAll('var(--av-skin)', skin.base)
   .replaceAll('var(--av-hair-shadow)', hair.shadow)
+  .replaceAll('var(--av-hair-light)', hair.light)
   .replaceAll('var(--av-hair)', hair.base)
   .replaceAll('var(--av-c1)', c.c1)
   .replaceAll('var(--av-c2)', c.c2)

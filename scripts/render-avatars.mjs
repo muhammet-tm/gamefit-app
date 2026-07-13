@@ -22,6 +22,7 @@ function bakeVars(svg, { skinTone, hair, avatarClass }) {
     .replaceAll('var(--av-skin-shadow)', skin.shadow)
     .replaceAll('var(--av-skin)', skin.base)
     .replaceAll('var(--av-hair-shadow)', hairColor.shadow)
+    .replaceAll('var(--av-hair-light)', hairColor.light)
     .replaceAll('var(--av-hair)', hairColor.base)
     .replaceAll('var(--av-c1)', c.c1)
     .replaceAll('var(--av-c2)', c.c2)

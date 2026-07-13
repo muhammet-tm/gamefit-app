@@ -128,20 +128,53 @@ export default function BaseBody() {
       <ellipse cx="83.5" cy="35" rx="3.2" ry="5" fill="var(--av-skin)" />
       <ellipse cx="116.5" cy="35" rx="3.2" ry="5" fill="var(--av-skin-shadow)" />
 
-      {/* ============ FACE — set, determined ============ */}
-      <path d="M87.5,31 C90.5,29 95.5,29 97.5,31 L97.5,33.4 C95,31.8 90.5,31.8 87.5,33.4 Z"
-        fill="var(--av-skin-shadow)" />
-      <path d="M102.5,31 C104.5,29 109.5,29 112.5,31 L112.5,33.4 C109.5,31.8 105,31.8 102.5,33.4 Z"
-        fill="var(--av-skin-shadow)" />
-      {/* eyes: focused almonds */}
-      <path d="M89,36 C91,34.4 95,34.4 96.5,36 C95,37.6 91,37.6 89,36 Z" fill="#171A22" />
-      <path d="M103.5,36 C105,34.4 109,34.4 111,36 C109,37.6 105,37.6 103.5,36 Z" fill="#171A22" />
-      {/* nose */}
-      <path d="M99.5,39 L101.5,44.5 C100.6,45.4 99.2,45.4 98.4,44.8 Z"
-        fill="var(--av-skin-shadow)" opacity="0.65" />
-      {/* mouth: flat, resolute */}
-      <path d="M95.5,49.6 L104.5,49.6" stroke="#171A22" strokeWidth="1.5"
-        strokeLinecap="round" fill="none" opacity="0.7" />
+      {/* ============ FACE — realistic pass ============ */}
+      {/* eye sockets: soft shading above the lids */}
+      <path d="M87.5,33.5 C90,31.8 95,31.6 97.5,33 L97.5,34.6 C95,33.4 90.5,33.6 87.5,35 Z"
+        fill="var(--av-skin-shadow)" opacity="0.45" />
+      <path d="M102.5,33 C105,31.6 110,31.8 112.5,33.5 L112.5,35 C109.5,33.6 105,33.4 102.5,34.6 Z"
+        fill="var(--av-skin-shadow)" opacity="0.45" />
+      {/* eyebrows follow the hair color */}
+      <path d="M87.6,30.6 C90,28.2 94.6,27.9 97.4,29.6 L97.2,31.8 C94.4,30.6 90.4,30.9 88,32.6 Z"
+        fill="var(--av-hair)" />
+      <path d="M102.6,29.6 C105.4,27.9 110,28.2 112.4,30.6 L112,32.6 C109.6,30.9 105.6,30.6 102.8,31.8 Z"
+        fill="var(--av-hair)" />
+      {/* eyes: whites + iris + pupil + lid line */}
+      <path d="M88.6,36 C90.2,34 95,33.8 96.8,35.8 C95.4,38 90.4,38.2 88.6,36 Z" fill="#F1EDE6" />
+      <path d="M103.2,35.8 C105,33.8 109.8,34 111.4,36 C109.6,38.2 104.6,38 103.2,35.8 Z" fill="#F1EDE6" />
+      <circle cx="92.9" cy="36" r="2" fill="#4A3421" />
+      <circle cx="107.1" cy="36" r="2" fill="#4A3421" />
+      <circle cx="92.9" cy="36" r="0.9" fill="#171A22" />
+      <circle cx="107.1" cy="36" r="0.9" fill="#171A22" />
+      <circle cx="93.5" cy="35.3" r="0.5" fill="#FFFFFF" opacity="0.9" />
+      <circle cx="107.7" cy="35.3" r="0.5" fill="#FFFFFF" opacity="0.9" />
+      {/* upper lids */}
+      <path d="M88.6,35.6 C90.4,33.8 95.2,33.6 96.8,35.4" stroke="#2A2118" strokeWidth="0.9"
+        strokeLinecap="round" fill="none" opacity="0.75" />
+      <path d="M103.2,35.4 C104.8,33.6 109.6,33.8 111.4,35.6" stroke="#2A2118" strokeWidth="0.9"
+        strokeLinecap="round" fill="none" opacity="0.75" />
+      {/* nose: bridge, tip and nostril shading */}
+      <path d="M99.7,36.5 C99.5,39 99.3,41.5 98.8,43.6" stroke="var(--av-skin-shadow)"
+        strokeWidth="0.9" strokeLinecap="round" fill="none" opacity="0.55" />
+      <path d="M97,44.8 C97.6,46.4 99,47 100.2,47 C101.4,47 102.6,46.3 103,44.9
+               C102,45.8 101.2,46 100.1,46 C99,46 98,45.6 97,44.8 Z"
+        fill="var(--av-skin-shadow)" opacity="0.8" />
+      <ellipse cx="97.6" cy="45" rx="0.8" ry="0.5" fill="var(--av-skin-shadow)" opacity="0.8" />
+      <ellipse cx="102.6" cy="45" rx="0.8" ry="0.5" fill="var(--av-skin-shadow)" opacity="0.8" />
+      {/* cheekbone contours */}
+      <path d="M86.5,40 C87.5,42.6 89,44.6 91,45.8 C88.8,45.6 86.8,43.4 86.5,40 Z"
+        fill="var(--av-skin-shadow)" opacity="0.4" />
+      <path d="M113.5,40 C112.5,42.6 111,44.6 109,45.8 C111.2,45.6 113.2,43.4 113.5,40 Z"
+        fill="var(--av-skin-shadow)" opacity="0.5" />
+      {/* mouth: set lips with a lower-lip catch light */}
+      <path d="M95.6,50 C97.2,49.2 98.6,49.4 100,49.9 C101.4,49.4 102.8,49.2 104.4,50
+               C102.8,50.8 101.4,50.9 100,50.6 C98.6,50.9 97.2,50.8 95.6,50 Z"
+        fill="#8A5A48" opacity="0.85" />
+      <path d="M96.6,51.2 C98.8,52.6 101.2,52.6 103.4,51.2 C102.4,53 97.6,53 96.6,51.2 Z"
+        fill="#B07660" opacity="0.6" />
+      {/* chin crease */}
+      <path d="M97.8,54.4 C99.2,55.2 100.8,55.2 102.2,54.4" stroke="var(--av-skin-shadow)"
+        strokeWidth="0.8" strokeLinecap="round" fill="none" opacity="0.5" />
     </g>
   );
 }
