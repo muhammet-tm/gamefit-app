@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Play, Square, Check } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { calcXP, calcCoins } from '@/lib/mockData';
+import { validate, workoutDurationSchema } from '@/lib/validation';
 import BottomNav from '@/components/gamefit/BottomNav';
 import QuickStartTemplates from '@/components/gamefit/QuickStartTemplates';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
@@ -30,6 +31,7 @@ export default function Train() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [xpGain, setXpGain] = useState(null);
   const [saveError, setSaveError] = useState('');
+  const [durationError, setDurationError] = useState('');
   const intervalRef = useRef(null);
 
   const activeDuration = customDuration ? parseInt(customDuration) : duration;
@@ -37,7 +39,13 @@ export default function Train() {
   const previewCoins = calcCoins(previewXP);
 
   const startWorkout = () => {
-    setTimeLeft((activeDuration || 1) * 60);
+    setDurationError('');
+    const res = validate(workoutDurationSchema, activeDuration || 0);
+    if (!res.ok) {
+      setDurationError(res.message);
+      return;
+    }
+    setTimeLeft(res.data * 60);
     setPhase('timer');
   };
 
@@ -204,7 +212,7 @@ export default function Train() {
             ))}
           </div>
           <input
-            type="number" min="1" max="240" placeholder="Custom (mins)"
+            type="number" min="1" max="600" placeholder="Custom (mins)"
             value={customDuration}
             onChange={e => { setCustomDuration(e.target.value); setDuration(0); }}
             className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none transition-colors"
@@ -263,6 +271,12 @@ export default function Train() {
         </div>
 
         {/* Start Button */}
+        {durationError && (
+          <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
+            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+            {durationError}
+          </div>
+        )}
         <button onClick={startWorkout}
           disabled={!activeDuration}
           className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all active:scale-95"

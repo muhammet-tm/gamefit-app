@@ -376,7 +376,7 @@ export default function Onboarding() {
       mascotText: 'How old are you?',
       content: (
         <div className="w-full flex flex-col items-center">
-          <ScrollPicker value={age} onChange={setAge} min={13} max={80} unit="yrs" />
+          <ScrollPicker value={age} onChange={setAge} min={16} max={100} unit="yrs" />
         </div>
       ),
     },

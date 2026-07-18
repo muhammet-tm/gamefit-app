@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { X, Check, X as XIcon } from 'lucide-react';
-import { useGameFit } from '@/lib/GameFitContext';
 
 const FEATURES = [
   { label: 'Workout logging & XP', free: true, premium: true },
@@ -14,18 +14,14 @@ const FEATURES = [
 ];
 
 export default function PremiumModal({ onClose }) {
-  const { updateUser } = useGameFit();
+  const navigate = useNavigate();
   const [billing, setBilling] = useState('annual');
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
-  const handleUpgrade = async () => {
-    setLoading(true);
-    await new Promise(r => setTimeout(r, 1500));
-    updateUser({ account_type: 'premium' });
-    setSuccess(true);
-    setLoading(false);
-    setTimeout(onClose, 1500);
+  // The upsell sheet only sells — real payment happens on /premium via
+  // Stripe Checkout (the old version faked an upgrade client-side).
+  const handleUpgrade = () => {
+    onClose?.();
+    navigate('/premium');
   };
 
   return (
@@ -98,19 +94,12 @@ export default function PremiumModal({ onClose }) {
             ))}
           </div>
 
-          {/* CTA */}
-          {success ? (
-            <div className="w-full py-4 rounded-2xl font-heading font-black text-xl text-center"
-              style={{ backgroundColor: '#22C55E', color: '#FFFFFF' }}>
-              ✓ Premium Activated!
-            </div>
-          ) : (
-            <button onClick={handleUpgrade} disabled={loading}
-              className="w-full py-4 rounded-2xl font-heading font-black text-xl transition-all active:scale-95"
-              style={{ background: loading ? 'var(--gf-border)' : 'linear-gradient(135deg, #7C3AED, #A855F7)', color: '#FFFFFF' }}>
-              {loading ? 'Processing...' : 'Start Premium ⚡'}
-            </button>
-          )}
+          {/* CTA — continues to the real Stripe checkout */}
+          <button onClick={handleUpgrade}
+            className="w-full py-4 rounded-2xl font-heading font-black text-xl transition-all active:scale-95"
+            style={{ background: 'linear-gradient(135deg, #7C3AED, #A855F7)', color: '#FFFFFF' }}>
+            Start Premium ⚡
+          </button>
 
           <button onClick={onClose} className="w-full py-3 mt-3 font-body text-sm"
             style={{ color: 'var(--gf-text-secondary)' }}>
