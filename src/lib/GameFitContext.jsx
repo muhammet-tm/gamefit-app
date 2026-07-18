@@ -32,6 +32,7 @@ const FRESH_USER = {
   onboarding_complete: false,
   ai_requests_this_month: 0,
   theme_preference: 'dark',
+  weekly_goal: 3,
   badges: [],
   owned_accessories: [],
   equipped_accessory: null,
@@ -114,6 +115,7 @@ export function GameFitProvider({ children }) {
           onboarding_complete: me.onboarding_complete || false,
           theme_preference: me.theme_preference || theme,
           calorie_goal: me.calorie_goal ?? null,
+          weekly_goal: me.weekly_goal ?? 3,
           role: me.role || 'user',
           joined_at: me.created_at || null,
           // server-authoritative stats
@@ -246,7 +248,7 @@ export function GameFitProvider({ children }) {
       'first_name', 'last_name', 'fitness_goal', 'fitness_level',
       'age', 'height_cm', 'weight_kg', 'bmi', 'gender',
       'avatar_config', 'connected_apps', 'onboarding_complete',
-      'theme_preference', 'calorie_goal',
+      'theme_preference', 'calorie_goal', 'weekly_goal',
     ];
     const safeUpdates = {};
     for (const key of SAFE_FIELDS) {

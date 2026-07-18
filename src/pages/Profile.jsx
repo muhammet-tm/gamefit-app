@@ -7,7 +7,8 @@ import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import { useGameFit } from '@/lib/GameFitContext';
 import { validate, profileSchema } from '@/lib/validation';
-import { LEVEL_TITLES } from '@/lib/mockData';
+import { getRank } from '@/lib/ranks';
+import RankEmblem from '@/components/gamefit/RankEmblem';
 import BottomNav from '@/components/gamefit/BottomNav';
 import PremiumModal from '@/components/gamefit/PremiumModal';
 import BadgeGrid from '@/components/gamefit/BadgeGrid';
@@ -39,7 +40,8 @@ export default function Profile() {
     ? (parseFloat(form.weight_kg) / Math.pow(parseFloat(form.height_cm) / 100, 2)).toFixed(1)
     : '—';
 
-  const title = LEVEL_TITLES[user.current_level] || 'Recruit';
+  const rank = getRank(user.current_level);
+  const title = rank.display;
   const joinedDate = user.joined_at ? format(new Date(user.joined_at), 'MMM yyyy') : 'Jan 2024';
 
   const handleSave = () => {
@@ -89,12 +91,17 @@ export default function Profile() {
         title={`${user.first_name} ${user.last_name}`}
         subtitle={`${title} · Since ${joinedDate}`}
         showBackButton={false}
-        rightAction={isPremium && (
-          <span className="px-2 py-1 rounded-lg font-body text-xs font-bold"
-            style={{ backgroundColor: 'rgba(124,58,237,0.2)', color: 'var(--gf-purple)' }}>
-            ⚡ PRO
-          </span>
-        )}
+        rightAction={
+          <div className="flex items-center gap-2">
+            {isPremium && (
+              <span className="px-2 py-1 rounded-lg font-body text-xs font-bold"
+                style={{ backgroundColor: 'rgba(124,58,237,0.2)', color: 'var(--gf-purple)' }}>
+                ⚡ PRO
+              </span>
+            )}
+            <RankEmblem level={user.current_level} size={30} />
+          </div>
+        }
       />
 
       <div className="px-5 pt-5 space-y-5">

@@ -1,14 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, Square, Check } from 'lucide-react';
+import { Play, Square, Check, Flame } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { useGameFit } from '@/lib/GameFitContext';
 import { calcXP, calcCoins } from '@/lib/mockData';
 import { validate, workoutDurationSchema } from '@/lib/validation';
+import { BADGES } from '@/lib/badges';
+import UserAvatar from '@/components/avatar/UserAvatar';
 import BottomNav from '@/components/gamefit/BottomNav';
 import QuickStartTemplates from '@/components/gamefit/QuickStartTemplates';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
+
+// gentle number count-up (interval-based so it works even in throttled tabs)
+function useCountUp(target, duration = 900, run = true) {
+  const [value, setValue] = useState(run ? 0 : target);
+  useEffect(() => {
+    if (!run) { setValue(target); return; }
+    if (!target) { setValue(0); return; }
+    const start = Date.now();
+    const id = setInterval(() => {
+      const t = Math.min((Date.now() - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setValue(Math.round(target * eased));
+      if (t >= 1) clearInterval(id);
+    }, 30);
+    return () => clearInterval(id);
+  }, [target, duration, run]);
+  return value;
+}
 
 const EXERCISE_TYPES = ['Running','Cycling','Weight Training','Swimming','Yoga','HIIT','Boxing','Basketball','Football','Walking','Other'];
 const DURATION_PRESETS = [15, 30, 45, 60, 90];
@@ -21,7 +42,7 @@ const EXERCISE_EMOJI = { 'Running':'🏃','Cycling':'🚴','Weight Training':'�
 
 export default function Train() {
   const navigate = useNavigate();
-  const { addWorkout } = useGameFit();
+  const { addWorkout, lastWorkoutResult, user } = useGameFit();
   const [exerciseType, setExerciseType] = useState('Weight Training');
   const [duration, setDuration] = useState(45);
   const [customDuration, setCustomDuration] = useState('');
@@ -124,39 +145,21 @@ export default function Train() {
   }
 
   if (phase === 'complete' && xpGain) {
+    // prefer the server-confirmed numbers once they arrive
+    const confirmed = lastWorkoutResult?.workout;
+    const shownXP = confirmed?.xp_earned ?? xpGain.xp;
+    const shownCoins = confirmed?.coins_earned ?? xpGain.coins;
+    const streak = lastWorkoutResult?.user?.current_streak ?? user.current_streak;
+    const newBadges = (lastWorkoutResult?.new_badges || [])
+      .map(id => BADGES.find(b => b.id === id))
+      .filter(Boolean);
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6"
-        style={{ backgroundColor: '#0D0F14' }}>
-        <motion.div className="text-center" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring' }}>
-          <div className="text-6xl mb-4">{saveError ? '😕' : '🎉'}</div>
-          <h2 className="font-heading font-black text-4xl text-white mb-2">
-            {saveError ? 'Not Saved' : 'Workout Complete!'}
-          </h2>
-          <p className="font-body mb-8" style={{ color: '#8A8F9E' }}>{activeDuration} min {exerciseType}</p>
-          {saveError && (
-            <div className="mb-6 px-4 py-3 rounded-xl text-sm font-body max-w-xs mx-auto"
-              style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
-              {saveError}
-            </div>
-          )}
-          {!saveError && (
-            <div className="flex gap-4 justify-center mb-8">
-              <div className="px-6 py-4 rounded-2xl" style={{ backgroundColor: '#1E2330', border: '1px solid rgba(200,255,0,0.3)' }}>
-                <p className="font-heading font-black text-3xl" style={{ color: '#C8FF00' }}>+{xpGain.xp} XP</p>
-              </div>
-              <div className="px-6 py-4 rounded-2xl" style={{ backgroundColor: '#1E2330', border: '1px solid rgba(255,184,0,0.3)' }}>
-                <p className="font-heading font-black text-3xl" style={{ color: '#FFB800' }}>🪙 {xpGain.coins}</p>
-              </div>
-            </div>
-          )}
-          <button onClick={() => navigate('/dashboard')}
-            className="w-full max-w-xs py-4 rounded-2xl font-heading font-black text-xl"
-            style={{ backgroundColor: '#C8FF00', color: '#0D0F14' }}>
-            Back to Dashboard
-          </button>
-        </motion.div>
-      </div>
+      <CompletionScreen
+        xp={shownXP} coins={shownCoins} streak={streak}
+        newBadges={newBadges} saveError={saveError}
+        duration={activeDuration} exerciseType={exerciseType}
+        user={user} onDone={() => navigate('/dashboard')}
+      />
     );
   }
 
@@ -287,6 +290,94 @@ export default function Train() {
       </ScreenTransition>
 
       <BottomNav />
+    </div>
+  );
+}
+
+function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, exerciseType, user, onDone }) {
+  const xpShown = useCountUp(xp, 900, !saveError);
+  const coinsShown = useCountUp(coins, 900, !saveError);
+
+  useEffect(() => {
+    if (saveError) return;
+    // two quick bursts in brand colors
+    confetti({ particleCount: 70, spread: 75, origin: { y: 0.35 }, colors: ['#C8FF00', '#FFB800', '#9664FF'] });
+    const t = setTimeout(() => confetti({ particleCount: 40, spread: 100, origin: { y: 0.3 }, colors: ['#C8FF00', '#FFFFFF'] }), 350);
+    return () => clearTimeout(t);
+  }, [saveError]);
+
+  const EXERCISE_EMOJI_LOCAL = { 'Running':'🏃','Cycling':'🚴','Weight Training':'🏋️','Swimming':'🏊','Yoga':'🧘','HIIT':'⚡','Boxing':'🥊','Basketball':'🏀','Football':'⚽','Walking':'🚶','Other':'💪' };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-10"
+      style={{ backgroundColor: '#0D0F14' }}>
+      <motion.div className="text-center w-full max-w-sm" initial={{ scale: 0.6, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 14 }}>
+
+        {/* the avatar celebrates with you */}
+        <motion.div className="flex justify-center mb-2"
+          initial={{ y: 14 }} animate={{ y: 0 }} transition={{ type: 'spring', damping: 8, delay: 0.15 }}>
+          <UserAvatar user={user} size={110} />
+        </motion.div>
+
+        <h2 className="font-heading font-black text-4xl text-white mb-1">
+          {saveError ? 'Not Saved' : 'Workout Complete!'}
+        </h2>
+        <p className="font-body mb-6" style={{ color: '#8A8F9E' }}>
+          {EXERCISE_EMOJI_LOCAL[exerciseType]} {duration} min {exerciseType}
+        </p>
+
+        {saveError ? (
+          <div className="mb-6 px-4 py-3 rounded-xl text-sm font-body"
+            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+            {saveError}
+          </div>
+        ) : (
+          <>
+            {/* counters */}
+            <div className="flex gap-3 justify-center mb-4">
+              <div className="flex-1 px-4 py-4 rounded-2xl" style={{ backgroundColor: '#1E2330', border: '1px solid rgba(200,255,0,0.3)' }}>
+                <p className="font-heading font-black text-3xl" style={{ color: '#C8FF00' }}>+{xpShown}</p>
+                <p className="font-body text-xs mt-0.5" style={{ color: '#8A8F9E' }}>XP EARNED</p>
+              </div>
+              <div className="flex-1 px-4 py-4 rounded-2xl" style={{ backgroundColor: '#1E2330', border: '1px solid rgba(255,184,0,0.3)' }}>
+                <p className="font-heading font-black text-3xl" style={{ color: '#FFB800' }}>🪙 {coinsShown}</p>
+                <p className="font-body text-xs mt-0.5" style={{ color: '#8A8F9E' }}>COINS</p>
+              </div>
+            </div>
+
+            {/* streak */}
+            <motion.div className="flex items-center justify-center gap-2 mb-4 px-4 py-3 rounded-2xl"
+              style={{ backgroundColor: 'rgba(255,184,0,0.08)', border: '1px solid rgba(255,184,0,0.3)' }}
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+              <Flame size={18} color="#FFB800" fill="#FFB800" />
+              <span className="font-heading font-black text-lg" style={{ color: '#FFB800' }}>
+                {streak} day streak
+              </span>
+            </motion.div>
+
+            {/* badge unlocks */}
+            {newBadges.map((b, i) => (
+              <motion.div key={b.id}
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl mb-3 text-left"
+                style={{ backgroundColor: 'rgba(150,100,255,0.1)', border: '1px solid rgba(150,100,255,0.4)' }}
+                initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 + i * 0.15 }}>
+                <span className="text-3xl">{b.emoji}</span>
+                <div>
+                  <p className="font-heading font-black text-sm" style={{ color: '#9664FF' }}>BADGE UNLOCKED</p>
+                  <p className="font-body text-sm text-white">{b.label} — {b.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </>
+        )}
+
+        <button onClick={onDone}
+          className="w-full py-4 rounded-2xl font-heading font-black text-xl mt-2"
+          style={{ backgroundColor: '#C8FF00', color: '#0D0F14' }}>
+          Back to Dashboard
+        </button>
+      </motion.div>
     </div>
   );
 }

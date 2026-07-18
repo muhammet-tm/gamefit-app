@@ -4,31 +4,34 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import Avatar from '@/components/avatar/Avatar';
-import { normalizeAvatarConfig } from '@/components/avatar/migrate';
+import {
+  AVATAR_CLASSES, CLASS_LABELS, CLASS_TAGLINES, CLASS_COLORS,
+  SKIN_TONES, HAIR_STYLES, HAIR_COLORS, DEFAULT_CONFIG,
+} from '@/components/avatar/palettes';
 
 // ── Mascot (little GameFit elephant-like coach) ───────────────────────────────
 function Mascot({ size = 70 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80">
-      <ellipse cx="40" cy="42" rx="22" ry="26" fill="#64B5F6" />
-      <ellipse cx="30" cy="42" rx="8" ry="7" fill="#64B5F6" />
-      <ellipse cx="50" cy="42" rx="8" ry="7" fill="#64B5F6" />
-      <ellipse cx="30" cy="40" rx="5" ry="4.5" fill="#4FC3F7" />
-      <ellipse cx="50" cy="40" rx="5" ry="4.5" fill="#4FC3F7" />
-      <ellipse cx="40" cy="26" rx="16" ry="14" fill="#64B5F6" />
-      <rect x="28" y="18" width="24" height="8" rx="4" fill="#4CAF50" />
-      <circle cx="33" cy="27" r="4" fill="#90CAF9" />
-      <circle cx="47" cy="27" r="4" fill="#90CAF9" />
-      <circle cx="34" cy="27" r="2.2" fill="#1A237E" />
-      <circle cx="48" cy="27" r="2.2" fill="#1A237E" />
-      <circle cx="34.7" cy="26.3" r="0.8" fill="white" />
-      <circle cx="48.7" cy="26.3" r="0.8" fill="white" />
-      <path d="M36 32 Q40 35 44 32" stroke="#1565C0" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-      <ellipse cx="40" cy="38" rx="6" ry="4" fill="#90CAF9" />
-      <path d="M30 52 Q28 62 30 68" stroke="#64B5F6" strokeWidth="6" strokeLinecap="round" fill="none" />
-      <path d="M50 52 Q52 62 50 68" stroke="#64B5F6" strokeWidth="6" strokeLinecap="round" fill="none" />
-      <ellipse cx="30" cy="68" rx="5" ry="3" fill="#90CAF9" />
-      <ellipse cx="50" cy="68" rx="5" ry="3" fill="#90CAF9" />
+      <ellipse cx="40" cy="42" rx="22" ry="26" fill="#1E2330" />
+      <ellipse cx="30" cy="42" rx="8" ry="7" fill="#1E2330" />
+      <ellipse cx="50" cy="42" rx="8" ry="7" fill="#1E2330" />
+      <ellipse cx="30" cy="40" rx="5" ry="4.5" fill="#2A3040" />
+      <ellipse cx="50" cy="40" rx="5" ry="4.5" fill="#2A3040" />
+      <ellipse cx="40" cy="26" rx="16" ry="14" fill="#1E2330" />
+      <rect x="28" y="18" width="24" height="8" rx="4" fill="#C8FF00" />
+      <circle cx="33" cy="27" r="4" fill="#F1EDE6" />
+      <circle cx="47" cy="27" r="4" fill="#F1EDE6" />
+      <circle cx="34" cy="27" r="2.2" fill="#0D0F14" />
+      <circle cx="48" cy="27" r="2.2" fill="#0D0F14" />
+      <circle cx="34.7" cy="26.3" r="0.8" fill="#C8FF00" />
+      <circle cx="48.7" cy="26.3" r="0.8" fill="#C8FF00" />
+      <path d="M36 32 Q40 35 44 32" stroke="#C8FF00" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+      <ellipse cx="40" cy="38" rx="6" ry="4" fill="#2A3040" />
+      <path d="M30 52 Q28 62 30 68" stroke="#1E2330" strokeWidth="6" strokeLinecap="round" fill="none" />
+      <path d="M50 52 Q52 62 50 68" stroke="#1E2330" strokeWidth="6" strokeLinecap="round" fill="none" />
+      <ellipse cx="30" cy="68" rx="5" ry="3" fill="#C8FF00" />
+      <ellipse cx="50" cy="68" rx="5" ry="3" fill="#C8FF00" />
     </svg>
   );
 }
@@ -138,97 +141,6 @@ function ScrollPicker({ value, onChange, min, max, unit, step = 1 }) {
   );
 }
 
-// ── Avatar Customizer ─────────────────────────────────────────────────────────
-function AvatarCustomizer({ avatarConfig, onChange }) {
-  const skins = ['light', 'medium', 'dark', 'deepbrown'];
-  const outfits = ['blue', 'black', 'red', 'green', 'purple'];
-  const hairs = ['brown', 'black', 'blonde', 'white', 'pink'];
-
-  const skinLabels = { light: '☀️', medium: '🌤️', dark: '🌙', deepbrown: '🌑' };
-  const outfitLabels = { blue: '🔵', black: '⚫', red: '🔴', green: '🟢', purple: '🟣' };
-  const hairLabels = { brown: '🤎', black: '🖤', blonde: '💛', white: '🤍', pink: '🩷' };
-
-  return (
-    <div className="w-full">
-      {/* Avatar preview */}
-      <div className="flex justify-center mb-6">
-        <div className="relative p-4 rounded-3xl" style={{ backgroundColor: '#161A22', border: '2px solid #C8FF00' }}>
-          <Avatar {...(c => ({ avatarClass: c.class, skinTone: c.skin_tone, hair: c.hair }))(normalizeAvatarConfig(avatarConfig))} size={140} tier={1} />
-        </div>
-      </div>
-
-      {/* Gender */}
-      <div className="mb-4">
-        <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#8A8F9E' }}>Gender</p>
-        <div className="flex gap-3">
-          {['male', 'female'].map(g => (
-            <button key={g} onClick={() => onChange({ ...avatarConfig, gender: g })}
-              className="flex-1 py-3 rounded-xl font-body font-semibold text-sm transition-all"
-              style={{
-                backgroundColor: avatarConfig.gender === g ? '#C8FF00' : '#161A22',
-                color: avatarConfig.gender === g ? '#0D0F14' : '#8A8F9E',
-                border: `1px solid ${avatarConfig.gender === g ? '#C8FF00' : '#2A2F3A'}`,
-              }}>
-              {g === 'male' ? '♂ Male' : '♀ Female'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Skin */}
-      <div className="mb-4">
-        <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#8A8F9E' }}>Skin Tone</p>
-        <div className="flex gap-3 justify-center">
-          {skins.map(s => (
-            <button key={s} onClick={() => onChange({ ...avatarConfig, skin: s })}
-              className="w-11 h-11 rounded-full transition-all flex items-center justify-center text-lg"
-              style={{
-                backgroundColor: { light: '#FDDBB4', medium: '#E8AC7A', dark: '#C68642', deepbrown: '#7D4C2A' }[s],
-                border: `3px solid ${avatarConfig.skin === s ? '#C8FF00' : 'transparent'}`,
-              }}>
-              {avatarConfig.skin === s && <Check size={14} color="white" strokeWidth={3} />}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Outfit */}
-      <div className="mb-4">
-        <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#8A8F9E' }}>Outfit Color</p>
-        <div className="flex gap-3 justify-center">
-          {outfits.map(o => (
-            <button key={o} onClick={() => onChange({ ...avatarConfig, outfit: o })}
-              className="w-11 h-11 rounded-full transition-all flex items-center justify-center text-lg"
-              style={{
-                backgroundColor: { blue: '#4FC3F7', black: '#37474F', red: '#EF5350', green: '#66BB6A', purple: '#AB47BC' }[o],
-                border: `3px solid ${avatarConfig.outfit === o ? 'white' : 'transparent'}`,
-              }}>
-              {avatarConfig.outfit === o && <Check size={14} color="white" strokeWidth={3} />}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Hair */}
-      <div>
-        <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#8A8F9E' }}>Hair Color</p>
-        <div className="flex gap-3 justify-center">
-          {hairs.map(h => (
-            <button key={h} onClick={() => onChange({ ...avatarConfig, hair: h })}
-              className="w-11 h-11 rounded-full transition-all flex items-center justify-center text-lg"
-              style={{
-                backgroundColor: { brown: '#5D4037', black: '#212121', blonde: '#FBC02D', white: '#ECEFF1', pink: '#F48FB1' }[h],
-                border: `3px solid ${avatarConfig.hair === h ? '#C8FF00' : 'transparent'}`,
-              }}>
-              {avatarConfig.hair === h && <Check size={14} color="white" strokeWidth={3} />}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Health Integrations Screen ────────────────────────────────────────────────
 function HealthIntegrations({ connected, onToggle }) {
   const INTEGRATIONS = [
@@ -293,13 +205,15 @@ export default function Onboarding() {
   const [saving, setSaving] = useState(false);
 
   // All profile state
-  const [gender, setGender] = useState(null);
   const [age, setAge] = useState(22);
   const [weightKg, setWeightKg] = useState(70);
   const [heightCm, setHeightCm] = useState(170);
   const [fitnessGoal, setFitnessGoal] = useState(null);
   const [fitnessLevel, setFitnessLevel] = useState(null);
-  const [avatarConfig, setAvatarConfig] = useState({ gender: 'male', skin: 'light', outfit: 'blue', hair: 'brown' });
+  const [weeklyGoal, setWeeklyGoal] = useState(null);
+  const [avatarClass, setAvatarClass] = useState(null);
+  const [skinTone, setSkinTone] = useState(DEFAULT_CONFIG.skin_tone);
+  const [hair, setHair] = useState(DEFAULT_CONFIG.hair);
   const [connectedApps, setConnectedApps] = useState([]);
 
   const bmi = weightKg && heightCm ? (weightKg / ((heightCm / 100) ** 2)).toFixed(1) : null;
@@ -309,15 +223,11 @@ export default function Onboarding() {
     setConnectedApps(prev => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id]);
   };
 
-  // Sync avatar gender with profile gender
-  React.useEffect(() => {
-    if (gender) setAvatarConfig(a => ({ ...a, gender }));
-  }, [gender]);
-
   const canProceed = () => {
-    if (step === 0) return !!gender;
+    if (step === 0) return !!avatarClass;
     if (step === 4) return !!fitnessGoal;
     if (step === 5) return !!fitnessLevel;
+    if (step === 6) return !!weeklyGoal;
     return true;
   };
 
@@ -325,9 +235,10 @@ export default function Onboarding() {
     setSaving(true);
     // Only include safe, user-editable profile fields — never send admin/payment fields
     const profileData = {
-      gender, age, weight_kg: weightKg, height_cm: heightCm,
+      age, weight_kg: weightKg, height_cm: heightCm,
       bmi: parseFloat(bmi), fitness_goal: fitnessGoal,
-      fitness_level: fitnessLevel, avatar_config: avatarConfig,
+      fitness_level: fitnessLevel, weekly_goal: weeklyGoal,
+      avatar_config: { version: 2, class: avatarClass, skin_tone: skinTone, hair },
       connected_apps: connectedApps, onboarding_complete: true,
     };
 
@@ -349,24 +260,33 @@ export default function Onboarding() {
   const back = () => { if (step > 0) setStep(s => s - 1); };
 
   const steps = [
-    // 0 — Gender
+    // 0 — Class pick
     {
-      mascotText: "Alright! Let's get some basic info down.",
+      mascotText: 'Choose your class, champion! You can change it anytime.',
       content: (
         <div className="w-full">
-          <h2 className="font-heading font-black text-3xl text-white mb-1">I am...</h2>
-          <div className="flex gap-4 mt-6">
-            {[['male', '♂', 'MALE'], ['female', '♀', 'FEMALE']].map(([val, sym, label]) => (
-              <button key={val} onClick={() => setGender(val)}
-                className="flex-1 py-8 rounded-2xl flex flex-col items-center gap-2 transition-all active:scale-95"
-                style={{
-                  backgroundColor: gender === val ? 'rgba(200,255,0,0.10)' : '#161A22',
-                  border: `2px solid ${gender === val ? '#C8FF00' : '#2A2F3A'}`,
-                }}>
-                <span className="font-heading font-black text-5xl" style={{ color: '#4A5065' }}>{sym}</span>
-                <span className="font-heading font-black text-lg text-white">{label}</span>
-              </button>
-            ))}
+          <h2 className="font-heading font-black text-3xl text-white mb-4">Choose your class</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {AVATAR_CLASSES.map(cls => {
+              const selected = avatarClass === cls;
+              const cc = CLASS_COLORS[cls];
+              return (
+                <button key={cls} onClick={() => setAvatarClass(cls)}
+                  className="rounded-2xl p-3 flex flex-col items-center gap-1.5 transition-all active:scale-95"
+                  style={{
+                    backgroundColor: selected ? `${cc.glow}14` : '#161A22',
+                    border: `2px solid ${selected ? cc.glow : '#2A2F3A'}`,
+                  }}>
+                  <Avatar avatarClass={cls} tier={2} skinTone={skinTone} hair={hair} size={72} animate={false} />
+                  <span className="font-heading font-black text-base" style={{ color: selected ? cc.glow : '#FFFFFF' }}>
+                    {CLASS_LABELS[cls]}
+                  </span>
+                  <span className="font-body text-[10px] text-center leading-tight" style={{ color: '#8A8F9E' }}>
+                    {CLASS_TAGLINES[cls]}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       ),
@@ -441,27 +361,79 @@ export default function Onboarding() {
         </div>
       ),
     },
-    // 6 — Avatar Pick
+    // 6 — Weekly target
     {
-      mascotText: 'Pick an Avatar to get started! Make it your own.',
-      content: <AvatarCustomizer avatarConfig={avatarConfig} onChange={setAvatarConfig} />,
+      mascotText: 'How many days a week will you train? Be honest — streaks are won by realists!',
+      content: (
+        <div className="w-full">
+          <h2 className="font-heading font-black text-3xl text-white mb-4">My weekly target</h2>
+          {[
+            { val: 2, label: '2 days / week', sub: 'Easing in', emoji: '🌱' },
+            { val: 3, label: '3 days / week', sub: 'Solid habit', emoji: '💪' },
+            { val: 4, label: '4 days / week', sub: 'Committed', emoji: '🔥' },
+            { val: 5, label: '5+ days / week', sub: 'All in', emoji: '🏆' },
+          ].map(({ val, label, sub, emoji }) => (
+            <OptionRow key={val} label={label} sublabel={sub} emoji={emoji}
+              selected={weeklyGoal === val} onSelect={() => setWeeklyGoal(val)} />
+          ))}
+        </div>
+      ),
     },
-    // 7 — Avatar Reveal
+    // 7 — Look customizer + reveal
     {
-      mascotText: 'Say hello to your very own Avatar!',
+      mascotText: null,
       content: (
         <div className="w-full flex flex-col items-center">
-          <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 200 }}>
-            <h2 className="font-heading font-black text-3xl text-white text-center mb-2">Meet your Avatar</h2>
-            <p className="font-body text-sm text-center mb-8" style={{ color: '#8A8F9E' }}>
-              A reflection of you. It grows as you get stronger!
+          <motion.div className="w-full" initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 180 }}>
+            <h2 className="font-heading font-black text-3xl text-white text-center mb-2">Make it yours</h2>
+            <p className="font-body text-sm text-center mb-5" style={{ color: '#8A8F9E' }}>
+              Your avatar grows as you get stronger!
             </p>
-            <div className="flex justify-center">
-              <div className="p-8 rounded-3xl relative overflow-hidden"
+            <div className="flex justify-center mb-6">
+              <div className="p-6 rounded-3xl relative overflow-hidden"
                 style={{ backgroundColor: '#161A22', border: '2px solid #C8FF00' }}>
                 <div className="absolute inset-0 opacity-10" style={{ background: 'radial-gradient(circle at 50% 40%, #C8FF00, transparent 60%)' }} />
-                <Avatar {...(c => ({ avatarClass: c.class, skinTone: c.skin_tone, hair: c.hair }))(normalizeAvatarConfig(avatarConfig))} size={160} tier={1} />
+                <Avatar avatarClass={avatarClass || 'warrior'} skinTone={skinTone} hair={hair} size={150} tier={1} />
               </div>
+            </div>
+
+            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#8A8F9E' }}>Skin tone</p>
+            <div className="flex gap-2.5 justify-center mb-4">
+              {Object.keys(SKIN_TONES).map(s => (
+                <button key={s} onClick={() => setSkinTone(s)}
+                  className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
+                  style={{ backgroundColor: SKIN_TONES[s].base, border: `3px solid ${skinTone === s ? '#C8FF00' : 'transparent'}` }}>
+                  {skinTone === s && <Check size={13} color="white" strokeWidth={3} />}
+                </button>
+              ))}
+            </div>
+
+            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#8A8F9E' }}>Hair</p>
+            <div className="flex gap-2 mb-3">
+              {HAIR_STYLES.map(style => {
+                const cur = hair.split('_');
+                const selected = cur[0] === style;
+                return (
+                  <button key={style} onClick={() => setHair(`${style}_${cur[1] || 'black'}`)}
+                    className="flex-1 py-2 rounded-xl font-body font-medium text-xs capitalize transition-all"
+                    style={{ backgroundColor: selected ? '#C8FF00' : '#161A22', color: selected ? '#0D0F14' : '#8A8F9E', border: `1px solid ${selected ? '#C8FF00' : '#2A2F3A'}` }}>
+                    {style}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex gap-2.5 justify-center">
+              {Object.keys(HAIR_COLORS).map(c => {
+                const cur = hair.split('_');
+                const selected = (cur[1] || 'black') === c;
+                return (
+                  <button key={c} onClick={() => setHair(`${cur[0] || 'short'}_${c}`)}
+                    className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
+                    style={{ backgroundColor: HAIR_COLORS[c].base, border: `3px solid ${selected ? '#C8FF00' : 'transparent'}` }}>
+                    {selected && <Check size={13} color="white" strokeWidth={3} />}
+                  </button>
+                );
+              })}
             </div>
           </motion.div>
         </div>
