@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Zap, Flame, Dumbbell, Calendar } from 'lucide-react';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
-import { base44 } from '@/api/base44Client';
+import { callRpc } from '@/api/supabase';
 import { useGameFit } from '@/lib/GameFitContext';
 import BottomNav from '@/components/gamefit/BottomNav';
 
@@ -23,8 +23,8 @@ export default function MonthlySummary() {
     const fetchStats = async () => {
       setLoading(true);
       try {
-        const res = await base44.functions.invoke('getMonthlyStats', { month, year });
-        setStats(res.data);
+        const res = await callRpc('get_monthly_stats', { p_month: month, p_year: year });
+        setStats(res);
       } catch (err) {
         console.error('Failed to fetch monthly stats:', err);
       } finally {

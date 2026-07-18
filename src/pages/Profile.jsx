@@ -7,7 +7,6 @@ import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import { useGameFit } from '@/lib/GameFitContext';
 import { LEVEL_TITLES } from '@/lib/mockData';
-import AvatarIllustration from '@/components/gamefit/AvatarIllustration';
 import BottomNav from '@/components/gamefit/BottomNav';
 import PremiumModal from '@/components/gamefit/PremiumModal';
 import BadgeGrid from '@/components/gamefit/BadgeGrid';

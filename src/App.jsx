@@ -4,11 +4,15 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { GameFitProvider } from '@/lib/GameFitContext';
+import { AuthProvider } from '@/lib/AuthContext';
 import { TabStackProvider } from '@/lib/TabStackNavigation';
 
 // Pages
 import Splash from '@/pages/Splash';
 import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
 import Onboarding from '@/pages/Onboarding';
 import Dashboard from '@/pages/Dashboard';
 import Train from '@/pages/Train';
@@ -27,12 +31,16 @@ import AdminRoute from '@/components/AdminRoute';
 function App() {
   return (
     <Router>
+      <AuthProvider>
       <GameFitProvider>
         <QueryClientProvider client={queryClientInstance}>
           <TabStackProvider>
             <Routes>
             <Route path="/" element={<Splash />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/*" element={<Dashboard />} />
@@ -60,6 +68,7 @@ function App() {
           </TabStackProvider>
         </QueryClientProvider>
       </GameFitProvider>
+      </AuthProvider>
       <Toaster />
     </Router>
   )

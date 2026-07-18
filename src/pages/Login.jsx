@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, User, ChevronDown } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
-import { MOCK_USER } from '@/lib/mockData';
-import { base44 } from '@/api/base44Client';
+import { supabase, updateProfile } from '@/api/supabase';
 import GoogleIcon from '@/components/GoogleIcon';
 
 const FITNESS_GOALS = ['Lose Weight', 'Build Muscle', 'Improve Endurance', 'Stay Active', 'General Fitness'];
@@ -20,21 +19,57 @@ export default function Login() {
   });
 
   const [error, setError] = useState('');
+  const [confirmEmailSent, setConfirmEmailSent] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (mode === 'signup') {
+      const age = parseInt(form.age, 10);
+      if (!age || age < 16 || age > 100) {
+        setError('You must be at least 16 years old to use GameFit.');
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       if (mode === 'login') {
-        await base44.auth.loginViaEmailPassword(form.email, form.password);
+        const { error: err } = await supabase.auth.signInWithPassword({
+          email: form.email,
+          password: form.password,
+        });
+        if (err) throw err;
         window.location.href = '/dashboard';
       } else {
-        await base44.auth.register({ email: form.email, password: form.password });
-        navigate('/onboarding', { replace: true });
+        const { data, error: err } = await supabase.auth.signUp({
+          email: form.email,
+          password: form.password,
+          options: {
+            data: { full_name: `${form.firstName} ${form.lastName}`.trim() },
+          },
+        });
+        if (err) throw err;
+        if (data.session) {
+          // signed in immediately — save the extra signup fields
+          await updateProfile({
+            first_name: form.firstName,
+            last_name: form.lastName,
+            age: parseInt(form.age, 10),
+            fitness_goal: form.fitnessGoal,
+          }).catch(() => {});
+          navigate('/onboarding', { replace: true });
+        } else {
+          // email confirmation required first
+          setConfirmEmailSent(true);
+        }
       }
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      const msg = err.message === 'Invalid login credentials'
+        ? 'Wrong email or password. Please try again.'
+        : err.message || 'Something went wrong. Please try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -76,6 +111,18 @@ export default function Login() {
           <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
             style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
             {error}
+          </div>
+        )}
+
+        {confirmEmailSent && (
+          <div className="mb-3 px-4 py-4 rounded-xl text-sm font-body text-center"
+            style={{ backgroundColor: 'rgba(200,255,0,0.08)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-green)' }}>
+            <p className="text-2xl mb-2">📬</p>
+            <p className="font-medium mb-1">Check your email!</p>
+            <p style={{ color: 'var(--gf-text-secondary)' }}>
+              We sent a confirmation link to <strong>{form.email}</strong>.
+              Click it, then sign in here.
+            </p>
           </div>
         )}
 
@@ -127,7 +174,10 @@ export default function Login() {
 
           {mode === 'login' && (
             <div className="text-right">
-              <span className="text-sm font-body" style={{ color: 'var(--gf-purple)' }}>Forgot Password?</span>
+              <button type="button" onClick={() => navigate('/forgot-password')}
+                className="text-sm font-body" style={{ color: 'var(--gf-purple)' }}>
+                Forgot Password?
+              </button>
             </div>
           )}
 
@@ -147,7 +197,10 @@ export default function Login() {
         <button
           className="w-full py-3.5 rounded-xl font-body font-medium text-sm flex items-center justify-center gap-2 transition-all active:scale-95"
           style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-border)' }}
-          onClick={() => base44.auth.loginWithProvider('google', '/dashboard')}
+          onClick={() => supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: `${window.location.origin}/dashboard` },
+          })}
         >
           <GoogleIcon className="w-5 h-5" />
           Continue with Google

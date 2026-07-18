@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Smartphone } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { invokeFunction } from '@/api/supabase';
 import BodyAnalysis from '@/components/gamefit/BodyAnalysis';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
@@ -24,26 +24,23 @@ const OUTFITS = ['blue', 'black', 'red', 'green', 'purple'];
 const HAIRS = ['brown', 'black', 'blonde', 'white', 'pink'];
 
 export default function AvatarScreen() {
-  const { user, workouts, updateUser } = useGameFit();
+  const { user, workouts, updateUser, purchaseAccessory, equipAccessory } = useGameFit();
   const [activeTab, setActiveTab] = useState('avatar');
-  const [connectedApps, setConnectedApps] = useState(() => {
-    const saved = user.connected_apps || [];
-    // Also check if strava token is saved
-    if (user.strava_access_token && !saved.includes('strava')) {
-      return [...saved, 'strava'];
-    }
-    return saved;
-  });
+  const [connectedApps, setConnectedApps] = useState(() => user.connected_apps || []);
   const [connectingApp, setConnectingApp] = useState(null);
+  const [shopError, setShopError] = useState('');
 
   const handleConnect = async (app) => {
     if (app.comingSoon) return;
 
-    // Handle disconnect
+    // Handle disconnect — the server forgets the Strava tokens
     if (connectedApps.includes(app.id)) {
       const updated = connectedApps.filter(a => a !== app.id);
       setConnectedApps(updated);
-      updateUser({ connected_apps: updated, strava_access_token: null, strava_athlete: null });
+      if (app.id === 'strava') {
+        invokeFunction('strava-auth', { action: 'disconnect' }).catch(() => {});
+      }
+      updateUser({ connected_apps: updated }).catch(() => {});
       return;
     }
 
@@ -51,10 +48,9 @@ export default function AvatarScreen() {
     if (app.realOAuth && app.id === 'strava') {
       setConnectingApp(app.id);
       try {
-        const redirect_uri = `${window.location.origin}/strava/callback`;
-        const res = await base44.functions.invoke('stravaAuth', { action: 'authorize', redirect_uri });
-        if (res.data?.url) {
-          window.location.href = res.data.url;
+        const res = await invokeFunction('strava-auth', { action: 'authorize' });
+        if (res?.url) {
+          window.location.href = res.url;
         }
       } catch (err) {
         console.error('Strava auth error:', err);
@@ -69,17 +65,19 @@ export default function AvatarScreen() {
   const equippedAccessory = user.equipped_accessory || null;
   const equippedItem = ACCESSORIES.find(a => a.id === equippedAccessory);
 
-  const handleBuyAccessory = (item) => {
+  // The server checks the price and coin balance atomically — the UI just
+  // asks and shows the result.
+  const handleBuyAccessory = async (item) => {
     if (user.coins < item.cost) return;
-    updateUser({
-      coins: user.coins - item.cost,
-      owned_accessories: [...ownedAccessories, item.id],
-      equipped_accessory: item.id,
-    });
+    setShopError('');
+    const res = await purchaseAccessory(item.id);
+    if (!res.ok) setShopError(res.error || 'Purchase failed. Please try again.');
   };
 
-  const handleEquipAccessory = (id) => {
-    updateUser({ equipped_accessory: id });
+  const handleEquipAccessory = async (id) => {
+    setShopError('');
+    const res = await equipAccessory(id);
+    if (!res.ok) setShopError(res.error || 'Could not equip. Please try again.');
   };
 
   const level = user.current_level;
@@ -222,6 +220,12 @@ export default function AvatarScreen() {
 
       {activeTab === 'shop' && (
         <div className="px-5 pt-5 pb-6">
+          {shopError && (
+            <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
+              style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+              {shopError}
+            </div>
+          )}
           <AccessoryShop
             coins={user.coins}
             ownedAccessories={ownedAccessories}

@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Bell, Sun, Moon, Dumbbell, Bot, ShoppingBag, Trophy, Zap, Flame, Coins } from 'lucide-react';
+import { Bell, Sun, Moon, Dumbbell, Bot, ShoppingBag, Trophy, Zap, Flame } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
-import { getLevelForXP, getNextLevelXP, getCurrentLevelXP, LEVEL_TITLES } from '@/lib/mockData';
+import { getNextLevelXP, getCurrentLevelXP, LEVEL_TITLES } from '@/lib/mockData';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import HumanAvatar from '@/components/gamefit/HumanAvatar';
 import BottomNav from '@/components/gamefit/BottomNav';

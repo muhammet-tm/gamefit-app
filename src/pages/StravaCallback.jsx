@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { invokeFunction } from '@/api/supabase';
 import { useGameFit } from '@/lib/GameFitContext';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
@@ -24,14 +24,12 @@ export default function StravaCallback() {
     const exchange = async () => {
       try {
         setStatus('Exchanging tokens...');
-        const res = await base44.functions.invoke('stravaAuth', { action: 'exchange', code });
-        const { athlete } = res.data;
+        const res = await invokeFunction('strava-auth', { action: 'exchange', code });
+        const { athlete } = res;
 
-        // Tokens are persisted server-side; just update local state with athlete info
-        await updateUser({
-          connected_apps: ['strava'],
-          strava_athlete: athlete,
-        });
+        // Tokens are persisted server-side; the server also updates
+        // connected_apps — refresh local state to match
+        await updateUser({ connected_apps: ['strava'] }).catch(() => {});
 
         setStatus(`Connected as ${athlete.firstname} ${athlete.lastname}! 🎉`);
         setTimeout(() => navigate('/avatar'), 1500);

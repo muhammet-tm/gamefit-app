@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { getLevelForXP, getAvatarTier, LEVEL_THRESHOLDS } from './mockData';
-import { base44 } from '@/api/base44Client';
+import { supabase, getMe, updateProfile, callRpc } from '@/api/supabase';
 
 const GameFitContext = createContext(null);
 
@@ -31,7 +31,26 @@ const FRESH_USER = {
   onboarding_complete: false,
   ai_requests_this_month: 0,
   theme_preference: 'dark',
+  badges: [],
+  owned_accessories: [],
+  equipped_accessory: null,
+  calorie_goal: null,
+  role: 'user',
 };
+
+function mapWorkoutRow(w) {
+  return {
+    id: w.id,
+    user_id: w.user_id,
+    exercise_type: w.exercise_type,
+    duration_min: w.duration_min,
+    intensity_level: w.intensity_level,
+    xp_earned: w.xp_earned,
+    coins_earned: w.coins_earned,
+    notes: w.notes || '',
+    logged_at: w.created_at,
+  };
+}
 
 export function GameFitProvider({ children }) {
   const [user, setUser] = useState(FRESH_USER);
@@ -44,75 +63,34 @@ export function GameFitProvider({ children }) {
     return 'dark';
   });
   const [levelUpData, setLevelUpData] = useState(null);
+  const [lastWorkoutResult, setLastWorkoutResult] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Load real user data on mount
+  // Load the profile — the server is the single source of truth for all
+  // stats. The old version re-derived XP/coins by summing workout records
+  // (which made spent coins reappear on refresh); now they're just columns.
   React.useEffect(() => {
     async function loadUser() {
       try {
-        const me = await base44.auth.me();
+        const me = await getMe();
         if (!me?.id) {
           setLoading(false);
           return;
         }
-
         setIsAuthenticated(true);
 
-        // Get user entity record for profile fields saved during onboarding
-        let profileData = {};
-        try {
-          const userRecords = await base44.entities.User.filter({ id: me.id }, '-created_date', 1);
-          if (userRecords && userRecords.length > 0) {
-            profileData = userRecords[0];
-          }
-        } catch (e) {
-          // User entity not accessible or no record yet
-        }
+        const [workoutsRes, aiCountRes] = await Promise.all([
+          supabase.from('workouts').select('*')
+            .order('created_at', { ascending: false }).limit(20),
+          supabase.from('ai_request_logs').select('id', { count: 'exact', head: true })
+            .eq('month_key', new Date().toISOString().slice(0, 7)),
+        ]);
 
-        // Load all workouts to compute real stats
-        let realTotalXP = 0;
-        let realCoins = 0;
-        let realLevel = 1;
-        let realTier = 1;
-        let currentStreak = 0;
-        let bestStreak = profileData.best_streak || 0;
-        let weeklyCount = 0;
-        let lastWorkoutDate = null;
-        let realWorkouts = [];
-
-        try {
-          const records = await base44.entities.Workout.filter({ user_id: me.id }, '-created_date', 200);
-          if (records && records.length > 0) {
-            realTotalXP = records.reduce((sum, w) => sum + (w.xp_earned || 0), 0);
-            realCoins = records.reduce((sum, w) => sum + (w.coins_earned || 0), 0);
-            realLevel = getLevelForXP(realTotalXP);
-            realTier = getAvatarTier(realLevel);
-
-            const sorted = [...records].sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
-            lastWorkoutDate = sorted[0] ? new Date(sorted[0].created_date).toISOString() : null;
-
-            weeklyCount = records.filter(w => (Date.now() - new Date(w.created_date)) < 7 * 24 * 60 * 60 * 1000).length;
-
-            // Use streak_count from the most recent workout record (it was computed at log time)
-            currentStreak = sorted[0]?.streak_count || 0;
-            bestStreak = Math.max(bestStreak, currentStreak);
-
-            realWorkouts = sorted.slice(0, 20).map(w => ({
-              id: w.id,
-              user_id: w.user_id,
-              exercise_type: w.exercise_type,
-              duration_min: w.duration_min,
-              intensity_level: w.intensity_level,
-              xp_earned: w.xp_earned,
-              coins_earned: w.coins_earned,
-              notes: w.notes || '',
-              logged_at: w.created_date,
-            }));
-          }
-        } catch (e) {
-          // No workouts yet — new user starts at zero
-        }
+        const rows = workoutsRes.data ?? [];
+        const weeklyCount = rows.filter(
+          w => Date.now() - new Date(w.created_at) < 7 * 24 * 60 * 60 * 1000,
+        ).length;
 
         const nameParts = (me.full_name || '').split(' ');
 
@@ -120,34 +98,40 @@ export function GameFitProvider({ children }) {
           ...FRESH_USER,
           id: me.id,
           email: me.email,
-          first_name: nameParts[0] || '',
-          last_name: nameParts.slice(1).join(' ') || '',
-          // Profile fields from User entity (saved during onboarding/profile edit)
-          age: profileData.age ?? FRESH_USER.age,
-          height_cm: profileData.height_cm ?? FRESH_USER.height_cm,
-          weight_kg: profileData.weight_kg ?? FRESH_USER.weight_kg,
-          bmi: profileData.bmi ?? FRESH_USER.bmi,
-          account_type: profileData.account_type || 'regular',
-          fitness_goal: profileData.fitness_goal || FRESH_USER.fitness_goal,
-          fitness_level: profileData.fitness_level || FRESH_USER.fitness_level,
-          gender: profileData.gender || FRESH_USER.gender,
-          avatar_config: profileData.avatar_config || FRESH_USER.avatar_config,
-          connected_apps: profileData.connected_apps || [],
-          onboarding_complete: profileData.onboarding_complete || false,
-          theme_preference: profileData.theme_preference || theme,
-          // Stats computed from real workout records (all zero for new users)
-          total_xp: realTotalXP,
-          current_level: realLevel,
-          avatar_tier: realTier,
-          coins: realCoins,
-          current_streak: currentStreak,
-          best_streak: bestStreak,
+          first_name: me.first_name || nameParts[0] || '',
+          last_name: me.last_name || nameParts.slice(1).join(' ') || '',
+          age: me.age ?? null,
+          height_cm: me.height_cm ?? null,
+          weight_kg: me.weight_kg ?? null,
+          bmi: me.bmi ?? null,
+          account_type: me.account_type || 'regular',
+          fitness_goal: me.fitness_goal || FRESH_USER.fitness_goal,
+          fitness_level: me.fitness_level || FRESH_USER.fitness_level,
+          gender: me.gender || FRESH_USER.gender,
+          avatar_config: me.avatar_config && Object.keys(me.avatar_config).length
+            ? me.avatar_config : FRESH_USER.avatar_config,
+          connected_apps: me.connected_apps || [],
+          onboarding_complete: me.onboarding_complete || false,
+          theme_preference: me.theme_preference || theme,
+          calorie_goal: me.calorie_goal ?? null,
+          role: me.role || 'user',
+          joined_at: me.created_at || null,
+          // server-authoritative stats
+          total_xp: me.total_xp ?? 0,
+          current_level: me.current_level ?? 1,
+          avatar_tier: getAvatarTier(me.current_level ?? 1),
+          coins: (me.total_coins_earned ?? 0) - (me.total_coins_spent ?? 0),
+          current_streak: me.current_streak ?? 0,
+          best_streak: me.best_streak ?? 0,
+          badges: me.badges || [],
+          owned_accessories: me.owned_accessories || [],
+          equipped_accessory: me.equipped_accessory || null,
           weekly_workout_count: weeklyCount,
-          last_workout_date: lastWorkoutDate,
-          ai_requests_this_month: 0,
+          last_workout_date: rows[0]?.created_at ?? null,
+          ai_requests_this_month: aiCountRes.count ?? 0,
         });
 
-        setWorkouts(realWorkouts);
+        setWorkouts(rows.map(mapWorkoutRow));
       } catch (e) {
         // Not logged in
       } finally {
@@ -169,79 +153,73 @@ export function GameFitProvider({ children }) {
     });
   }, []);
 
-  // Apply theme on mount
   React.useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
+  // Log a workout. The UI updates instantly with a local preview; the server
+  // computes the real XP/coins/streak/badges and its answer overwrites the
+  // preview (so nobody can cheat, and every device agrees).
   const addWorkout = useCallback(async (workout) => {
     const prevUser = user;
     const prevWorkouts = workouts;
 
-    const newWorkout = { ...workout, id: `w${Date.now()}`, user_id: user.id, logged_at: new Date().toISOString() };
-    setWorkouts(prev => [newWorkout, ...prev]);
-
-    const prevLevel = user.current_level;
-    const newTotalXP = user.total_xp + workout.xp_earned;
-    const newLevel = getLevelForXP(newTotalXP);
-    const newTier = getAvatarTier(newLevel);
-    const newWeekly = user.weekly_workout_count + 1;
-
-    // Streak logic
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const lastDate = user.last_workout_date ? new Date(user.last_workout_date) : null;
-    if (lastDate) lastDate.setHours(0, 0, 0, 0);
-    const diffDays = lastDate ? Math.floor((today - lastDate) / 86400000) : 999;
-    const newStreak = diffDays <= 1 ? user.current_streak + 1 : 1;
-
-    // Streak bonus coins
-    const streakMultiplier = newStreak >= 7 ? 1.5 : newStreak >= 3 ? 1.25 : 1;
-    const bonusCoins = Math.round(workout.coins_earned * streakMultiplier);
-
+    const optimistic = {
+      ...workout,
+      id: `pending-${Date.now()}`,
+      user_id: user.id,
+      logged_at: new Date().toISOString(),
+    };
+    setWorkouts(prev => [optimistic, ...prev]);
     setUser(prev => ({
       ...prev,
-      total_xp: newTotalXP,
-      current_level: newLevel,
-      avatar_tier: newTier,
-      coins: prev.coins + bonusCoins,
-      weekly_workout_count: newWeekly,
-      current_streak: newStreak,
-      best_streak: Math.max(prev.best_streak, newStreak),
-      last_workout_date: new Date().toISOString(),
+      total_xp: prev.total_xp + (workout.xp_earned || 0),
+      coins: prev.coins + (workout.coins_earned || 0),
+      weekly_workout_count: prev.weekly_workout_count + 1,
+      last_workout_date: optimistic.logged_at,
     }));
 
-    if (newLevel > prevLevel) {
-      const levelBonusCoins = newLevel * 50;
-      setLevelUpData({ newLevel, newTier, bonusCoins: levelBonusCoins });
-      setUser(prev => ({ ...prev, coins: prev.coins + levelBonusCoins }));
-    }
-
-    // Persist to entity — triggers the notification automation
-    base44.auth.me().then(me => {
-      if (!me?.email) return;
-      base44.entities.Workout.create({
-        user_id: me.id || user.id,
-        user_email: me.email,
-        user_name: me.full_name || `${user.first_name || ''} ${user.last_name || ''}`.trim(),
-        exercise_type: workout.exercise_type,
-        duration_min: workout.duration_min,
-        intensity_level: workout.intensity_level,
-        xp_earned: workout.xp_earned,
-        coins_earned: workout.coins_earned,
-        total_xp_after: newTotalXP,
-        level_before: prevLevel,
-        level_after: newLevel,
-        streak_count: newStreak,
-        notes: workout.notes || '',
-      }).catch(err => {
-        console.warn('Workout entity save failed:', err.message);
-        setUser(prevUser);
-        setWorkouts(prevWorkouts);
+    try {
+      const res = await callRpc('log_workout', {
+        p_exercise_type: workout.exercise_type,
+        p_duration_min: workout.duration_min,
+        p_intensity: workout.intensity_level,
+        p_notes: workout.notes || '',
       });
-    }).catch(() => {});
 
-    return newWorkout;
+      // reconcile with the server's authoritative numbers
+      setWorkouts(prev => [
+        mapWorkoutRow(res.workout),
+        ...prev.filter(w => w.id !== optimistic.id),
+      ]);
+      setUser(prev => ({
+        ...prev,
+        total_xp: res.user.total_xp,
+        current_level: res.user.current_level,
+        avatar_tier: res.user.avatar_tier,
+        coins: res.user.coins,
+        current_streak: res.user.current_streak,
+        best_streak: res.user.best_streak,
+        badges: res.new_badges?.length
+          ? [...new Set([...(prev.badges || []), ...res.new_badges])]
+          : prev.badges,
+      }));
+
+      if (res.level_up) {
+        setLevelUpData({
+          newLevel: res.level_up.new_level,
+          newTier: res.level_up.new_tier,
+          bonusCoins: res.level_up.bonus_coins,
+        });
+      }
+      setLastWorkoutResult(res);
+      return res;
+    } catch (err) {
+      console.warn('Workout save failed:', err.message);
+      setUser(prevUser);
+      setWorkouts(prevWorkouts);
+      throw err;
+    }
   }, [user, workouts]);
 
   const claimLevelUp = useCallback(() => {
@@ -257,46 +235,74 @@ export function GameFitProvider({ children }) {
   }, []);
 
   const updateUser = useCallback(async (updates) => {
-    // Whitelist only safe, user-editable profile fields — never forward admin/payment fields
+    // Only profile fields a user may edit about themselves. Economy, premium,
+    // and accessories are server-owned (the database also refuses them).
     const SAFE_FIELDS = [
       'first_name', 'last_name', 'fitness_goal', 'fitness_level',
       'age', 'height_cm', 'weight_kg', 'bmi', 'gender',
       'avatar_config', 'connected_apps', 'onboarding_complete',
-      'theme_preference', 'calorie_goal', 'owned_accessories',
-      'equipped_accessory',
+      'theme_preference', 'calorie_goal',
     ];
     const safeUpdates = {};
     for (const key of SAFE_FIELDS) {
       if (key in updates) safeUpdates[key] = updates[key];
     }
+    if (Object.keys(safeUpdates).length === 0) return;
 
     const prevUser = user;
     setUser(prev => ({ ...prev, ...safeUpdates }));
-
     try {
-      const me = await base44.auth.me();
-      if (me?.id) {
-        await base44.entities.User.update(me.id, safeUpdates);
-      }
+      await updateProfile(safeUpdates);
     } catch (err) {
-      console.warn('User update failed:', err.message);
+      console.warn('Profile update failed:', err.message);
       setUser(prevUser);
+      throw err;
     }
   }, [user]);
 
-  const redeemReward = useCallback((reward) => {
-    if (user.coins < reward.cost_coins) return false;
-    setUser(prev => ({ ...prev, coins: prev.coins - reward.cost_coins }));
-    return true;
-  }, [user.coins]);
+  // Buy or equip a shop accessory — the server checks the price and balance
+  // atomically, so double-spends and free items are impossible.
+  const purchaseAccessory = useCallback(async (accessoryId) => {
+    try {
+      const res = await callRpc('purchase_accessory', {
+        p_action: 'purchase',
+        p_accessory_id: accessoryId,
+      });
+      setUser(prev => ({
+        ...prev,
+        coins: res.coins,
+        owned_accessories: res.owned_accessories,
+        equipped_accessory: res.equipped_accessory,
+      }));
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  }, []);
+
+  const equipAccessory = useCallback(async (accessoryId) => {
+    try {
+      const res = await callRpc('purchase_accessory', {
+        p_action: accessoryId ? 'equip' : 'unequip',
+        p_accessory_id: accessoryId,
+      });
+      setUser(prev => ({ ...prev, equipped_accessory: res.equipped_accessory }));
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  }, []);
 
   const login = useCallback((userData) => {
     setUser(userData || FRESH_USER);
     setIsAuthenticated(true);
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut();
     setIsAuthenticated(false);
+    setUser(FRESH_USER);
+    setWorkouts([]);
   }, []);
 
   const incrementAIRequests = useCallback(() => {
@@ -305,9 +311,11 @@ export function GameFitProvider({ children }) {
 
   return (
     <GameFitContext.Provider value={{
-      user, workouts, notifications, theme, levelUpData, isAuthenticated, loading,
+      user, workouts, notifications, theme, levelUpData, lastWorkoutResult,
+      isAuthenticated, loading,
       unreadCount, toggleTheme, addWorkout, claimLevelUp,
-      markNotificationRead, markAllRead, updateUser, redeemReward,
+      markNotificationRead, markAllRead, updateUser,
+      purchaseAccessory, equipAccessory,
       login, logout, incrementAIRequests,
       LEVEL_THRESHOLDS,
     }}>

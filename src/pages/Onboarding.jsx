@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import HumanAvatar from '@/components/gamefit/HumanAvatar';
-import { base44 } from '@/api/base44Client';
 
 // ── Mascot (little GameFit elephant-like coach) ───────────────────────────────
 function Mascot({ size = 70 }) {
@@ -329,17 +328,12 @@ export default function Onboarding() {
       bmi: parseFloat(bmi), fitness_goal: fitnessGoal,
       fitness_level: fitnessLevel, avatar_config: avatarConfig,
       connected_apps: connectedApps, onboarding_complete: true,
-      avatar_style: `${avatarConfig.gender}_${avatarConfig.skin}`,
     };
-    updateUser(profileData);
 
-    // Save to backend
+    // updateUser persists to the backend and updates local state
     try {
-      const me = await base44.auth.me();
-      if (me) {
-        await base44.auth.updateMe(profileData);
-      }
-    } catch (_) { /* offline — continue */ }
+      await updateUser(profileData);
+    } catch (_) { /* keep going — profile can be re-saved from the Profile tab */ }
 
     setSaving(false);
     navigate('/dashboard', { replace: true });
