@@ -3,13 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Bell, Sun, Moon, Dumbbell, Bot, ShoppingBag, Trophy, Zap, Flame } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
-import { getNextLevelXP, getCurrentLevelXP, LEVEL_TITLES } from '@/lib/mockData';
+import { getNextLevelXP, getCurrentLevelXP } from '@/lib/mockData';
+import { getRank } from '@/lib/ranks';
+import RankEmblem from '@/components/gamefit/RankEmblem';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import UserAvatar from '@/components/avatar/UserAvatar';
 import BottomNav from '@/components/gamefit/BottomNav';
 import LevelUpOverlay from '@/components/gamefit/LevelUpOverlay';
 import NotificationsPanel from '@/components/gamefit/NotificationsPanel';
-import StreakWidget from '@/components/gamefit/StreakWidget';
+import StreakCalendar from '@/components/gamefit/StreakCalendar';
+import ProgressChart from '@/components/gamefit/ProgressChart';
 import PullToRefresh from '@/components/gamefit/PullToRefresh';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -31,7 +34,8 @@ export default function Dashboard() {
   const xpProgress = nextLevelXP > currentLevelXP
     ? ((user.total_xp - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100
     : 100;
-  const title = LEVEL_TITLES[level] || 'Recruit';
+  const rank = getRank(level);
+  const title = rank.display;
 
   const quickActions = [
     { label: 'Log Workout', icon: Dumbbell, color: '#C8FF00', textColor: '#0D0F14', path: '/train' },
@@ -97,9 +101,12 @@ export default function Dashboard() {
               </span>
             </div>
             <div className="flex-1">
-              <p className="font-heading font-black text-lg mb-0.5" style={{ color: 'var(--gf-text-primary)' }}>
-                {title}
-              </p>
+              <div className="flex items-center gap-2 mb-0.5">
+                <RankEmblem level={level} size={22} />
+                <p className="font-heading font-black text-lg uppercase" style={{ color: rank.color, letterSpacing: '0.04em' }}>
+                  {title}
+                </p>
+              </div>
               <div className="flex items-center gap-1.5 mb-3">
                 <Flame size={14} color="#FFB800" />
                 <span className="font-body text-sm font-medium" style={{ color: '#FFB800' }}>
@@ -130,7 +137,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-3 gap-3">
           {[
             { label: 'Total XP', value: user.total_xp.toLocaleString(), icon: Zap, color: 'var(--gf-green)' },
-            { label: 'This Week', value: `${user.weekly_workout_count} workouts`, icon: Dumbbell, color: '#3B82F6' },
+            { label: 'This Week', value: `${user.weekly_workout_count} / ${user.weekly_goal || 3}`, sub: user.weekly_workout_count >= (user.weekly_goal || 3) ? 'Goal hit! 🎯' : 'workouts', icon: Dumbbell, color: '#3B82F6' },
             { label: 'Coins', value: `🪙 ${user.coins}`, icon: null, color: 'var(--gf-amber)' },
           ].map((stat, i) => (
             <motion.div key={i}
@@ -139,6 +146,9 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 * i + 0.2 }}>
               <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>{stat.label}</p>
               <p className="font-heading font-black text-base leading-tight" style={{ color: stat.color }}>{stat.value}</p>
+              {stat.sub && (
+                <p className="font-body text-[10px] leading-none" style={{ color: 'var(--gf-text-secondary)' }}>{stat.sub}</p>
+              )}
             </motion.div>
           ))}
         </div>
@@ -166,21 +176,28 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Streak Widget */}
-        <StreakWidget
-          streak={user.current_streak || 0}
-          bestStreak={user.best_streak || 0}
-          lastWorkoutDate={user.last_workout_date || (workouts[0]?.logged_at)}
-        />
+        {/* Streak Calendar */}
+        <StreakCalendar />
+
+        {/* Progress chart */}
+        <ProgressChart />
 
         {/* Recent Activity */}
         <div>
           <h3 className="font-heading font-black text-lg mb-3" style={{ color: 'var(--gf-text-primary)' }}>Recent Activity</h3>
           <div className="space-y-2">
             {recentWorkouts.length === 0 && (
-              <div className="rounded-2xl p-5 text-center" style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}>
-                <p className="font-body" style={{ color: 'var(--gf-text-secondary)' }}>No workouts yet. Start training!</p>
-              </div>
+              <button onClick={() => navigate('/train')}
+                className="w-full rounded-2xl p-5 text-center transition-all active:scale-98"
+                style={{ backgroundColor: 'rgba(200,255,0,0.06)', border: '1.5px dashed rgba(200,255,0,0.4)' }}>
+                <span className="text-3xl block mb-1.5">💧</span>
+                <p className="font-heading font-black text-base" style={{ color: 'var(--gf-green)' }}>
+                  Log your first workout
+                </p>
+                <p className="font-body text-xs mt-0.5" style={{ color: 'var(--gf-text-secondary)' }}>
+                  and earn the First Sweat badge
+                </p>
+              </button>
             )}
             {recentWorkouts.map((w, i) => (
               <motion.div key={w.id}

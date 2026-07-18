@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameFit } from '@/lib/GameFitContext';
-import { LEVEL_TITLES } from '@/lib/mockData';
+import { getRank } from '@/lib/ranks';
 import UserAvatar from '@/components/avatar/UserAvatar';
 
 // Burst particle explosion from center
@@ -152,7 +152,7 @@ export default function LevelUpOverlay() {
     }, 500);
   };
 
-  const title = levelUpData ? (LEVEL_TITLES[levelUpData.newLevel] || 'Legend') : '';
+  const title = levelUpData ? getRank(levelUpData.newLevel).display : '';
 
   return (
     <>
