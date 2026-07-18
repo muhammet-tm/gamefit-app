@@ -338,7 +338,8 @@ export default function Coach() {
 
           {/* Input */}
           <div className="px-5 py-3 flex gap-2" style={{ borderTop: '1px solid var(--gf-border)', backgroundColor: 'var(--gf-bg-surface)' }}>
-            <input value={chatInput} onChange={e => setChatInput(e.target.value)}
+            <input value={chatInput} maxLength={500}
+              onChange={e => setChatInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleChat()}
               placeholder={atLimit ? 'Upgrade to send more messages' : "Ask Coach G anything..."}
               disabled={atLimit}

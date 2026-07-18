@@ -6,6 +6,7 @@ import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import { useGameFit } from '@/lib/GameFitContext';
+import { validate, profileSchema } from '@/lib/validation';
 import { LEVEL_TITLES } from '@/lib/mockData';
 import BottomNav from '@/components/gamefit/BottomNav';
 import PremiumModal from '@/components/gamefit/PremiumModal';
@@ -30,6 +31,7 @@ export default function Profile() {
     weight_kg: user.weight_kg || '',
   });
   const [saved, setSaved] = useState(false);
+  const [formError, setFormError] = useState('');
   const [showGoalSheet, setShowGoalSheet] = useState(false);
 
   const isPremium = user.account_type === 'premium';
@@ -41,14 +43,22 @@ export default function Profile() {
   const joinedDate = user.joined_at ? format(new Date(user.joined_at), 'MMM yyyy') : 'Jan 2024';
 
   const handleSave = () => {
-    // Explicitly whitelist only safe profile fields — never spread form directly
-    updateUser({
+    setFormError('');
+    const res = validate(profileSchema, {
       first_name: form.first_name,
-      last_name: form.last_name,
-      fitness_goal: form.fitness_goal,
+      last_name: form.last_name || '',
       age: form.age,
       height_cm: form.height_cm,
       weight_kg: form.weight_kg,
+    });
+    if (!res.ok) {
+      setFormError(res.message);
+      return;
+    }
+    // Explicitly whitelist only safe profile fields — never spread form directly
+    updateUser({
+      ...res.data,
+      fitness_goal: form.fitness_goal,
       bmi: parseFloat(bmi) || user.bmi,
     });
     setSaved(true);
@@ -116,6 +126,12 @@ export default function Profile() {
             </button>
           </div>
           <div className="p-4 space-y-3">
+            {formError && editing && (
+              <div className="px-4 py-3 rounded-xl text-sm font-body"
+                style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+                {formError}
+              </div>
+            )}
             <div className="flex gap-3">
               {['first_name', 'last_name'].map(k => (
                 <div key={k} className="flex-1">
