@@ -3,7 +3,7 @@ import { callRpc, invokeFunction } from '@/api/supabase';
 import { useGameFit } from '@/lib/GameFitContext';
 import { Send, Loader2, Swords, Wind, Zap, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import HumanAvatar from '@/components/gamefit/HumanAvatar';
+import UserAvatar from '@/components/avatar/UserAvatar';
 import BottomNav from '@/components/gamefit/BottomNav';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
@@ -142,7 +142,7 @@ export default function AvatarCoach() {
           title="Avatar Coach" 
           subtitle="AI-powered RPG stat coaching"
           rightAction={<div className="w-10 h-10 overflow-hidden">
-            <HumanAvatar {...avatarCfg} tier={tier} size={40} />
+            <UserAvatar user={user} tier={tier} size={40} animate={false} />
           </div>}
         />
       </ScreenTransition>

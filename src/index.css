@@ -129,3 +129,37 @@
   .text-gf-amber { color: var(--gf-amber); }
   .text-gf-purple { color: var(--gf-purple); }
 }
+/* ============ Avatar system animations ============ */
+@keyframes av-breathe {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(-1.6px) scaleY(1.012); }
+}
+.av-breathe {
+  animation: av-breathe 3.6s ease-in-out infinite;
+  transform-origin: 50% 100%;
+  transform-box: fill-box;
+}
+@keyframes av-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.av-pulse { animation: av-pulse 2.8s ease-in-out infinite; }
+@keyframes av-flicker {
+  0%, 100% { opacity: 1; }
+  42% { opacity: 0.72; }
+  55% { opacity: 0.92; }
+  68% { opacity: 0.62; }
+}
+.av-flicker { animation: av-flicker 2.2s ease-in-out infinite; }
+@keyframes av-aura-drift {
+  0%, 100% { opacity: 0.92; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.015); }
+}
+.av-aura-wrap {
+  animation: av-aura-drift 4.5s ease-in-out infinite;
+  transform-origin: 50% 55%;
+  transform-box: fill-box;
+}
+@media (prefers-reduced-motion: reduce) {
+  .av-breathe, .av-pulse, .av-flicker, .av-aura-wrap { animation: none; }
+}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameFit } from '@/lib/GameFitContext';
 import { LEVEL_TITLES } from '@/lib/mockData';
-import AvatarIllustration from './AvatarIllustration';
+import UserAvatar from '@/components/avatar/UserAvatar';
 
 // Burst particle explosion from center
 function BurstParticles() {
@@ -206,14 +206,7 @@ export default function LevelUpOverlay() {
                       animate={{ scale: [1, 1.4, 1] }}
                       transition={{ repeat: Infinity, duration: 1.8 }}
                     />
-                    <AvatarIllustration
-                      style={user.avatar_config?.outfit || 'blue'}
-                      tier={levelUpData.newTier}
-                      gender={user.avatar_config?.gender}
-                      skinColor={user.avatar_config?.skin}
-                      hairColor={user.avatar_config?.hair}
-                      size={130}
-                    />
+                    <UserAvatar user={user} tier={levelUpData.newTier} size={130} />
                   </motion.div>
 
                   {/* Level number */}

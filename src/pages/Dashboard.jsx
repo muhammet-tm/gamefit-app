@@ -5,7 +5,7 @@ import { Bell, Sun, Moon, Dumbbell, Bot, ShoppingBag, Trophy, Zap, Flame } from 
 import { useGameFit } from '@/lib/GameFitContext';
 import { getNextLevelXP, getCurrentLevelXP, LEVEL_TITLES } from '@/lib/mockData';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
-import HumanAvatar from '@/components/gamefit/HumanAvatar';
+import UserAvatar from '@/components/avatar/UserAvatar';
 import BottomNav from '@/components/gamefit/BottomNav';
 import LevelUpOverlay from '@/components/gamefit/LevelUpOverlay';
 import NotificationsPanel from '@/components/gamefit/NotificationsPanel';
@@ -90,7 +90,7 @@ export default function Dashboard() {
 
           <div className="flex items-center gap-4">
             <div className="relative">
-              <HumanAvatar {...(user.avatar_config || { gender: 'male', skin: 'light', outfit: 'blue', hair: 'brown' })} tier={user.avatar_tier || 1} size={90} />
+              <UserAvatar user={user} size={90} />
               <span className="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full font-heading font-black text-xs"
                 style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14' }}>
                 LVL {level}

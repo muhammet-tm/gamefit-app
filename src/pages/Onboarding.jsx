@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
-import HumanAvatar from '@/components/gamefit/HumanAvatar';
+import Avatar from '@/components/avatar/Avatar';
+import { normalizeAvatarConfig } from '@/components/avatar/migrate';
 
 // ── Mascot (little GameFit elephant-like coach) ───────────────────────────────
 function Mascot({ size = 70 }) {
@@ -152,7 +153,7 @@ function AvatarCustomizer({ avatarConfig, onChange }) {
       {/* Avatar preview */}
       <div className="flex justify-center mb-6">
         <div className="relative p-4 rounded-3xl" style={{ backgroundColor: '#161A22', border: '2px solid #C8FF00' }}>
-          <HumanAvatar {...avatarConfig} size={140} tier={1} />
+          <Avatar {...(c => ({ avatarClass: c.class, skinTone: c.skin_tone, hair: c.hair }))(normalizeAvatarConfig(avatarConfig))} size={140} tier={1} />
         </div>
       </div>
 
@@ -459,7 +460,7 @@ export default function Onboarding() {
               <div className="p-8 rounded-3xl relative overflow-hidden"
                 style={{ backgroundColor: '#161A22', border: '2px solid #C8FF00' }}>
                 <div className="absolute inset-0 opacity-10" style={{ background: 'radial-gradient(circle at 50% 40%, #C8FF00, transparent 60%)' }} />
-                <HumanAvatar {...avatarConfig} size={160} tier={1} />
+                <Avatar {...(c => ({ avatarClass: c.class, skinTone: c.skin_tone, hair: c.hair }))(normalizeAvatarConfig(avatarConfig))} size={160} tier={1} />
               </div>
             </div>
           </motion.div>

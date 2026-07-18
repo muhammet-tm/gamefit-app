@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { getLevelForXP, getAvatarTier, LEVEL_THRESHOLDS } from './mockData';
 import { supabase, getMe, updateProfile, callRpc } from '@/api/supabase';
+import { normalizeAvatarConfig, isLegacyConfig } from '@/components/avatar/migrate';
 
 const GameFitContext = createContext(null);
 
@@ -26,7 +27,7 @@ const FRESH_USER = {
   fitness_goal: 'General Fitness',
   fitness_level: 'Beginner',
   gender: 'male',
-  avatar_config: { gender: 'male', skin: 'light', outfit: 'blue', hair: 'brown' },
+  avatar_config: { version: 2, class: 'warrior', skin_tone: 'tan', hair: 'short_black' },
   connected_apps: [],
   onboarding_complete: false,
   ai_requests_this_month: 0,
@@ -108,8 +109,7 @@ export function GameFitProvider({ children }) {
           fitness_goal: me.fitness_goal || FRESH_USER.fitness_goal,
           fitness_level: me.fitness_level || FRESH_USER.fitness_level,
           gender: me.gender || FRESH_USER.gender,
-          avatar_config: me.avatar_config && Object.keys(me.avatar_config).length
-            ? me.avatar_config : FRESH_USER.avatar_config,
+          avatar_config: normalizeAvatarConfig(me.avatar_config),
           connected_apps: me.connected_apps || [],
           onboarding_complete: me.onboarding_complete || false,
           theme_preference: me.theme_preference || theme,
@@ -132,6 +132,11 @@ export function GameFitProvider({ children }) {
         });
 
         setWorkouts(rows.map(mapWorkoutRow));
+
+        // one-time upgrade of old avatar configs to the v2 shape
+        if (me.avatar_config && isLegacyConfig(me.avatar_config)) {
+          updateProfile({ avatar_config: normalizeAvatarConfig(me.avatar_config) }).catch(() => {});
+        }
       } catch (e) {
         // Not logged in
       } finally {

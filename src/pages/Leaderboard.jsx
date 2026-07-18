@@ -6,7 +6,7 @@ import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import PullToRefresh from '@/components/gamefit/PullToRefresh';
 import { useGameFit } from '@/lib/GameFitContext';
 import { MOCK_LEADERBOARD } from '@/lib/mockData';
-import AvatarIllustration from '@/components/gamefit/AvatarIllustration';
+import Avatar from '@/components/avatar/Avatar';
 import BottomNav from '@/components/gamefit/BottomNav';
 import PremiumModal from '@/components/gamefit/PremiumModal';
 
@@ -85,7 +85,7 @@ export default function Leaderboard() {
                   transition={{ delay: idx * 0.1 }}>
                   <div className="relative">
                     <div className="rounded-2xl p-2 border-2" style={{ backgroundColor: 'var(--gf-bg-elevated)', borderColor: medalColor }}>
-                      <AvatarIllustration style={entry.avatar_style} tier={entry.avatar_tier} size={podiumRank === 1 ? 60 : 48} />
+                      <Avatar avatarClass={entry.avatar_style} tier={entry.avatar_tier} size={podiumRank === 1 ? 60 : 48} animate={false} />
                     </div>
                     <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-black"
                       style={{ backgroundColor: medalColor, color: podiumRank === 2 ? '#0D0F14' : '#0D0F14' }}>
@@ -120,7 +120,7 @@ export default function Leaderboard() {
                   <span className="font-heading font-black text-base w-6 text-center" style={{ color: 'var(--gf-text-secondary)' }}>
                     {entry.rank}
                   </span>
-                  <AvatarIllustration style={entry.avatar_style} tier={entry.avatar_tier} size={36} />
+                  <Avatar avatarClass={entry.avatar_style} tier={entry.avatar_tier} size={36} animate={false} />
                   <div className="flex-1 min-w-0">
                     <p className="font-body font-semibold text-sm truncate" style={{ color: isMe ? 'var(--gf-green)' : 'var(--gf-text-primary)' }}>
                       {entry.display_name} {isMe && '(You)'}
@@ -143,7 +143,7 @@ export default function Leaderboard() {
                 <span className="font-heading font-black text-base w-6 text-center" style={{ color: 'var(--gf-green)' }}>
                   {myEntry.rank}
                 </span>
-                <AvatarIllustration style={myEntry.avatar_style} tier={myEntry.avatar_tier} size={36} />
+                <Avatar avatarClass={myEntry.avatar_style} tier={myEntry.avatar_tier} size={36} animate={false} />
                 <div className="flex-1">
                   <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-green)' }}>
                     {myEntry.display_name} (You)

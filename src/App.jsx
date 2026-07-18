@@ -26,6 +26,7 @@ import Admin from '@/pages/Admin';
 import Premium from '@/pages/Premium';
 import StravaCallback from '@/pages/StravaCallback';
 import AvatarCoach from '@/pages/AvatarCoach';
+import AvatarGallery from '@/pages/AvatarGallery';
 import AdminRoute from '@/components/AdminRoute';
 
 function App() {
@@ -63,6 +64,9 @@ function App() {
             <Route path="/premium" element={<Premium />} />
             <Route path="/strava/callback" element={<StravaCallback />} />
             <Route path="/avatar-coach" element={<AvatarCoach />} />
+            {import.meta.env.DEV && (
+              <Route path="/avatar-gallery" element={<AvatarGallery />} />
+            )}
             <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </TabStackProvider>
