@@ -6,6 +6,7 @@ import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import { useGameFit } from '@/lib/GameFitContext';
+import { invokeFunction } from '@/api/supabase';
 import { validate, profileSchema } from '@/lib/validation';
 import { getRank } from '@/lib/ranks';
 import RankEmblem from '@/components/gamefit/RankEmblem';
@@ -13,15 +14,24 @@ import BottomNav from '@/components/gamefit/BottomNav';
 import PremiumModal from '@/components/gamefit/PremiumModal';
 import BadgeGrid from '@/components/gamefit/BadgeGrid';
 import { format } from 'date-fns';
+import { track } from '@/lib/analytics';
 
 const FITNESS_GOALS = ['Lose Weight', 'Build Muscle', 'Improve Endurance', 'Stay Active', 'General Fitness'];
 
 export default function Profile() {
   const navigate = useNavigate();
+  React.useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('premium') === 'success') {
+      track('upgrade_completed');
+      window.history.replaceState({}, '', '/profile');
+    }
+  }, []);
   const { user, updateUser, logout, theme, toggleTheme, workouts } = useGameFit();
   const [showPremium, setShowPremium] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
     first_name: user.first_name,
@@ -71,6 +81,21 @@ export default function Profile() {
   const handleLogout = () => {
     logout();
     navigate('/login', { replace: true });
+  };
+
+  // Permanent server-side deletion (required by Apple/Google policies and
+  // GDPR/PDPL). Cancels any subscription, wipes all data, removes the login.
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    setDeleteError('');
+    try {
+      await invokeFunction('delete-account', { confirm: 'DELETE' });
+      await logout();
+      navigate('/login', { replace: true });
+    } catch (err) {
+      setDeleteError(err.message || 'Could not delete the account. Please try again.');
+      setDeleting(false);
+    }
   };
 
   const inputCls = "w-full px-4 py-3 rounded-xl font-body text-sm outline-none";
@@ -235,11 +260,22 @@ export default function Profile() {
             <ChevronRight size={16} color="var(--gf-text-secondary)" />
           </button>
 
-          <button className="w-full px-4 py-3.5 flex items-center justify-between"
+          <button onClick={() => navigate('/privacy')}
+            className="w-full px-4 py-3.5 flex items-center justify-between"
             style={{ borderBottom: '1px solid var(--gf-border)' }}>
             <div className="flex items-center gap-3">
               <Shield size={16} color="var(--gf-text-secondary)" />
               <span className="font-body font-medium text-sm" style={{ color: 'var(--gf-text-primary)' }}>Privacy Policy</span>
+            </div>
+            <ChevronRight size={16} color="var(--gf-text-secondary)" />
+          </button>
+
+          <button onClick={() => navigate('/terms')}
+            className="w-full px-4 py-3.5 flex items-center justify-between"
+            style={{ borderBottom: '1px solid var(--gf-border)' }}>
+            <div className="flex items-center gap-3">
+              <Shield size={16} color="var(--gf-text-secondary)" />
+              <span className="font-body font-medium text-sm" style={{ color: 'var(--gf-text-primary)' }}>Terms of Service</span>
             </div>
             <ChevronRight size={16} color="var(--gf-text-secondary)" />
           </button>
@@ -281,12 +317,25 @@ export default function Profile() {
           onClick={() => setShowDelete(false)}>
           <div className="w-full rounded-t-3xl p-6" style={{ backgroundColor: 'var(--gf-bg-surface)' }} onClick={e => e.stopPropagation()}>
             <h3 className="font-heading font-black text-xl mb-2" style={{ color: '#EF4444' }}>Delete Account?</h3>
-            <p className="font-body text-sm mb-5" style={{ color: 'var(--gf-text-secondary)' }}>This action is permanent. All your data, XP, and rewards will be lost forever.</p>
+            <p className="font-body text-sm mb-3" style={{ color: 'var(--gf-text-secondary)' }}>
+              This permanently erases your account: profile, workouts, XP, coins, badges and
+              purchased items. Any active Premium subscription is cancelled. This cannot be undone.
+            </p>
+            {deleteError && (
+              <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
+                style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+                {deleteError}
+              </div>
+            )}
             <div className="flex gap-3">
-              <button onClick={() => setShowDelete(false)} className="flex-1 py-3.5 rounded-xl font-heading font-black text-base"
+              <button onClick={() => setShowDelete(false)} disabled={deleting}
+                className="flex-1 py-3.5 rounded-xl font-heading font-black text-base"
                 style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-secondary)' }}>Cancel</button>
-              <button onClick={handleLogout} className="flex-1 py-3.5 rounded-xl font-heading font-black text-base"
-                style={{ backgroundColor: '#EF4444', color: '#FFF' }}>Delete</button>
+              <button onClick={handleDeleteAccount} disabled={deleting}
+                className="flex-1 py-3.5 rounded-xl font-heading font-black text-base"
+                style={{ backgroundColor: '#EF4444', color: '#FFF', opacity: deleting ? 0.6 : 1 }}>
+                {deleting ? 'Deleting…' : 'Delete Forever'}
+              </button>
             </div>
           </div>
         </div>

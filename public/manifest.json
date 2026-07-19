@@ -2,16 +2,17 @@
   "name": "GameFit — Fitness, Gamified",
   "short_name": "GameFit",
   "description": "Turn workouts into an RPG: XP, streaks, an evolving avatar, and an AI coach.",
+  "id": "/",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0D0F14",
   "theme_color": "#0D0F14",
+  "categories": ["fitness", "health", "lifestyle"],
   "icons": [
-    {
-      "src": "https://media.base44.com/images/public/6a22946565d355d321574da0/55530508e_logo.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    }
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

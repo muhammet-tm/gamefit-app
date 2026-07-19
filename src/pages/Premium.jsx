@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Check, Crown, Zap, Brain, Trophy, BarChart2, Shield } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { invokeFunction } from '@/api/supabase';
+import { track } from '@/lib/analytics';
+import { hidePurchases } from '@/lib/platform';
 
 const PLANS = [
   { id: 'monthly', label: 'Monthly', price: 'AED 29.99', period: '/month', priceId: null, badge: null },
@@ -36,6 +38,7 @@ export default function Premium() {
   const handleSubscribe = async () => {
     setLoading(true);
     setCheckoutError('');
+    track('upgrade_started', { plan: selectedPlan });
     try {
       const res = await invokeFunction('create-checkout', { plan: selectedPlan });
       if (res?.url) {
@@ -151,22 +154,32 @@ export default function Premium() {
             {checkoutError}
           </div>
         )}
-        <motion.button
-          onClick={handleSubscribe}
-          disabled={loading}
-          whileTap={{ scale: 0.97 }}
-          className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all"
-          style={{ background: loading ? 'var(--gf-border)' : 'linear-gradient(135deg, #7C3AED, #A855F7)', color: 'white' }}>
-          {loading ? (
-            <span className="font-body">Processing...</span>
-          ) : (
-            <><Crown size={22} /> Start Premium — {PLANS.find(p => p.id === selectedPlan)?.price}</>
-          )}
-        </motion.button>
+        {hidePurchases ? (
+          /* Store apps hide purchasing entirely (Apple 3.1.1 / Play billing policy) */
+          <p className="w-full py-4 rounded-2xl font-body text-sm text-center"
+            style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-secondary)' }}>
+            GameFit Premium is not available for purchase in this app.
+          </p>
+        ) : (
+          <>
+            <motion.button
+              onClick={handleSubscribe}
+              disabled={loading}
+              whileTap={{ scale: 0.97 }}
+              className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all"
+              style={{ background: loading ? 'var(--gf-border)' : 'linear-gradient(135deg, #7C3AED, #A855F7)', color: 'white' }}>
+              {loading ? (
+                <span className="font-body">Processing...</span>
+              ) : (
+                <><Crown size={22} /> Start Premium — {PLANS.find(p => p.id === selectedPlan)?.price}</>
+              )}
+            </motion.button>
 
-        <p className="text-center font-body text-xs mt-3" style={{ color: 'var(--gf-text-secondary)' }}>
-          Cancel anytime. No hidden fees.
-        </p>
+            <p className="text-center font-body text-xs mt-3" style={{ color: 'var(--gf-text-secondary)' }}>
+              Cancel anytime. No hidden fees.
+            </p>
+          </>
+        )}
       </div>
     </div>
   );

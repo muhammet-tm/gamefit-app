@@ -71,10 +71,8 @@ export default function Register() {
   };
 
   const handleGoogle = () => {
-    supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin },
-    });
+    import('@/lib/platform').then(({ signInWithGoogle }) =>
+      signInWithGoogle().catch((err) => setError(err.message)));
   };
 
   if (showOtp) {

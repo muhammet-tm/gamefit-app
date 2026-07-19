@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { X, Check, X as XIcon } from 'lucide-react';
+import { hidePurchases } from '@/lib/platform';
 
 const FEATURES = [
   { label: 'Workout logging & XP', free: true, premium: true },
@@ -94,12 +95,19 @@ export default function PremiumModal({ onClose }) {
             ))}
           </div>
 
-          {/* CTA — continues to the real Stripe checkout */}
-          <button onClick={handleUpgrade}
-            className="w-full py-4 rounded-2xl font-heading font-black text-xl transition-all active:scale-95"
-            style={{ background: 'linear-gradient(135deg, #7C3AED, #A855F7)', color: '#FFFFFF' }}>
-            Start Premium ⚡
-          </button>
+          {/* CTA — hidden in the store apps (billing policy); web goes to Stripe */}
+          {hidePurchases ? (
+            <p className="w-full py-4 rounded-2xl font-body text-sm text-center"
+              style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-secondary)' }}>
+              GameFit Premium is not available for purchase in this app.
+            </p>
+          ) : (
+            <button onClick={handleUpgrade}
+              className="w-full py-4 rounded-2xl font-heading font-black text-xl transition-all active:scale-95"
+              style={{ background: 'linear-gradient(135deg, #7C3AED, #A855F7)', color: '#FFFFFF' }}>
+              Start Premium ⚡
+            </button>
+          )}
 
           <button onClick={onClose} className="w-full py-3 mt-3 font-body text-sm"
             style={{ color: 'var(--gf-text-secondary)' }}>

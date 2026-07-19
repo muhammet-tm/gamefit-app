@@ -27,6 +27,9 @@ import Premium from '@/pages/Premium';
 import StravaCallback from '@/pages/StravaCallback';
 import AvatarCoach from '@/pages/AvatarCoach';
 import AvatarGallery from '@/pages/AvatarGallery';
+import Terms from '@/pages/legal/Terms';
+import Privacy from '@/pages/legal/Privacy';
+import DeleteAccount from '@/pages/legal/DeleteAccount';
 import AdminRoute from '@/components/AdminRoute';
 
 function App() {
@@ -61,6 +64,9 @@ function App() {
             <Route element={<AdminRoute />}>
               <Route path="/admin" element={<Admin />} />
             </Route>
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/delete-account" element={<DeleteAccount />} />
             <Route path="/premium" element={<Premium />} />
             <Route path="/strava/callback" element={<StravaCallback />} />
             <Route path="/avatar-coach" element={<AvatarCoach />} />

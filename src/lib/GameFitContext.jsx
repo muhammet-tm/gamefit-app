@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 import { getLevelForXP, getAvatarTier, LEVEL_THRESHOLDS } from './mockData';
 import { supabase, getMe, updateProfile, callRpc } from '@/api/supabase';
 import { normalizeAvatarConfig, isLegacyConfig } from '@/components/avatar/migrate';
+import { track, identify, resetAnalytics } from '@/lib/analytics';
 
 const GameFitContext = createContext(null);
 
@@ -134,6 +135,7 @@ export function GameFitProvider({ children }) {
         });
 
         setWorkouts(rows.map(mapWorkoutRow));
+        identify(me.id, { account_type: me.account_type || 'regular', level: me.current_level ?? 1 });
 
         // one-time upgrade of old avatar configs to the v2 shape
         if (me.avatar_config && isLegacyConfig(me.avatar_config)) {
@@ -220,6 +222,12 @@ export function GameFitProvider({ children }) {
         });
       }
       setLastWorkoutResult(res);
+      track(res.workout?.total_xp_after === res.workout?.xp_earned ? 'first_workout_logged' : 'workout_logged', {
+        exercise_type: workout.exercise_type,
+        duration_min: workout.duration_min,
+        intensity: workout.intensity_level,
+        level_up: !!res.level_up,
+      });
       return res;
     } catch (err) {
       console.warn('Workout save failed:', err.message);
@@ -306,6 +314,7 @@ export function GameFitProvider({ children }) {
   }, []);
 
   const logout = useCallback(async () => {
+    resetAnalytics();
     await supabase.auth.signOut();
     setIsAuthenticated(false);
     setUser(FRESH_USER);
