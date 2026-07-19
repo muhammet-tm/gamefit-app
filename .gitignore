@@ -36,3 +36,9 @@ dist-ssr
 
 # local env
 .env.local
+
+# Capacitor native build output
+android/app/build/
+android/.gradle/
+ios/App/Pods/
+ios/App/build/

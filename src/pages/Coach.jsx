@@ -9,6 +9,7 @@ import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import { invokeFunction } from '@/api/supabase';
+import { track } from '@/lib/analytics';
 
 const AI_LIMIT = 10;
 
@@ -74,6 +75,7 @@ export default function Coach() {
         type: 'plan', days, sessionDuration, equipment: eq, injuries,
       });
       setPlanResult(res?.reply || 'Failed to generate plan. Please try again.');
+      track('ai_request', { type: 'plan' });
     } catch (err) {
       if (err.premium_required) { setShowPremium(true); setPlanResult(''); }
       else setPlanResult(err.message || 'Failed to generate plan. Please try again.');
@@ -98,6 +100,7 @@ export default function Coach() {
       });
       const reply = res?.reply || 'Sorry, I could not respond right now.';
       setMessages(prev => [...prev, { role: 'ai', content: reply, showRating: true, rated: null }]);
+      track('ai_request', { type: 'chat' });
       incrementAIRequests();
     } catch (err) {
       if (err.premium_required) {
@@ -135,8 +138,14 @@ export default function Coach() {
           )}
         />
         
+        {/* Medical disclaimer — always visible on the coaching surface */}
+        <p className="px-5 pt-2 font-body text-[10px] leading-snug" style={{ color: 'var(--gf-text-secondary)' }}>
+          ⚕️ Coach G gives general fitness guidance only — not medical advice. Consult a
+          professional before starting a new program.
+        </p>
+
         {/* Tabs */}
-        <div className="px-5 pt-4 pb-2">
+        <div className="px-5 pt-2 pb-2">
           <div className="flex rounded-xl p-1" style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
             {[['plan','📋 Plan'], ['nutrition','🥗 Nutrition'], ['chat','💬 Chat']].map(([t, label]) => (
               <button key={t} onClick={() => setTab(t)}

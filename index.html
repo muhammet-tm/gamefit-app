@@ -2,15 +2,56 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="https://media.base44.com/images/public/6a22946565d355d321574da0/55530508e_logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0D0F14" />
-    <meta name="description" content="GameFit turns your workouts into an RPG: earn XP, keep streaks, evolve your avatar, and train with an AI coach." />
-    <link rel="manifest" href="/manifest.json" />
+
     <title>GameFit — Fitness, Gamified</title>
+    <meta name="description" content="GameFit turns workouts into an RPG: earn XP, keep streaks, evolve your avatar, climb leaderboards, and train with an AI coach." />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="canonical" href="https://gamefit.online/" />
+
+    <meta name="theme-color" content="#0D0F14" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="GameFit" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="GameFit" />
+    <meta property="og:title" content="GameFit — Fitness, Gamified" />
+    <meta property="og:description" content="Earn XP, keep streaks, evolve your avatar, and train with an AI coach." />
+    <meta property="og:url" content="https://gamefit.online/" />
+    <meta property="og:image" content="https://gamefit.online/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GameFit — Fitness, Gamified" />
+    <meta name="twitter:description" content="Earn XP, keep streaks, evolve your avatar, and train with an AI coach." />
+    <meta name="twitter:image" content="https://gamefit.online/og-image.png" />
+
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@type":"WebApplication","name":"GameFit",
+       "url":"https://gamefit.online","applicationCategory":"HealthApplication",
+       "description":"Gamified fitness: XP, streaks, avatars and AI coaching.",
+       "offers":{"@type":"Offer","price":"0","priceCurrency":"AED"}}
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Service worker: network-first navigations, so new deploys are never
+      // pinned by an old cache. Skipped inside the native app shells.
+      if ('serviceWorker' in navigator && !window.Capacitor) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>

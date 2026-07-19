@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, User, ChevronDown } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { supabase, updateProfile } from '@/api/supabase';
+import { track } from '@/lib/analytics';
+import { signInWithGoogle } from '@/lib/platform';
 import GoogleIcon from '@/components/GoogleIcon';
 
 const FITNESS_GOALS = ['Lose Weight', 'Build Muscle', 'Improve Endurance', 'Stay Active', 'General Fitness'];
@@ -51,6 +53,7 @@ export default function Login() {
           },
         });
         if (err) throw err;
+        track('signup_completed', { method: 'email' });
         if (data.session) {
           // signed in immediately — save the extra signup fields
           await updateProfile({
@@ -88,10 +91,15 @@ export default function Login() {
         transition={{ duration: 0.5 }}
       >
         {/* Logo */}
-         <div className="flex flex-col items-center mb-8">
-           <img src="https://media.base44.com/images/public/6a22946565d355d321574da0/f6b46b39a_GameFit_Logo.png" 
-             alt="GameFit Logo" className="h-40 object-contain mb-2" />
-         </div>
+        <div className="flex flex-col items-center mb-8">
+          <img src="/icons/icon-192.png" alt="GameFit" className="h-24 w-24 rounded-3xl mb-3" />
+          <h1 className="font-heading font-black text-4xl" style={{ color: 'var(--gf-text-primary)' }}>
+            GAME<span style={{ color: 'var(--gf-green)' }}>FIT</span>
+          </h1>
+          <p className="font-body text-sm mt-1" style={{ color: 'var(--gf-text-secondary)' }}>
+            Fitness, Gamified.
+          </p>
+        </div>
 
         {/* Mode tabs */}
         <div className="flex rounded-xl p-1 mb-6" style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
@@ -197,10 +205,7 @@ export default function Login() {
         <button
           className="w-full py-3.5 rounded-xl font-body font-medium text-sm flex items-center justify-center gap-2 transition-all active:scale-95"
           style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-border)' }}
-          onClick={() => supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: { redirectTo: `${window.location.origin}/dashboard` },
-          })}
+          onClick={() => signInWithGoogle().catch(err => setError(err.message))}
         >
           <GoogleIcon className="w-5 h-5" />
           Continue with Google
