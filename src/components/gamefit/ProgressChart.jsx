@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area } from '@/components/charts/area-chart';
+import { Grid } from '@/components/charts/grid';
+import { XAxis } from '@/components/charts/x-axis';
+import { ChartTooltip } from '@/components/charts/tooltip';
 import { supabase } from '@/api/supabase';
 import { useGameFit } from '@/lib/GameFitContext';
 
@@ -27,10 +30,9 @@ export default function ProgressChart() {
       for (let i = 0; i < 14; i++) {
         const d = new Date(since);
         d.setDate(since.getDate() + i);
-        byDay.set(d.toDateString(), {
-          label: d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }),
-          xp: 0,
-        });
+        // The chart is a time series — it needs a real Date on the x axis and
+        // formats the tick labels itself.
+        byDay.set(d.toDateString(), { date: d, xp: 0 });
       }
       let sum = 0;
       for (const w of rows || []) {
@@ -70,34 +72,28 @@ export default function ProgressChart() {
           Log a workout to start your graph 📈
         </p>
       ) : (
-        <div style={{ width: '100%', height: 150 }}>
-          <ResponsiveContainer>
-            <AreaChart data={data} margin={{ top: 6, right: 4, left: -18, bottom: 0 }}>
-              <defs>
-                <linearGradient id="xpFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#C8FF00" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="#C8FF00" stopOpacity={0.02} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="label" interval={3} tickLine={false} axisLine={false}
-                tick={{ fill: 'var(--gf-text-secondary)', fontSize: 10, fontFamily: 'DM Sans' }} />
-              <YAxis tickLine={false} axisLine={false} width={38} allowDecimals={false}
-                tick={{ fill: 'var(--gf-text-secondary)', fontSize: 10, fontFamily: 'DM Sans' }} />
-              <Tooltip
-                cursor={{ stroke: 'var(--gf-border)' }}
-                contentStyle={{
-                  backgroundColor: 'var(--gf-bg-elevated)', border: '1px solid var(--gf-border)',
-                  borderRadius: 12, fontFamily: 'DM Sans', fontSize: 12,
-                }}
-                labelStyle={{ color: 'var(--gf-text-secondary)' }}
-                itemStyle={{ color: 'var(--gf-green)' }}
-                formatter={(v) => [`${v} XP`, null]}
-              />
-              <Area type="monotone" dataKey="xp" stroke="#C8FF00" strokeWidth={2}
-                fill="url(#xpFill)" dot={false} activeDot={{ r: 4, fill: '#C8FF00' }} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+        <AreaChart
+          aspectRatio="auto"
+          data={data}
+          margin={{ top: 12, right: 12, bottom: 30, left: 12 }}
+          style={{ height: 170 }}
+          xDataKey="date"
+        >
+          <Grid horizontal numTicksRows={4} vertical={false} />
+          <Area
+            dataKey="xp"
+            fill="var(--gf-green)"
+            fillOpacity={0.35}
+            gradientToOpacity={0.02}
+            strokeWidth={2}
+          />
+          <XAxis numTicks={4} />
+          <ChartTooltip
+            rows={(point) => [
+              { label: 'XP', value: point.xp, color: 'var(--gf-green)' },
+            ]}
+          />
+        </AreaChart>
       )}
     </div>
   );

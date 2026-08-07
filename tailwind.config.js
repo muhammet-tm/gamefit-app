@@ -44,11 +44,17 @@ module.exports = {
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
   			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
+  				// These vars hold complete colors (not HSL triplets), so they are
+  				// referenced directly rather than wrapped in hsl().
+  				'1': 'var(--chart-1)',
+  				'2': 'var(--chart-2)',
+  				'3': 'var(--chart-3)',
+  				'4': 'var(--chart-4)',
+  				'5': 'var(--chart-5)',
+  				label: 'var(--chart-label)',
+  				'tooltip-background': 'var(--chart-tooltip-background)',
+  				'tooltip-foreground': 'var(--chart-tooltip-foreground)',
+  				'tooltip-muted': 'var(--chart-tooltip-muted)'
   			},
   		},
   		fontFamily: {
