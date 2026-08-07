@@ -74,7 +74,7 @@ sequenceDiagram
     C->>R: exercise, duration, intensity
     Note over R: validates input, caps daily volume
     R->>DB: compute XP, coins, streak, badges
-    Note over DB: column grants reject any<br/>direct write to these columns
+    Note over DB: direct writes to these columns are revoked
     DB-->>R: authoritative totals
     R-->>C: new XP, level, streak, badges
     Note over C: UI reconciles to the server's answer
