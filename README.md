@@ -81,13 +81,15 @@ sequenceDiagram
 ```
 
 Concretely: `revoke update on profiles from authenticated`, then `grant update`
-on the fourteen columns a user may legitimately edit. XP, coins, streaks,
-badges, premium status and role aren't among them. Strava tokens live in a table
-with no policies and no grants, so PostgREST can't reach them with any user key.
+on just the columns a user may legitimately edit — name, age, height, weight,
+goal, avatar config and so on. XP, coins, streaks, badges, premium status and
+role aren't among them. Strava tokens live in a separate table with no policies
+and no grants at all, so PostgREST cannot reach them with any user key.
 
-The suite in `scratchpad/e2e_test.py` checks both halves of that: the exact
-arithmetic on the happy path, and a 401/403/42501 on every attempt to write a
-protected column directly.
+That gets verified at the API level rather than in unit tests: a suite calls the
+live REST and RPC endpoints with a real user token, asserting the exact XP and
+coin arithmetic on the happy path and a 401, 403 or 42501 on every attempt to
+write a protected column directly.
 
 ## Architecture
 
