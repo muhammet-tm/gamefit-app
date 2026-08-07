@@ -260,7 +260,7 @@ export default function AvatarScreen() {
 
                 {/* Avatar with gear overlay */}
                 <div className="relative z-10 mt-2">
-                  <Avatar avatarClass={avatarCfg.class} tier={currentTier}
+                  <Avatar avatarClass={avatarCfg.class} tier={currentTier} body={avatarCfg.body}
                     skinTone={avatarCfg.skin_tone} hair={avatarCfg.hair}
                     accessories={equippedAccessory ? [equippedAccessory] : []} size={170} />
                   {equippedItem && (
@@ -316,6 +316,30 @@ export default function AvatarScreen() {
           <div>
             <h3 className="font-heading font-black text-xl mb-3" style={{ color: 'var(--gf-text-primary)' }}>Customize</h3>
 
+            {/* Body */}
+            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: 'var(--gf-text-secondary)' }}>Body</p>
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              {BODY_TYPES.map(b => {
+                const selected = avatarCfg.body === b;
+                return (
+                  <button key={b} onClick={() => updateAvatar('body', b)}
+                    className="flex items-center justify-center gap-2 py-2 rounded-xl transition-all"
+                    style={{
+                      backgroundColor: selected ? 'rgba(200,255,0,0.10)' : 'var(--gf-bg-elevated)',
+                      border: `1.5px solid ${selected ? 'var(--gf-green)' : 'var(--gf-border)'}`,
+                    }}>
+                    <Avatar avatarClass={avatarCfg.class} tier={currentTier} body={b}
+                      skinTone={avatarCfg.skin_tone} hair={hairForBody(avatarCfg.hair, b)}
+                      size={32} animate={false} />
+                    <span className="font-body text-xs font-semibold"
+                      style={{ color: selected ? 'var(--gf-green)' : 'var(--gf-text-secondary)' }}>
+                      {BODY_LABELS[b]}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Class */}
             <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: 'var(--gf-text-secondary)' }}>Class</p>
             <div className="grid grid-cols-5 gap-2 mb-1">
@@ -329,8 +353,8 @@ export default function AvatarScreen() {
                       backgroundColor: selected ? `${cc.glow}14` : 'var(--gf-bg-elevated)',
                       border: `1.5px solid ${selected ? cc.glow : 'var(--gf-border)'}`,
                     }}>
-                    <Avatar avatarClass={cls} tier={currentTier} skinTone={avatarCfg.skin_tone}
-                      hair={avatarCfg.hair} size={36} animate={false} />
+                    <Avatar avatarClass={cls} tier={currentTier} body={avatarCfg.body}
+                      skinTone={avatarCfg.skin_tone} hair={avatarCfg.hair} size={36} animate={false} />
                     <span className="font-body text-[10px] font-semibold"
                       style={{ color: selected ? cc.glow : 'var(--gf-text-secondary)' }}>
                       {CLASS_LABELS[cls]}
@@ -358,7 +382,7 @@ export default function AvatarScreen() {
             {/* Hair style */}
             <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: 'var(--gf-text-secondary)' }}>Hair Style</p>
             <div className="flex gap-2 mb-4">
-              {HAIR_STYLES.map(style => {
+              {hairStylesFor(avatarCfg.body).map(style => {
                 const currentStyle = avatarCfg.hair.split('_')[0] || 'short';
                 const currentColor = avatarCfg.hair.split('_')[1] || 'black';
                 const selected = currentStyle === style;
@@ -411,7 +435,7 @@ export default function AvatarScreen() {
                       minWidth: 76,
                     }}>
                     <div className="relative">
-                      <Avatar avatarClass={avatarCfg.class} tier={tier}
+                      <Avatar avatarClass={avatarCfg.class} tier={tier} body={avatarCfg.body}
                         skinTone={avatarCfg.skin_tone} hair={avatarCfg.hair}
                         size={44} animate={false} />
                     </div>

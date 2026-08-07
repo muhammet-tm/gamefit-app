@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Avatar from '@/components/avatar/Avatar';
 import {
-  AVATAR_CLASSES, CLASS_LABELS, SKIN_TONES, HAIR_STYLES, HAIR_COLORS,
+  AVATAR_CLASSES, CLASS_LABELS, SKIN_TONES, HAIR_COLORS,
+  BODY_TYPES, BODY_LABELS, hairStylesFor,
 } from '@/components/avatar/palettes';
 import { ACCESSORY_LAYERS } from '@/components/avatar/layers/accessories';
 
@@ -11,10 +12,13 @@ const ACCESSORY_IDS = Object.keys(ACCESSORY_LAYERS);
 
 export default function AvatarGallery() {
   const [skin, setSkin] = useState('tan');
+  const [body, setBody] = useState('male');
   const [hairStyle, setHairStyle] = useState('short');
   const [hairColor, setHairColor] = useState('black');
   const [accessory, setAccessory] = useState('');
-  const hair = `${hairStyle}_${hairColor}`;
+  const styles = hairStylesFor(body);
+  // keep the style valid when the body (and so the style list) changes
+  const hair = `${styles.includes(hairStyle) ? hairStyle : styles[0]}_${hairColor}`;
 
   return (
     <div className="min-h-screen p-6" style={{ backgroundColor: '#0D0F14' }}>
@@ -22,7 +26,7 @@ export default function AvatarGallery() {
         Avatar Gallery (dev)
       </h1>
       <p className="font-body text-sm mb-4" style={{ color: '#8A8F9E' }}>
-        5 classes × 5 tiers · skin: {skin} · hair: {hair} {accessory && `· acc: ${accessory}`}
+        5 classes × 5 tiers · {body} · skin: {skin} · hair: {hair} {accessory && `· acc: ${accessory}`}
       </p>
 
       {/* controls */}
@@ -34,7 +38,15 @@ export default function AvatarGallery() {
             title={s} />
         ))}
         <span className="w-3" />
-        {HAIR_STYLES.map(h => (
+        {BODY_TYPES.map(b => (
+          <button key={b} onClick={() => setBody(b)}
+            className="px-2 py-1 rounded text-xs font-body"
+            style={{ backgroundColor: body === b ? '#C8FF00' : '#1E2330', color: body === b ? '#0D0F14' : '#8A8F9E' }}>
+            {BODY_LABELS[b]}
+          </button>
+        ))}
+        <span className="w-3" />
+        {styles.map(h => (
           <button key={h} onClick={() => setHairStyle(h)}
             className="px-2 py-1 rounded text-xs font-body"
             style={{ backgroundColor: hairStyle === h ? '#C8FF00' : '#1E2330', color: hairStyle === h ? '#0D0F14' : '#8A8F9E' }}>
@@ -75,6 +87,7 @@ export default function AvatarGallery() {
                 <Avatar
                   avatarClass={cls}
                   tier={tier}
+                  body={body}
                   skinTone={skin}
                   hair={hair}
                   accessories={accessory ? [accessory] : []}

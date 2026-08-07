@@ -92,8 +92,6 @@ export default function AvatarCoach() {
   const [statsLoading, setStatsLoading] = useState(true);
   const messagesEndRef = useRef(null);
 
-  const avatarCfg = user.avatar_config || { gender: 'male', skin: 'light', outfit: 'blue', hair: 'brown' };
-
   useEffect(() => {
     // Load RPG stats (computed server-side from the workout history)
     callRpc('get_workout_stats').then(res => {
