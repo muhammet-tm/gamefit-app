@@ -43,6 +43,34 @@
     --gf-purple: #7C3AED;
     --gf-success: #22C55E;
     --gf-error: #EF4444;
+    /* Chart tokens (bklit charts) — mapped onto the GameFit palette above */
+    --chart-1: #C8FF00;
+    --chart-2: #7C3AED;
+    --chart-3: #FFB800;
+    --chart-4: #22C55E;
+    --chart-5: #EF4444;
+    --chart-background: #FFFFFF;
+    --chart-foreground: #0D0F14;
+    --chart-foreground-muted: #5A6072;
+    --chart-line-primary: var(--chart-1);
+    --chart-line-secondary: var(--chart-2);
+    --chart-crosshair: #D0D5E0;
+    --chart-grid: #D0D5E0;
+    --chart-brush-border: var(--chart-grid);
+    /* Tooltip stays dark in both themes — it floats over the chart surface. */
+    --chart-tooltip-background: rgb(13 15 20 / 0.92);
+    --chart-tooltip-foreground: #FFFFFF;
+    --chart-tooltip-muted: #8A8F9E;
+    --chart-marker-background: #FFFFFF;
+    --chart-marker-border: #D0D5E0;
+    --chart-marker-foreground: #0D0F14;
+    --chart-label: #5A6072;
+    --chart-scale-01: #F2FFC4;
+    --chart-scale-02: #E4FF8A;
+    --chart-scale-03: #D6FF4D;
+    --chart-scale-04: #C8FF00;
+    --chart-scale-05: #9ACC00;
+    --chart-scale-pattern-color: #F4F6FA;
   }
 
   .dark {
@@ -78,6 +106,31 @@
     --gf-purple: #7C3AED;
     --gf-success: #22C55E;
     --gf-error: #EF4444;
+    /* Chart tokens (bklit charts) — dark surfaces, same brand series colors */
+    --chart-1: #C8FF00;
+    --chart-2: #A78BFA;
+    --chart-3: #FFB800;
+    --chart-4: #22C55E;
+    --chart-5: #EF4444;
+    --chart-background: #161A22;
+    --chart-foreground: #FFFFFF;
+    --chart-foreground-muted: #8A8F9E;
+    --chart-crosshair: #2A2F3A;
+    --chart-grid: #2A2F3A;
+    --chart-brush-border: var(--chart-grid);
+    --chart-tooltip-background: rgb(30 35 48 / 0.94);
+    --chart-tooltip-foreground: #FFFFFF;
+    --chart-tooltip-muted: #8A8F9E;
+    --chart-marker-background: #1E2330;
+    --chart-marker-border: #2A2F3A;
+    --chart-marker-foreground: #FFFFFF;
+    --chart-label: #8A8F9E;
+    --chart-scale-01: #2A3300;
+    --chart-scale-02: #4D5C00;
+    --chart-scale-03: #7A9400;
+    --chart-scale-04: #A3C400;
+    --chart-scale-05: #C8FF00;
+    --chart-scale-pattern-color: #161A22;
   }
 }
 
