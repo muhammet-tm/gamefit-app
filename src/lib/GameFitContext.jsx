@@ -28,7 +28,7 @@ const FRESH_USER = {
   fitness_goal: 'General Fitness',
   fitness_level: 'Beginner',
   gender: 'male',
-  avatar_config: { version: 2, class: 'warrior', skin_tone: 'tan', hair: 'short_black' },
+  avatar_config: { version: 3, class: 'warrior', body: 'male', skin_tone: 'tan', hair: 'short_black' },
   connected_apps: [],
   onboarding_complete: false,
   ai_requests_this_month: 0,
@@ -111,7 +111,7 @@ export function GameFitProvider({ children }) {
           fitness_goal: me.fitness_goal || FRESH_USER.fitness_goal,
           fitness_level: me.fitness_level || FRESH_USER.fitness_level,
           gender: me.gender || FRESH_USER.gender,
-          avatar_config: normalizeAvatarConfig(me.avatar_config),
+          avatar_config: normalizeAvatarConfig(me.avatar_config, { gender: me.gender }),
           connected_apps: me.connected_apps || [],
           onboarding_complete: me.onboarding_complete || false,
           theme_preference: me.theme_preference || theme,
@@ -137,9 +137,11 @@ export function GameFitProvider({ children }) {
         setWorkouts(rows.map(mapWorkoutRow));
         identify(me.id, { account_type: me.account_type || 'regular', level: me.current_level ?? 1 });
 
-        // one-time upgrade of old avatar configs to the v2 shape
-        if (me.avatar_config && isLegacyConfig(me.avatar_config)) {
-          updateProfile({ avatar_config: normalizeAvatarConfig(me.avatar_config) }).catch(() => {});
+        // one-time upgrade of old avatar configs to the current shape
+        if (isLegacyConfig(me.avatar_config)) {
+          updateProfile({
+            avatar_config: normalizeAvatarConfig(me.avatar_config, { gender: me.gender }),
+          }).catch(() => {});
         }
       } catch (e) {
         // Not logged in

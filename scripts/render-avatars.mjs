@@ -8,7 +8,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import Avatar from '../src/components/avatar/Avatar.jsx';
-import { SKIN_TONES, CLASS_COLORS, HAIR_COLORS, AVATAR_CLASSES } from '../src/components/avatar/palettes.js';
+import {
+  SKIN_TONES, CLASS_COLORS, HAIR_COLORS, AVATAR_CLASSES, hairStylesFor,
+} from '../src/components/avatar/palettes.js';
 
 const outDir = process.argv[2] || 'scratch-avatars';
 fs.mkdirSync(outDir, { recursive: true });
@@ -30,11 +32,31 @@ function bakeVars(svg, { skinTone, hair, avatarClass }) {
     .replaceAll('var(--av-glow)', c.glow);
 }
 
-function renderOne({ avatarClass, tier, skinTone = 'tan', hair = 'short_black', accessories = [] }) {
+function renderOne({ avatarClass, tier, body = 'male', skinTone = 'tan', hair = 'short_black', accessories = [] }) {
   const markup = renderToStaticMarkup(
-    React.createElement(Avatar, { avatarClass, tier, skinTone, hair, accessories, animate: false, size: 200 }),
+    React.createElement(Avatar, { avatarClass, tier, body, skinTone, hair, accessories, animate: false, size: 200 }),
   );
   return bakeVars(markup, { skinTone, hair, avatarClass });
+}
+
+function stripSvg(s) {
+  return s.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
+}
+
+// Sheet builder: cells = [{ label, props }]
+function renderSheet(cells, cols, file) {
+  const rows = Math.ceil(cells.length / cols);
+  let out = `<svg xmlns="http://www.w3.org/2000/svg" width="${CELL_W * cols}" height="${CELL_H * rows}" viewBox="0 0 ${CELL_W * cols} ${CELL_H * rows}">`;
+  out += `<rect width="100%" height="100%" fill="#161A22"/>`;
+  cells.forEach((cell, i) => {
+    const x = (i % cols) * CELL_W + 5;
+    const y = Math.floor(i / cols) * CELL_H + 5;
+    out += `<g transform="translate(${x},${y})"><svg width="200" height="280" viewBox="0 0 200 280">${stripSvg(renderOne(cell.props))}</svg></g>`;
+    out += `<text x="${x + 100}" y="${y + 292}" fill="#8A8F9E" font-size="12" text-anchor="middle" font-family="sans-serif">${cell.label}</text>`;
+  });
+  out += `</svg>`;
+  toPng(out, path.join(outDir, file), CELL_W * cols);
+  console.log('wrote', path.join(outDir, file));
 }
 
 function toPng(svgString, file, width = 200) {
@@ -93,3 +115,46 @@ ACC.forEach((id, i) => {
 acc += `</svg>`;
 toPng(acc, path.join(outDir, 'sheet-accessories.png'), CELL_W * 5);
 console.log('wrote', path.join(outDir, 'sheet-accessories.png'));
+
+// ---- female rig: all 25 class x tier combos on the female body
+renderSheet(
+  AVATAR_CLASSES.flatMap(cls =>
+    [1, 2, 3, 4, 5].map(tier => ({
+      label: `${cls} T${tier}`,
+      props: { avatarClass: cls, tier, body: 'female', hair: 'long_black' },
+    }))),
+  5, 'sheet-female-all.png',
+);
+
+// ---- female hair styles across colours
+renderSheet(
+  hairStylesFor('female').flatMap(style =>
+    ['black', 'brown', 'blonde', 'silver'].map(color => ({
+      label: `${style} ${color}`,
+      props: { avatarClass: 'archer', tier: 2, body: 'female', hair: `${style}_${color}` },
+    }))),
+  4, 'sheet-female-hair.png',
+);
+
+// ---- female skin tones
+renderSheet(
+  Object.keys(SKIN_TONES).map((tone, i) => ({
+    label: tone,
+    props: {
+      avatarClass: 'warrior', tier: 2, body: 'female', skinTone: tone,
+      hair: `${hairStylesFor('female')[i % 5]}_${['black', 'brown', 'blonde', 'silver', 'black', 'brown'][i]}`,
+    },
+  })),
+  6, 'sheet-female-skins.png',
+);
+
+// ---- male vs female side by side, tier 1 and tier 4
+renderSheet(
+  AVATAR_CLASSES.flatMap(cls => [
+    { label: `${cls} M T1`, props: { avatarClass: cls, tier: 1, body: 'male' } },
+    { label: `${cls} F T1`, props: { avatarClass: cls, tier: 1, body: 'female', hair: 'long_black' } },
+    { label: `${cls} M T4`, props: { avatarClass: cls, tier: 4, body: 'male' } },
+    { label: `${cls} F T4`, props: { avatarClass: cls, tier: 4, body: 'female', hair: 'long_black' } },
+  ]),
+  4, 'sheet-compare.png',
+);

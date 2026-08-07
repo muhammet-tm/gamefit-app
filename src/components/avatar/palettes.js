@@ -11,9 +11,27 @@ export const SKIN_TONES = {
   ebony:     { base: '#573123', shadow: '#3E2118' },
 };
 
+// Two distinct rigs — each is its own drawn character, not a reskin.
+export const BODY_TYPES = ['male', 'female'];
+
+export const BODY_LABELS = { male: 'Male', female: 'Female' };
+
 // Hair presets: style × color baked into one id (kept flat so the profile
-// stores a single string).
-export const HAIR_STYLES = ['short', 'fade', 'ponytail', 'curly'];
+// stores a single string). Styles are per body: each rig has its own skull
+// shape and hairline, so a style drawn for one does not fit the other.
+export const HAIR_STYLES_BY_BODY = {
+  male: ['short', 'fade', 'ponytail', 'curly'],
+  female: ['long', 'bob', 'braid', 'bun', 'wavy'],
+};
+
+export const DEFAULT_HAIR_BY_BODY = { male: 'short_black', female: 'long_black' };
+
+export function hairStylesFor(body) {
+  return HAIR_STYLES_BY_BODY[body] || HAIR_STYLES_BY_BODY.male;
+}
+
+// legacy export — the male set, kept so older imports keep working
+export const HAIR_STYLES = HAIR_STYLES_BY_BODY.male;
 
 export const HAIR_COLORS = {
   black:  { base: '#23252E', shadow: '#15161C', light: '#3F4453' },
@@ -22,13 +40,23 @@ export const HAIR_COLORS = {
   silver: { base: '#B9BFCC', shadow: '#8E95A6', light: '#DEE3EC' },
 };
 
-export function hairPreset(hairId) {
-  // 'short_brown' -> { style:'short', color:{...} }; tolerant of bad input
-  const [style, color] = String(hairId || 'short_black').split('_');
+export function hairPreset(hairId, body = 'male') {
+  // 'short_brown' -> { style:'short', color:{...} }; tolerant of bad input.
+  // A style belonging to the other rig falls back to that body's default.
+  const styles = hairStylesFor(body);
+  const [style, color] = String(hairId || '').split('_');
   return {
-    style: HAIR_STYLES.includes(style) ? style : 'short',
+    style: styles.includes(style) ? style : styles[0],
     color: HAIR_COLORS[color] || HAIR_COLORS.black,
   };
+}
+
+/** Keep a hair id valid when the body changes, preserving the colour. */
+export function hairForBody(hairId, body) {
+  const color = String(hairId || '').split('_')[1] || 'black';
+  const styles = hairStylesFor(body);
+  const style = String(hairId || '').split('_')[0];
+  return `${styles.includes(style) ? style : styles[0]}_${HAIR_COLORS[color] ? color : 'black'}`;
 }
 
 // Class identities — gear colors tuned to the Dark RPG Athletic palette.
@@ -56,8 +84,9 @@ export const CLASS_TAGLINES = {
 };
 
 export const DEFAULT_CONFIG = {
-  version: 2,
+  version: 3,
   class: 'warrior',
+  body: 'male',
   skin_tone: 'tan',
   hair: 'short_black',
 };

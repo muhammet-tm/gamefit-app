@@ -7,11 +7,12 @@ import { normalizeAvatarConfig } from './migrate';
  * avatar_config shape and the user's equipped shop accessory.
  */
 export default function UserAvatar({ user, tier, size = 120, animate = true, className = '', style }) {
-  const cfg = normalizeAvatarConfig(user?.avatar_config);
+  const cfg = normalizeAvatarConfig(user?.avatar_config, { gender: user?.gender });
   return (
     <Avatar
       avatarClass={cfg.class}
       tier={tier ?? user?.avatar_tier ?? 1}
+      body={cfg.body}
       skinTone={cfg.skin_tone}
       hair={cfg.hair}
       accessories={user?.equipped_accessory ? [user.equipped_accessory] : []}
