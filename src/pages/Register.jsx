@@ -28,7 +28,13 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      const { error: err } = await supabase.auth.signUp({ email, password });
+      const { error: err } = await supabase.auth.signUp({
+        email,
+        password,
+        // Landing page if the user clicks the email's link instead of
+        // typing the code below. Must be in the auth redirect allow-list.
+        options: { emailRedirectTo: `${window.location.origin}/login?verified=1` },
+      });
       if (err) throw err;
       setShowOtp(true);
     } catch (err) {

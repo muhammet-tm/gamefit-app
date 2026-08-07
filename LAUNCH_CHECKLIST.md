@@ -69,6 +69,22 @@ URL https://gamefit.online/icons/icon-192.png), adjust wording. Also set
 SMTP (Resend free tier) under Project Settings → Auth → SMTP when you want
 emails from @gamefit.online instead of Supabase's shared sender.
 
+### 5b. ⚠️ Fix auth redirect URLs (~2 min — DO THIS FIRST, it's a live bug)
+Verification-email links currently send users to localhost and error out,
+because the project's Site URL was never changed from the default.
+Supabase dashboard → Authentication → URL Configuration:
+- **Site URL**: `https://gamefit-app.vercel.app`
+- **Redirect URLs** — add all of these (keep anything already listed,
+  e.g. the Google OAuth entries):
+  - `https://gamefit-app.vercel.app/**`
+  - `http://localhost:5173/**`   (local development)
+  - `https://gamefit.online/**`  (future domain cutover)
+  - `online.gamefit.app://**`    (native app deep link)
+The app now also sends an explicit landing page with each signup
+(`/login?verified=1`, added 2026-08-07), but that only works once these
+URLs are allow-listed. Do not use `supabase config push` for this — the
+repo's config.toml is a local-dev template and would wipe hosted settings.
+
 ### 6. App stores
 Follow docs/STORE_SUBMISSION.md (accounts, builds, listing answers).
 
