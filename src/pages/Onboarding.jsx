@@ -7,7 +7,8 @@ import { invokeFunction } from '@/api/supabase';
 import Avatar from '@/components/avatar/Avatar';
 import {
   AVATAR_CLASSES, CLASS_LABELS, CLASS_TAGLINES, CLASS_COLORS,
-  SKIN_TONES, HAIR_STYLES, HAIR_COLORS, DEFAULT_CONFIG,
+  SKIN_TONES, HAIR_COLORS, DEFAULT_CONFIG,
+  hairStylesFor, hairForBody, DEFAULT_HAIR_BY_BODY,
 } from '@/components/avatar/palettes';
 
 // ── Mascot (little GameFit elephant-like coach) ───────────────────────────────
@@ -220,13 +221,15 @@ export default function Onboarding() {
   const bmi = weightKg && heightCm ? (weightKg / ((heightCm / 100) ** 2)).toFixed(1) : null;
   const bmiLabel = bmi ? (bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Healthy' : bmi < 30 ? 'Overweight' : 'Obese') : '';
 
-  // Match the avatar's starting hair to the picked gender — same rule the old
-  // Base44 config migration used. Still fully customizable at the look step.
+  // Gender picks the avatar rig: male and female are separately drawn
+  // characters, not one body with different hair. The body can still be
+  // changed later from the Avatar screen.
+  const body = gender === 'female' ? 'female' : 'male';
   const pickGender = (g) => {
     setGender(g);
-    if (hair === 'short_black' || hair === 'ponytail_black') {
-      setHair(g === 'female' ? 'ponytail_black' : 'short_black');
-    }
+    setHair(prev => (prev === DEFAULT_CONFIG.hair
+      ? DEFAULT_HAIR_BY_BODY[g === 'female' ? 'female' : 'male']
+      : hairForBody(prev, g === 'female' ? 'female' : 'male')));
   };
 
   const canProceed = () => {
@@ -246,7 +249,7 @@ export default function Onboarding() {
       gender, age, weight_kg: weightKg, height_cm: heightCm,
       bmi: parseFloat(bmi), fitness_goal: fitnessGoal,
       fitness_level: fitnessLevel, weekly_goal: weeklyGoal,
-      avatar_config: { version: 2, class: avatarClass, skin_tone: skinTone, hair },
+      avatar_config: { version: 3, class: avatarClass, body, skin_tone: skinTone, hair },
       onboarding_complete: true,
     };
     try {
@@ -330,7 +333,7 @@ export default function Onboarding() {
                     backgroundColor: selected ? `${cc.glow}14` : '#161A22',
                     border: `2px solid ${selected ? cc.glow : '#2A2F3A'}`,
                   }}>
-                  <Avatar avatarClass={cls} tier={2} skinTone={skinTone} hair={hair} size={72} animate={false} />
+                  <Avatar avatarClass={cls} tier={2} body={body} skinTone={skinTone} hair={hair} size={72} animate={false} />
                   <span className="font-heading font-black text-base" style={{ color: selected ? cc.glow : '#FFFFFF' }}>
                     {CLASS_LABELS[cls]}
                   </span>
@@ -446,7 +449,7 @@ export default function Onboarding() {
               <div className="p-6 rounded-3xl relative overflow-hidden"
                 style={{ backgroundColor: '#161A22', border: '2px solid #C8FF00' }}>
                 <div className="absolute inset-0 opacity-10" style={{ background: 'radial-gradient(circle at 50% 40%, #C8FF00, transparent 60%)' }} />
-                <Avatar avatarClass={avatarClass || 'warrior'} skinTone={skinTone} hair={hair} size={150} tier={1} />
+                <Avatar avatarClass={avatarClass || 'warrior'} body={body} skinTone={skinTone} hair={hair} size={150} tier={1} />
               </div>
             </div>
 
@@ -463,7 +466,7 @@ export default function Onboarding() {
 
             <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#8A8F9E' }}>Hair</p>
             <div className="flex gap-2 mb-3">
-              {HAIR_STYLES.map(style => {
+              {hairStylesFor(body).map(style => {
                 const cur = hair.split('_');
                 const selected = cur[0] === style;
                 return (

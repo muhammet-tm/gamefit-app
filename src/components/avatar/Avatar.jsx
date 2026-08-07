@@ -1,5 +1,6 @@
 import React from 'react';
 import BaseBody from './layers/BaseBody';
+import BaseBodyF from './layers/BaseBodyF';
 import { HAIR_PATHS } from './layers/hair';
 import { ACCESSORY_LAYERS } from './layers/accessories';
 import { SKIN_TONES, CLASS_COLORS, hairPreset, DEFAULT_CONFIG } from './palettes';
@@ -11,6 +12,10 @@ import knight from './layers/classes/knight';
 import ninja from './layers/classes/ninja';
 
 const CLASS_DEFS = { warrior, mage, archer, knight, ninja };
+
+// The two rigs share gear anchors (deltoid centres, head box, belt line) so
+// every class×tier gear set fits both without duplicated art.
+const BASE_BODIES = { male: BaseBody, female: BaseBodyF };
 
 const ANIM_CLASS = { pulse: 'av-pulse', flicker: 'av-flicker' };
 
@@ -36,6 +41,7 @@ function renderPiece(piece, key) {
  *
  * @param {string} avatarClass 'warrior'|'mage'|'archer'|'knight'|'ninja'
  * @param {number} tier        1..5 (visual evolution)
+ * @param {string} body        'male'|'female' — separate drawn rigs
  * @param {string} skinTone    key of SKIN_TONES
  * @param {string} hair        preset id like 'short_black' (style_color)
  * @param {string[]} accessories equipped shop accessory ids
@@ -45,6 +51,7 @@ function renderPiece(piece, key) {
 export default function Avatar({
   avatarClass = DEFAULT_CONFIG.class,
   tier = 1,
+  body = DEFAULT_CONFIG.body,
   skinTone = DEFAULT_CONFIG.skin_tone,
   hair = DEFAULT_CONFIG.hair,
   accessories = [],
@@ -56,7 +63,9 @@ export default function Avatar({
   const classDef = CLASS_DEFS[avatarClass] || CLASS_DEFS.warrior;
   const colors = CLASS_COLORS[avatarClass] || CLASS_COLORS.warrior;
   const skin = SKIN_TONES[skinTone] || SKIN_TONES[DEFAULT_CONFIG.skin_tone];
-  const { style: hairStyle, color: hairColor } = hairPreset(hair);
+  const bodyType = BASE_BODIES[body] ? body : DEFAULT_CONFIG.body;
+  const Body = BASE_BODIES[bodyType];
+  const { style: hairStyle, color: hairColor } = hairPreset(hair, bodyType);
   const hairDef = HAIR_PATHS[hairStyle] || HAIR_PATHS.short;
 
   const t = Math.min(Math.max(Number(tier) || 1, 1), 5);
@@ -101,7 +110,7 @@ export default function Avatar({
       className={className}
       style={cssVars}
       role="img"
-      aria-label={`${avatarClass} avatar, tier ${t}`}
+      aria-label={`${bodyType} ${avatarClass} avatar, tier ${t}`}
     >
       {/* auras + effects behind everything */}
       <g className={animate ? 'av-aura-wrap' : undefined}>
@@ -115,7 +124,7 @@ export default function Avatar({
       >
         {bySlot.back.map((p, i) => renderPiece(p, `bk${i}`))}
         {!hideHair && (hairDef.back || []).map((p, i) => renderPiece(p, `hb${i}`))}
-        <BaseBody />
+        <Body />
         {bySlot.gear.map((p, i) => renderPiece(p, `g${i}`))}
         {!hideHair && (hairDef.front || []).map((p, i) => renderPiece(p, `hf${i}`))}
         {bySlot.head.map((p, i) => renderPiece(p, `hd${i}`))}

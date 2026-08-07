@@ -56,7 +56,24 @@ Supabase + Vercel in a fresh repo, keep Base44 live until this one passes QA.
    workout log until fixed in `20260707130001_fix_array_append.sql`).
 2. **Security hardening** — zod validation (`src/lib/validation.js`), honest
    Premium upsell (routes to real checkout instead of faking an unlock).
-3. **Avatar system** — layered SVG, 5 classes × 5 tiers, `src/components/avatar/`.
+3. **Avatar system** — layered SVG, 5 classes × 5 tiers × **2 bodies**,
+   `src/components/avatar/`.
+   **2026-08-07**: added a genuinely separate female rig (`layers/BaseBodyF.jsx`)
+   — narrower ribcage with a waist pinch, hip flare, sports-bra + leggings kit,
+   slimmer limbs, softer face (lashes, arched brows, fuller lips, blush). It is
+   NOT a reskin. Critical constraint if you touch either rig: **both bodies
+   share gear anchors** — deltoid centres (66,78)/(134,78), head box y11-57,
+   belt line y128-140 — so all 25 class×tier gear sets fit both without
+   duplicated art. Break those anchors and pauldrons/helms/belts float.
+   Five feminine hair styles (long, bob, braid, bun, wavy) live in
+   `layers/hair.js` alongside the four male ones; styles are per body
+   (`HAIR_STYLES_BY_BODY`). **Front-view lesson**: hair in the `back` slot
+   below the jaw is completely occluded by the torso and arms — long styles
+   must drape in the `front` slot, outside the neck but inside the pauldron
+   line (x83/117), or every style renders as an identical cap.
+   `avatar_config` is now **v3** (`{version:3, class, body, skin_tone, hair}`);
+   `migrate.js` upgrades v1/v2 on next login and takes the profile gender as a
+   hint for which body to assign.
    Went through 4 rounds of headless-rendered art review (`@resvg/resvg-js` +
    `react-dom/server`, script now at `scripts/render-avatars.mjs` — **note:
    this file was edited outside this session**, currently a dev tool that
