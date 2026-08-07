@@ -22,6 +22,9 @@ export default function Login() {
 
   const [error, setError] = useState('');
   const [confirmEmailSent, setConfirmEmailSent] = useState(false);
+  // Set when the user arrives from the email-confirmation link
+  const [emailVerified] = useState(() =>
+    new URLSearchParams(window.location.search).get('verified') === '1');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,6 +53,9 @@ export default function Login() {
           password: form.password,
           options: {
             data: { full_name: `${form.firstName} ${form.lastName}`.trim() },
+            // Where the confirmation email's link lands. Must be in the
+            // project's auth redirect allow-list (see LAUNCH_CHECKLIST).
+            emailRedirectTo: `${window.location.origin}/login?verified=1`,
           },
         });
         if (err) throw err;
@@ -119,6 +125,14 @@ export default function Login() {
           <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
             style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
             {error}
+          </div>
+        )}
+
+        {emailVerified && !confirmEmailSent && (
+          <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body text-center"
+            style={{ backgroundColor: 'rgba(200,255,0,0.08)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-green)' }}>
+            ✅ <span className="font-medium">Email verified!</span>{' '}
+            <span style={{ color: 'var(--gf-text-secondary)' }}>Sign in below to start.</span>
           </div>
         )}
 
