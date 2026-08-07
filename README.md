@@ -94,17 +94,17 @@ protected column directly.
 ```mermaid
 flowchart TB
     subgraph client [Client]
-        W[Vite + React 18<br/>PWA]
-        N[Capacitor shells<br/>iOS · Android]
+        W["Vite + React 18 PWA"]
+        N["Capacitor shells: iOS, Android"]
     end
     subgraph vercel [Vercel]
-        H[Static hosting<br/>SPA rewrites]
+        H["Static hosting, SPA rewrites"]
     end
     subgraph supabase [Supabase]
-        A[Auth<br/>email + Google OAuth]
-        P[(Postgres<br/>RLS + column grants)]
-        F[Edge Functions<br/>Deno]
-        S[Storage<br/>meal photos]
+        A["Auth: email + Google OAuth"]
+        P[("Postgres: RLS + column grants")]
+        F["Edge Functions (Deno)"]
+        S["Storage: meal photos"]
     end
     subgraph external [External]
         ST[Stripe]
