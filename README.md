@@ -12,9 +12,9 @@
 </p>
 
 <p align="center">
-  <a href="https://gamefit-app.vercel.app"><b>Live app</b></a> ·
-  <a href="docs/STORE_SUBMISSION.md">Store submission guide</a> ·
-  <a href="LAUNCH_CHECKLIST.md">Launch checklist</a>
+  <a href="https://gamefit-app.vercel.app"><b>Live app</b></a> 
+  <!-- <a href="docs/STORE_SUBMISSION.md">Store submission guide</a> ·
+  <a href="LAUNCH_CHECKLIST.md">Launch checklist</a> -->
 </p>
 
 ---
