@@ -146,44 +146,6 @@ server-only values.
 | Analytics | PostHog and Sentry, both inert until keys are set |
 | Hosting | Vercel, auto-deploy from `main` |
 
-## Running it locally
-
-You'll need Node 18+ and a Supabase project.
-
-```bash
-git clone https://github.com/muhammet-tm/gamefit-app.git
-cd gamefit-app
-npm install
-cp .env.example .env.local
-npm run dev
-```
-
-Fill `.env.local` with your project's URL and anon key from **Project Settings →
-API**. Both are browser-safe by design. Then apply the schema:
-
-```bash
-npx supabase link --project-ref YOUR-PROJECT-REF
-npx supabase db push
-npx supabase functions deploy
-```
-
-Edge Function secrets (`ANTHROPIC_API_KEY`, `STRIPE_SECRET_KEY`,
-`STRIPE_WEBHOOK_SECRET`, Strava and Resend credentials) go in the Supabase
-dashboard under **Edge Functions → Secrets**. Never in this repo.
-
-## Scripts
-
-| Command | What it does |
-|---|---|
-| `npm run dev` | Dev server on :5173 |
-| `npm run build` | Production build |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | Type check |
-| `node scripts/render-avatars.mjs [dir]` | Rasterise every avatar combination to PNG contact sheets for art review |
-| `node scripts/generate-brand-assets.mjs` | Regenerate icons, favicons, splash screens and the OG image from the brand mark |
-| `node scripts/store-screenshots.mjs` | Capture App Store and Play Store screenshots at required resolutions |
-| `node scripts/readme-assets.mjs` | Recapture the screenshots and hero image on this page |
-
 ## Layout
 
 ```
