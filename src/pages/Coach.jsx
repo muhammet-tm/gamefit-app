@@ -8,6 +8,7 @@ import NutritionTab from '@/components/gamefit/NutritionTab';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
+import CoachMarkdown from '@/components/gamefit/CoachMarkdown';
 import { invokeFunction } from '@/api/supabase';
 import { track } from '@/lib/analytics';
 
@@ -252,9 +253,7 @@ export default function Coach() {
           {planResult && (
             <motion.div className="rounded-2xl p-5" style={{ backgroundColor: 'var(--gf-bg-elevated)', border: '1px solid var(--gf-border)' }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <pre className="font-body text-sm whitespace-pre-wrap leading-relaxed" style={{ color: 'var(--gf-text-primary)' }}>
-                {planResult}
-              </pre>
+              <CoachMarkdown text={planResult} />
               {!planRating && (
                 <div className="flex gap-2 mt-4 pt-4" style={{ borderTop: '1px solid var(--gf-border)' }}>
                   <p className="font-body text-xs mr-auto" style={{ color: 'var(--gf-text-secondary)' }}>Rate this plan:</p>
@@ -311,7 +310,7 @@ export default function Coach() {
                       border: `1px solid ${msg.role === 'user' ? 'rgba(200,255,0,0.3)' : 'rgba(124,58,237,0.3)'}`,
                       borderRadius: msg.role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
                     }}>
-                    {msg.content}
+                    {msg.role === 'user' ? msg.content : <CoachMarkdown text={msg.content} />}
                   </div>
                   {msg.showRating && !msg.rated && (
                     <div className="flex gap-1 mt-1 justify-end">
