@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
+import { invokeFunction } from '@/api/supabase';
 import Avatar from '@/components/avatar/Avatar';
 import {
   AVATAR_CLASSES, CLASS_LABELS, CLASS_TAGLINES, CLASS_COLORS,
@@ -142,61 +143,60 @@ function ScrollPicker({ value, onChange, min, max, unit, step = 1 }) {
 }
 
 // ── Health Integrations Screen ────────────────────────────────────────────────
-function HealthIntegrations({ connected, onToggle }) {
-  const INTEGRATIONS = [
-    { id: 'strava',        name: 'Strava',        emoji: '🏃', color: '#FC4C02', desc: 'Sync runs, rides & activities' },
-    { id: 'apple_health',  name: 'Apple Health',  emoji: '❤️', color: '#FF2D55', desc: 'Steps, heart rate & workouts' },
-    { id: 'google_fit',    name: 'Google Fit',    emoji: '🟢', color: '#34A853', desc: 'Activity & fitness metrics' },
-    { id: 'whoop',         name: 'WHOOP',         emoji: '⚡', color: '#CDF000', desc: 'Recovery & strain data' },
-    { id: 'garmin',        name: 'Garmin',        emoji: '⌚', color: '#007CC3', desc: 'GPS & performance tracking' },
-  ];
+// Strava is a real OAuth connection; the rest are on the roadmap and say so.
+// A "Connected ✓" toggle that only stores a string would show up as a phantom
+// connection on the Avatar screen's Connect tab, which tracks real tokens.
+const HEALTH_APPS = [
+  { id: 'strava',       name: 'Strava',       emoji: '🏃', color: '#FC4C02', desc: 'Sync runs, rides & activities', comingSoon: false },
+  { id: 'apple_health', name: 'Apple Health', emoji: '❤️', color: '#FF2D55', desc: 'Steps, heart rate & workouts',  comingSoon: true },
+  { id: 'whoop',        name: 'WHOOP',        emoji: '⚡', color: '#CDF000', desc: 'Recovery & strain data',        comingSoon: true },
+  { id: 'garmin',       name: 'Garmin',       emoji: '⌚', color: '#007CC3', desc: 'GPS & performance tracking',    comingSoon: true },
+];
 
+function HealthIntegrations({ onConnectStrava, stravaBusy }) {
   return (
     <div className="w-full">
       <div className="flex justify-center mb-4">
         <Mascot size={60} />
       </div>
-      <SpeechBubble text="Connect your health apps to sync your data automatically!" />
-      
-      {INTEGRATIONS.map(int => {
-        const isConnected = connected.includes(int.id);
-        return (
-          <button key={int.id} onClick={() => onToggle(int.id)}
-            className="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl mb-3 transition-all active:scale-98"
-            style={{
-              backgroundColor: isConnected ? `${int.color}15` : '#161A22',
-              border: `1.5px solid ${isConnected ? int.color : '#2A2F3A'}`,
-            }}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-                style={{ backgroundColor: `${int.color}20` }}>
-                {int.emoji}
-              </div>
-              <div className="text-left">
-                <p className="font-body font-semibold text-sm text-white">{int.name}</p>
-                <p className="font-body text-xs" style={{ color: '#8A8F9E' }}>{int.desc}</p>
-              </div>
+      <SpeechBubble text="Connect a health app to sync activities automatically — or do it later from your Avatar screen." />
+
+      {HEALTH_APPS.map(app => (
+        <button key={app.id} onClick={app.comingSoon ? undefined : onConnectStrava}
+          disabled={app.comingSoon || stravaBusy}
+          className="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl mb-3 transition-all active:scale-98"
+          style={{
+            backgroundColor: '#161A22',
+            border: '1.5px solid #2A2F3A',
+            opacity: app.comingSoon ? 0.55 : 1,
+          }}>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+              style={{ backgroundColor: `${app.color}20` }}>
+              {app.emoji}
             </div>
-            <div className="flex items-center gap-2">
-              {isConnected ? (
-                <span className="text-xs font-body font-semibold px-2 py-1 rounded-lg" style={{ color: int.color, backgroundColor: `${int.color}20` }}>
-                  Connected ✓
-                </span>
-              ) : (
-                <span className="text-xs font-body font-semibold px-3 py-1 rounded-lg" style={{ backgroundColor: '#2A2F3A', color: '#8A8F9E' }}>
-                  Connect
-                </span>
-              )}
+            <div className="text-left">
+              <p className="font-body font-semibold text-sm text-white">{app.name}</p>
+              <p className="font-body text-xs" style={{ color: '#8A8F9E' }}>{app.desc}</p>
             </div>
-          </button>
-        );
-      })}
+          </div>
+          {app.comingSoon ? (
+            <span className="text-xs font-body font-semibold px-3 py-1 rounded-lg" style={{ backgroundColor: '#2A2F3A', color: '#8A8F9E' }}>
+              Soon
+            </span>
+          ) : (
+            <span className="text-xs font-body font-semibold px-3 py-1 rounded-lg" style={{ backgroundColor: '#FC4C02', color: '#FFFFFF' }}>
+              {stravaBusy ? 'Opening…' : 'Connect'}
+            </span>
+          )}
+        </button>
+      ))}
     </div>
   );
 }
 
 // ── Main Onboarding Flow ──────────────────────────────────────────────────────
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 10;
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -205,6 +205,7 @@ export default function Onboarding() {
   const [saving, setSaving] = useState(false);
 
   // All profile state
+  const [gender, setGender] = useState(null);
   const [age, setAge] = useState(22);
   const [weightKg, setWeightKg] = useState(70);
   const [heightCm, setHeightCm] = useState(170);
@@ -214,40 +215,64 @@ export default function Onboarding() {
   const [avatarClass, setAvatarClass] = useState(null);
   const [skinTone, setSkinTone] = useState(DEFAULT_CONFIG.skin_tone);
   const [hair, setHair] = useState(DEFAULT_CONFIG.hair);
-  const [connectedApps, setConnectedApps] = useState([]);
+  const [stravaBusy, setStravaBusy] = useState(false);
 
   const bmi = weightKg && heightCm ? (weightKg / ((heightCm / 100) ** 2)).toFixed(1) : null;
   const bmiLabel = bmi ? (bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Healthy' : bmi < 30 ? 'Overweight' : 'Obese') : '';
 
-  const toggleApp = (id) => {
-    setConnectedApps(prev => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id]);
+  // Match the avatar's starting hair to the picked gender — same rule the old
+  // Base44 config migration used. Still fully customizable at the look step.
+  const pickGender = (g) => {
+    setGender(g);
+    if (hair === 'short_black' || hair === 'ponytail_black') {
+      setHair(g === 'female' ? 'ponytail_black' : 'short_black');
+    }
   };
 
   const canProceed = () => {
-    if (step === 0) return !!avatarClass;
-    if (step === 4) return !!fitnessGoal;
-    if (step === 5) return !!fitnessLevel;
-    if (step === 6) return !!weeklyGoal;
+    if (step === 0) return !!gender;
+    if (step === 1) return !!avatarClass;
+    if (step === 5) return !!fitnessGoal;
+    if (step === 6) return !!fitnessLevel;
+    if (step === 7) return !!weeklyGoal;
     return true;
+  };
+
+  // Only safe, user-editable profile fields — never admin/payment fields.
+  // connected_apps is deliberately NOT set here: only a completed OAuth flow
+  // (StravaCallback) may claim a connection.
+  const saveProfile = async () => {
+    const profileData = {
+      gender, age, weight_kg: weightKg, height_cm: heightCm,
+      bmi: parseFloat(bmi), fitness_goal: fitnessGoal,
+      fitness_level: fitnessLevel, weekly_goal: weeklyGoal,
+      avatar_config: { version: 2, class: avatarClass, skin_tone: skinTone, hair },
+      onboarding_complete: true,
+    };
+    try {
+      await updateUser(profileData);
+    } catch (_) { /* keep going — profile can be re-saved from the Profile tab */ }
   };
 
   const finish = async () => {
     setSaving(true);
-    // Only include safe, user-editable profile fields — never send admin/payment fields
-    const profileData = {
-      age, weight_kg: weightKg, height_cm: heightCm,
-      bmi: parseFloat(bmi), fitness_goal: fitnessGoal,
-      fitness_level: fitnessLevel, weekly_goal: weeklyGoal,
-      avatar_config: { version: 2, class: avatarClass, skin_tone: skinTone, hair },
-      connected_apps: connectedApps, onboarding_complete: true,
-    };
-
-    // updateUser persists to the backend and updates local state
-    try {
-      await updateUser(profileData);
-    } catch (_) { /* keep going — profile can be re-saved from the Profile tab */ }
-
+    await saveProfile();
     setSaving(false);
+    navigate('/dashboard', { replace: true });
+  };
+
+  // Strava is a real OAuth redirect: save the profile first so nothing is
+  // lost, then hand the browser to Strava (StravaCallback returns to the app).
+  const connectStrava = async () => {
+    setStravaBusy(true);
+    await saveProfile();
+    try {
+      const res = await invokeFunction('strava-auth', { action: 'authorize' });
+      if (res?.url) { window.location.href = res.url; return; }
+    } catch (err) {
+      console.error('Strava auth error:', err);
+    }
+    setStravaBusy(false);
     navigate('/dashboard', { replace: true });
   };
 
@@ -260,7 +285,35 @@ export default function Onboarding() {
   const back = () => { if (step > 0) setStep(s => s - 1); };
 
   const steps = [
-    // 0 — Class pick
+    // 0 — Gender
+    {
+      mascotText: "Alright! Let's get some basic info down.",
+      content: (
+        <div className="w-full">
+          <h2 className="font-heading font-black text-3xl text-white mb-4">I am...</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { val: 'male', label: 'MALE', symbol: '♂' },
+              { val: 'female', label: 'FEMALE', symbol: '♀' },
+            ].map(({ val, label, symbol }) => {
+              const selected = gender === val;
+              return (
+                <button key={val} onClick={() => pickGender(val)}
+                  className="rounded-2xl py-10 flex flex-col items-center gap-3 transition-all active:scale-95"
+                  style={{
+                    backgroundColor: selected ? 'rgba(200,255,0,0.10)' : '#161A22',
+                    border: `2px solid ${selected ? '#C8FF00' : '#2A2F3A'}`,
+                  }}>
+                  <span className="text-4xl leading-none" style={{ color: selected ? '#C8FF00' : '#8A8F9E' }}>{symbol}</span>
+                  <span className="font-heading font-black text-lg" style={{ color: selected ? '#C8FF00' : '#FFFFFF' }}>{label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ),
+    },
+    // 1 — Class pick
     {
       mascotText: 'Choose your class, champion! You can change it anytime.',
       content: (
@@ -291,7 +344,7 @@ export default function Onboarding() {
         </div>
       ),
     },
-    // 1 — Age
+    // 2 — Age
     {
       mascotText: 'How old are you?',
       content: (
@@ -300,7 +353,7 @@ export default function Onboarding() {
         </div>
       ),
     },
-    // 2 — Weight
+    // 3 — Weight
     {
       mascotText: "What's your current weight?",
       content: (
@@ -316,7 +369,7 @@ export default function Onboarding() {
         </div>
       ),
     },
-    // 3 — Height
+    // 4 — Height
     {
       mascotText: "How tall are you?",
       content: (
@@ -325,7 +378,7 @@ export default function Onboarding() {
         </div>
       ),
     },
-    // 4 — Fitness Goal
+    // 5 — Fitness Goal
     {
       mascotText: 'What is your top fitness goal?',
       content: (
@@ -344,7 +397,7 @@ export default function Onboarding() {
         </div>
       ),
     },
-    // 5 — Experience
+    // 6 — Experience
     {
       mascotText: 'How experienced are you with working out?',
       content: (
@@ -361,7 +414,7 @@ export default function Onboarding() {
         </div>
       ),
     },
-    // 6 — Weekly target
+    // 7 — Weekly target
     {
       mascotText: 'How many days a week will you train? Be honest — streaks are won by realists!',
       content: (
@@ -379,7 +432,7 @@ export default function Onboarding() {
         </div>
       ),
     },
-    // 7 — Look customizer + reveal
+    // 8 — Look customizer + reveal
     {
       mascotText: null,
       content: (
@@ -439,7 +492,7 @@ export default function Onboarding() {
         </div>
       ),
     },
-    // 8 — Health Integrations
+    // 9 — Health Integrations
     {
       mascotText: null,
       content: (
@@ -448,7 +501,7 @@ export default function Onboarding() {
           <p className="font-body text-sm mb-5" style={{ color: '#8A8F9E' }}>
             Connect your health apps to automatically sync your fitness data with GameFit.
           </p>
-          <HealthIntegrations connected={connectedApps} onToggle={toggleApp} />
+          <HealthIntegrations onConnectStrava={connectStrava} stravaBusy={stravaBusy} />
         </div>
       ),
     },
@@ -472,7 +525,7 @@ export default function Onboarding() {
       </div>
 
       {/* Mascot + Bubble */}
-      {step !== 7 && step !== 8 && (
+      {step !== 8 && step !== 9 && (
         <div className="flex items-start gap-3 mb-5">
           <Mascot size={60} />
           {currentStep.mascotText && <SpeechBubble text={currentStep.mascotText} />}
@@ -501,7 +554,7 @@ export default function Onboarding() {
           {saving ? 'Setting up your profile...' : isLast ? "Let's Go! 🚀" : 'NEXT'}
           {!saving && !isLast && <ChevronRight size={22} />}
         </button>
-        {step >= 8 && (
+        {isLast && (
           <button onClick={() => navigate('/dashboard', { replace: true })}
             className="w-full py-3 font-body text-sm" style={{ color: '#4A5065' }}>
             Continue without connecting
