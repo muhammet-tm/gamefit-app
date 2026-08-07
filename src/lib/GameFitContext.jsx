@@ -325,6 +325,13 @@ export function GameFitProvider({ children }) {
     setUser(prev => ({ ...prev, ai_requests_this_month: prev.ai_requests_this_month + 1 }));
   }, []);
 
+  // Merge badges a SECURITY DEFINER function just awarded (e.g. log_pr) into
+  // local state, so they show without a reload. Server remains the truth.
+  const applyServerBadges = useCallback((newBadges) => {
+    if (!newBadges?.length) return;
+    setUser(prev => ({ ...prev, badges: [...new Set([...(prev.badges || []), ...newBadges])] }));
+  }, []);
+
   return (
     <GameFitContext.Provider value={{
       user, workouts, notifications, theme, levelUpData, lastWorkoutResult,
@@ -332,7 +339,7 @@ export function GameFitProvider({ children }) {
       unreadCount, toggleTheme, addWorkout, claimLevelUp,
       markNotificationRead, markAllRead, updateUser,
       purchaseAccessory, equipAccessory,
-      login, logout, incrementAIRequests,
+      login, logout, incrementAIRequests, applyServerBadges,
       LEVEL_THRESHOLDS,
     }}>
       {children}

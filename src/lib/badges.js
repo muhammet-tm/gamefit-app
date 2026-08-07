@@ -24,6 +24,10 @@ export const BADGES = [
   // Level milestones
   { id: 'level_5',        emoji: '🛡️', label: 'Champion',      desc: 'Reach Level 5',                  condition: (w, u) => u.current_level >= 5 },
   { id: 'level_10',       emoji: '🌙', label: 'Titan',          desc: 'Reach Level 10',                 condition: (w, u) => u.current_level >= 10 },
+
+  // Personal records (awarded server-side by log_pr; read from user.badges)
+  { id: 'record_setter',  emoji: '📈', label: 'Record Setter',  desc: 'Log your first personal record',  condition: (w, u) => (u.badges || []).includes('record_setter') },
+  { id: 'record_breaker', emoji: '🏋️', label: 'Record Breaker', desc: 'Beat one of your own PRs',        condition: (w, u) => (u.badges || []).includes('record_breaker') },
 ];
 
 export function getEarnedBadges(workouts, user) {

@@ -18,6 +18,19 @@ export const profileSchema = z.object({
     .max(300, 'Weight should be between 30 and 300 kg'),
 });
 
+export const prSchema = z.object({
+  exercise: z.string().trim()
+    .min(2, 'Exercise name must be at least 2 characters')
+    .max(60, 'Exercise name is too long'),
+  weight_kg: z.coerce.number({ invalid_type_error: 'Weight must be a number' })
+    .positive('Weight must be above 0')
+    .max(600, 'Weight is capped at 600 kg'),
+  reps: z.coerce.number({ invalid_type_error: 'Reps must be a number' })
+    .int('Reps must be a whole number')
+    .min(1, 'At least 1 rep')
+    .max(100, 'Reps are capped at 100'),
+});
+
 export const workoutDurationSchema = z.coerce
   .number({ invalid_type_error: 'Duration must be a number' })
   .int('Duration must be whole minutes')

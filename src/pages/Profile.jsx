@@ -13,6 +13,7 @@ import RankEmblem from '@/components/gamefit/RankEmblem';
 import BottomNav from '@/components/gamefit/BottomNav';
 import PremiumModal from '@/components/gamefit/PremiumModal';
 import BadgeGrid from '@/components/gamefit/BadgeGrid';
+import PersonalRecords from '@/components/gamefit/PersonalRecords';
 import { format } from 'date-fns';
 import { track } from '@/lib/analytics';
 
@@ -26,7 +27,7 @@ export default function Profile() {
       window.history.replaceState({}, '', '/profile');
     }
   }, []);
-  const { user, updateUser, logout, theme, toggleTheme, workouts } = useGameFit();
+  const { user, updateUser, logout, theme, toggleTheme, workouts, applyServerBadges } = useGameFit();
   const [showPremium, setShowPremium] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -220,6 +221,9 @@ export default function Profile() {
             ))}
           </div>
         </div>
+
+        {/* Personal records */}
+        <PersonalRecords onBadges={applyServerBadges} />
 
         {/* Badges */}
         <BadgeGrid workouts={workouts} user={user} />
