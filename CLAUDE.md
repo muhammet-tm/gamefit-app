@@ -156,16 +156,28 @@ All merged to `main`, pushed, Vercel bundle confirmed deployed
 
 ## Open issues / things to watch
 
-- **⚠️ Supabase project is PAUSED (discovered 2026-08-07)** —
-  `bigqoiekozxfgiznoedm.supabase.co` is NXDOMAIN globally (free-tier
-  auto-pause after ~1 week idle; last activity was ~19 July). The Vercel
-  frontend is up but every login/API call fails until the owner restores
-  the project at supabase.com/dashboard (data is kept; free-tier restores
-  work within 90 days). After restore: re-run the live gender-write check
-  (`gender_write_test.py` pattern — QA login, PATCH gender, read back,
-  restore) and spot-check login + workout logging. Consider preventing
-  recurrence: Supabase Pro, or a weekly keep-alive ping (e.g. GitHub
-  Actions cron hitting a REST endpoint) — owner decision, not yet made.
+- **Supabase was restored by the owner on 2026-08-08** — the project is
+  Healthy again (eu-central-1 Frankfurt, nano compute). It had auto-paused
+  after ~1 week idle on the free tier. Login and the QA account both work;
+  the store-screenshot script ran against it successfully. Recurrence is
+  still unprevented — Supabase Pro or a weekly keep-alive ping (e.g. a
+  GitHub Actions cron hitting a REST endpoint) remains an open owner
+  decision.
+
+- **⚠️ The live app is behind Vercel's Security Checkpoint (found
+  2026-08-08)** — a plain Playwright visit to
+  `gamefit-app.vercel.app/login` gets a bot-detection challenge page with
+  no form on it, so `scripts/store-screenshots.mjs` cannot log in against
+  production. Run it against `http://localhost:5173` instead (it takes a
+  base URL argument). Worth checking whether Attack Challenge Mode is
+  deliberately on in the Vercel project, since it also affects anything
+  else automating against production.
+
+- **Edge cache can make a deploy look like it failed** — after pushing,
+  `gamefit-app.vercel.app` served `X-Vercel-Cache: HIT` with an age of
+  hours, so the bundle hash looked unchanged. Query-string busting did not
+  defeat it. Check the deployment-specific URL or the Vercel dashboard
+  rather than concluding a deploy did not land.
 
 - `scripts/render-avatars.mjs` was modified outside this session (currently
   in good, working state per the file listing above) — if avatar art work
@@ -176,6 +188,31 @@ All merged to `main`, pushed, Vercel bundle confirmed deployed
   `CLAUDE.MD.md` (empty, 0 bytes) and `gamefit-app/` (looks like an Obsidian
   vault — `.obsidian/`, `Welcome.md`, `.base` files). Likely artifacts of
   opening this folder in Obsidian, unrelated to the codebase. Left untouched.
+
+## Sibling project: the marketing site (started 2026-08-08)
+
+The GameFit marketing site is a **separate repo at `D:\gamefit-web`**, not
+part of this codebase. Built from scratch to replace the Base44 site whose
+source files no longer exist.
+
+- Astro 7 + Preact + Tailwind 4, static output, deployed to Vercel, no
+  backend and **no connection to this project's Supabase** — deliberately,
+  so the site stays up regardless of the app's database state.
+- Forms go to Web3Forms, not to Postgres.
+- 191 Playwright tests covering accessibility, the CSP under real headers,
+  responsive behaviour and asset budgets.
+- `DESIGN.md` there is the design system; the site reuses this app's `--gf-*`
+  palette and the real rank-tier colours from `src/components/avatar/tiers.js`.
+
+**It corrects claims this app's own marketing materials got wrong.** The old
+site advertised OpenAI while `coach-g` calls Anthropic Claude Haiku 4.5, and
+described the avatar as 3D when it is layered 2D SVG. A test there fails the
+build if either reappears. `Muhammet_Yalkapov_GameFit_Profile.md` (in the
+owner's CV folder, outside both repos) also carries a DOI that 404s — the
+working one is `10.1007/978-3-032-23883-2_13`.
+
+Arabic localisation is specced but not built; it is planned as a second
+phase.
 
 ## Exact next steps (owner-only actions — I cannot do these)
 
