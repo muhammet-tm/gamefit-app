@@ -66,6 +66,38 @@ function Confetti() {
   );
 }
 
+/**
+ * The threshold moment.
+ *
+ * A sunburst that turns once and settles, rather than a loop. This is the
+ * point where the XP meter finally tips over into a new rank, so it gets the
+ * one authored entrance in the app: everything else is 120-260ms feedback.
+ * Rendered behind the avatar, at low opacity, so it reads as light rather
+ * than as a graphic competing with the figure.
+ */
+function Sunburst() {
+  return (
+    <motion.svg
+      className="pointer-events-none absolute left-1/2 top-1/2 -z-10"
+      style={{ width: 420, height: 420, marginLeft: -210, marginTop: -210 }}
+      viewBox="0 0 420 420"
+      aria-hidden="true"
+      initial={{ rotate: -14, scale: 1.22, opacity: 0 }}
+      animate={{ rotate: 0, scale: 1, opacity: 0.16 }}
+      transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <g fill="#F4B044">
+        {Array.from({ length: 12 }, (_, i) => {
+          const a = (i * 30 * Math.PI) / 180;
+          const w = 0.13;
+          const p = (r, t) => `${210 + r * Math.cos(t)},${210 + r * Math.sin(t)}`;
+          return <polygon key={i} points={`${p(26, a)} ${p(300, a - w)} ${p(300, a + w)}`} />;
+        })}
+      </g>
+    </motion.svg>
+  );
+}
+
 // Pulsing ring effect
 function GlowRings() {
   return (
@@ -197,15 +229,19 @@ export default function LevelUpOverlay() {
                   {/* Avatar with tier glow */}
                   <motion.div
                     className="relative mb-5"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.2, type: 'spring', damping: 12 }}
+                    initial={{ scale: 0.55, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    // ease-out, not a spring. A bounce here reads as a toy;
+                    // the rank landing should feel like it arrives and stays.
+                    transition={{ delay: 0.12, duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
                   >
+                    <Sunburst />
                     <motion.div
                       className="absolute inset-0 rounded-full blur-3xl"
-                      style={{ backgroundColor: '#F4B044', opacity: 0.5 }}
-                      animate={{ scale: [1, 1.4, 1] }}
-                      transition={{ repeat: Infinity, duration: 1.8 }}
+                      style={{ backgroundColor: '#F4B044' }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.42 }}
+                      transition={{ duration: 0.8, ease: 'easeOut' }}
                     />
                     <UserAvatar user={user} tier={levelUpData.newTier} size={130} />
                   </motion.div>
