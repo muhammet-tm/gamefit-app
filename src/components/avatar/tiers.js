@@ -35,11 +35,29 @@ export const TIER_CONFIG = {
 // relative import so the avatar package also works outside Vite (render scripts)
 export { AVATAR_TIER_LEVELS } from '../../lib/mockData';
 
+/**
+ * Flatten a class's gear up to `tier`.
+ *
+ * Tiers are cumulative: a tier-4 avatar wears everything from tiers 1-4. That
+ * models the progression well for additive pieces (a belt, then a pauldron on
+ * top of it) but not for replacement. Class identity now starts at tier 1 in
+ * cloth and escalates in material, so a tier-4 steel helm is not worn *over*
+ * the tier-1 headband — it is the same slot in a better material.
+ *
+ * A piece may carry `id`, and any later piece may list `supersedes: [id, ...]`.
+ * Superseded pieces are dropped rather than drawn under. Relying on the newer
+ * art to simply cover the older art is what produces the classic artifact of a
+ * bone horn poking out from behind a steel one.
+ */
 export function cumulativeGear(classDef, tier) {
   const t = Math.min(Math.max(tier || 1, 1), 5);
   const pieces = [];
   for (let i = 1; i <= t; i++) {
     if (classDef.gear[i]) pieces.push(...classDef.gear[i]);
   }
-  return pieces;
+  const superseded = new Set();
+  for (const p of pieces) {
+    for (const id of p.supersedes || []) superseded.add(id);
+  }
+  return superseded.size ? pieces.filter(p => !p.id || !superseded.has(p.id)) : pieces;
 }

@@ -20,6 +20,17 @@ export default {
       { slot: 'gear', d: `M81,124 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0`, fill: STEEL_EDGE },
       // baldric strap
       { slot: 'gear', d: `M126,78 L72,128 L77,137 L130,87 Z`, fill: 'var(--av-c2)' },
+      // IDENTITY: a mail coif. Where the other four classes read by adding a
+      // spike, the knight reads by having none — the coif widens the head into
+      // a smooth heavy dome. That contrast is deliberate: a silhouette set
+      // needs one member defined by mass rather than by points, or every class
+      // is "person with a thing on their head".
+      { slot: 'back', id: 'k-coif',
+        d: `M100,4 C114,4 124,14 124,32 C124,46 118,56 108,61 L92,61 C82,56 76,46 76,32
+            C76,14 86,4 100,4 Z`, fill: STEEL_DARK },
+      { slot: 'back', id: 'k-coif-hi',
+        d: `M100,4 C114,4 124,14 124,32 C124,40 122,47 118,52 C120,45 121,38 121,32
+            C121,16 112,7 100,7 Z`, fill: STEEL },
     ],
     2: [
       // contoured breastplate with center ridge + waist cut
@@ -53,8 +64,10 @@ export default {
         fill: 'var(--av-glow)', opacity: 0.5 },
     ],
     4: [
-      // full helm enclosing the head: dome, visor slit, cheek guards
+      // full helm enclosing the head: dome, visor slit, cheek guards.
+      // Mail becomes plate — same mass, better material.
       { slot: 'head', hidesHair: true,
+        supersedes: ['k-coif', 'k-coif-hi'],
         d: `M81,32 C80,14 89,7 100,7 C111,7 120,14 119,32 C119,42 116,50 110,55
           C106,58 94,58 90,55 C84,50 81,42 81,32 Z`, fill: STEEL },
       { slot: 'head', d: `M100,7 C111,7 120,14 119,32 C119,42 116,50 110,55 C107,57 103,58 100,58

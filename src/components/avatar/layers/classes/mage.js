@@ -15,6 +15,14 @@ export default {
       // sash across the chest
       { slot: 'gear', d: `M128,76 L74,126 L79,135 L132,85 Z`, fill: 'var(--av-c1)' },
       { slot: 'gear', d: `M103,99 L74,126 L79,135 L107,108 Z`, fill: 'var(--av-c2)' },
+      // IDENTITY: a raised cowl behind the head. In the back slot, so the
+      // skull masks everything below the crown and only the peak and a rim
+      // survive — a pointed apex, which is the mage read at 46px. The tier-4
+      // hood is the same shape brought forward over the head.
+      { slot: 'back', id: 'm-cowl', d: `M100,-4 C114,8 122,28 122,50 L78,50 C78,28 86,8 100,-4 Z`,
+        fill: 'var(--av-c1)' },
+      { slot: 'back', id: 'm-cowl-sh', d: `M100,-4 C114,8 122,28 122,50 L104,50 C106,28 104,10 100,-4 Z`,
+        fill: 'var(--av-c2)' },
     ],
     2: [
       // layered shoulder cape
@@ -41,8 +49,10 @@ export default {
       { slot: 'gear', d: `M110,131 m-1.8,0 a1.8,1.8 0 1,0 3.6,0 a1.8,1.8 0 1,0 -3.6,0`, fill: 'var(--av-glow)' },
     ],
     4: [
-      // deep hood: peak, wide rim, cascade onto the shoulders — face open
+      // deep hood: peak, wide rim, cascade onto the shoulders — face open.
+      // The same cowl, pulled up: it supersedes the tier-1 shape.
       { slot: 'head', hidesHair: true,
+        supersedes: ['m-cowl', 'm-cowl-sh'],
         d: `M100,2 C86,4 78,15 78,30 C78,42 82,51 89,56 L92,50 C87,45 85,36 87,27
           C90,17 95,13 100,13 C105,13 110,17 113,27 C115,36 113,45 108,50 L111,56 C118,51 122,42 122,30
           C122,15 114,4 100,2 Z`, fill: 'var(--av-c1)' },

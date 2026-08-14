@@ -18,6 +18,16 @@ export default {
       // quiver strap across the chest
       { slot: 'gear', d: `M74,78 L128,120 L124,129 L70,87 Z`, fill: 'var(--av-c1)' },
       { slot: 'gear', d: `M100,98 L128,120 L124,129 L96,107 Z`, fill: 'var(--av-c2)' },
+      // IDENTITY: banded cap with a fletched feather raked up and back. The
+      // feather is the archer read — a single diagonal spike off the skull,
+      // which no other class has, and a diagonal survives downscaling better
+      // than any interior detail.
+      { slot: 'back', id: 'a-feather', d: `M112,26 C126,18 138,3 145,-14 C134,-8 120,3 106,16 Z`,
+        fill: 'var(--av-c1)' },
+      { slot: 'back', id: 'a-feather-sh', d: `M118,20 C130,11 139,0 145,-14 C138,0 129,11 119,21 Z`,
+        fill: 'var(--av-c2)' },
+      { slot: 'head', id: 'a-band', d: `M82,21 L118,21 L118,27 L82,27 Z`, fill: 'var(--av-c2)' },
+      { slot: 'head', id: 'a-band-hi', d: `M82,21 L118,21 L118,22.6 L82,22.6 Z`, fill: 'var(--av-c1)' },
     ],
     2: [
       // quiver over the right shoulder + arrows in open air
@@ -42,8 +52,10 @@ export default {
       { slot: 'gear', d: `M110,112 m-2.2,0 a2.2,2.2 0 1,0 4.4,0 a2.2,2.2 0 1,0 -4.4,0`, fill: 'var(--av-glow)' },
     ],
     4: [
-      // pointed cowl with short shoulder cape — face open
+      // pointed cowl with short shoulder cape — face open. Supersedes the
+      // tier-1 cap; the feather stays, because it is the class mark.
       { slot: 'head', hidesHair: true,
+        supersedes: ['a-band', 'a-band-hi'],
         d: `M100,0 C86,3 78,14 79,30 C80,42 84,51 90,56 L93,50 C88,44 86,35 88,26
           C91,16 96,12 100,12 C104,12 109,16 112,26 C114,35 112,44 107,50 L110,56 C116,51 120,42 121,30
           C122,14 114,3 100,0 Z`, fill: 'var(--av-c1)' },

@@ -28,6 +28,19 @@ export default {
       { slot: 'gear', d: `M136,144 L150,140 L153,152 L139,156 Z`, fill: 'var(--av-c2)' },
       { slot: 'gear', d: `M50,145 L63,149 L62,152 L49,148 Z`, fill: 'var(--av-contour)' },
       { slot: 'gear', d: `M137,148 L150,144 L151,147 L138,151 Z`, fill: 'var(--av-contour)' },
+      // IDENTITY: headband with tails streaming to one side. This art already
+      // existed at tier 4; it moved here because it is the ninja read, and a
+      // ninja who looks like everyone else until level 7 is the exact problem.
+      // The tails are the only horizontal mark in the set, which reads clearly
+      // even when the figure is 46px tall.
+      { slot: 'head', id: 'n-band', d: `M82,24 L118,24 L118,31 L82,31 Z`, fill: 'var(--av-c1)' },
+      { slot: 'head', id: 'n-band-lo', d: `M82,28.6 L118,28.6 L118,31 L82,31 Z`, fill: 'var(--av-c2)' },
+      { slot: 'back', id: 'n-tail-1',
+        d: `M116,27 C128,25 140,29 148,39 C138,39 128,37 120,33 C117,31 115,29 116,27 Z`,
+        fill: 'var(--av-c1)' },
+      { slot: 'back', id: 'n-tail-2',
+        d: `M116,31 C126,35 136,45 140,57 C131,51 123,43 118,37 C116,35 115,33 116,31 Z`,
+        fill: 'var(--av-c2)' },
     ],
     2: [
       // scarf: neck wrap + big tail streaming left
@@ -61,12 +74,15 @@ export default {
           C103,61 97,61 92,58 C86,54 83,47 84,40 Z`, fill: 'var(--av-c1)' },
       { slot: 'head', d: `M100,55 C107,55 113,49 116,40 C117,47 114,54 108,58 C105,60 102,61 100,61 Z`,
         fill: 'var(--av-c2)' },
-      // headband + knot + streaming tails
-      { slot: 'head', d: `M82,24 L118,24 L118,32 L82,32 Z`, fill: 'var(--av-c2)' },
+      // The tier-1 band and tails, upgraded: a charged seam and a knot, longer
+      // tails. Same silhouette, better material.
+      { slot: 'head', supersedes: ['n-band', 'n-band-lo'],
+        d: `M82,24 L118,24 L118,32 L82,32 Z`, fill: 'var(--av-c2)' },
       { slot: 'head', d: `M82,24 L118,24 L118,26.5 L82,26.5 Z`, fill: 'var(--av-glow)', opacity: 0.55 },
       { slot: 'head', d: `M116,27 m-3.5,0 a3.5,3.5 0 1,0 7,0 a3.5,3.5 0 1,0 -7,0`, fill: 'var(--av-c1)' },
       // tails stream right, away from the katana grip
-      { slot: 'back', d: `M118,26 C130,24 142,28 150,38 C140,38 130,36 122,32 C119,30 117,28 118,26 Z`,
+      { slot: 'back', supersedes: ['n-tail-1', 'n-tail-2'],
+        d: `M118,26 C130,24 142,28 150,38 C140,38 130,36 122,32 C119,30 117,28 118,26 Z`,
         fill: 'var(--av-c2)' },
       { slot: 'back', d: `M118,30 C128,34 138,44 142,56 C133,50 125,42 120,36 C118,34 117,32 118,30 Z`,
         fill: 'var(--av-kit-shadow)' },

@@ -25,6 +25,18 @@ export default {
       // wrist wraps
       { slot: 'gear', d: `M46,148 L60,152 L58,160 L44,156 Z`, fill: 'var(--av-c2)' },
       { slot: 'gear', d: `M140,152 L154,148 L156,156 L142,160 Z`, fill: 'var(--av-c2)' },
+      // IDENTITY: bound bone horns on a cloth band. Horns sit in the back slot
+      // so the skull covers their roots and only the outward sweep shows —
+      // that keeps the player's hair visible, unlike a full helm. Two spikes
+      // at the top of the outline is what tells a warrior from a mage at 46px.
+      // Sized to survive a 46px render: the first pass was thin enough to
+      // dissolve into two dark specks at leaderboard scale.
+      { slot: 'back', id: 'w-horn-l', d: `M90,27 C80,21 71,10 67,-5 C76,-2 86,8 94,21 Z`,
+        fill: 'var(--av-wood)' },
+      { slot: 'back', id: 'w-horn-r', d: `M110,27 C120,21 129,10 133,-5 C124,-2 114,8 106,21 Z`,
+        fill: 'var(--av-wood-dark)' },
+      { slot: 'head', id: 'w-band', d: `M82,22 L118,22 L118,29 L82,29 Z`, fill: 'var(--av-c1)' },
+      { slot: 'head', id: 'w-band-lo', d: `M82,26.5 L118,26.5 L118,29 L82,29 Z`, fill: 'var(--av-c2)' },
     ],
     2: [
       // left pauldron: two heavy plates seated on the deltoid
@@ -51,8 +63,11 @@ export default {
       { slot: 'gear', d: `M76,132 L124,132 L124,134 L76,134 Z`, fill: 'var(--av-glow)', opacity: 0.5 },
     ],
     4: [
-      // horned dome helm — sits above the brow, face fully open
+      // Same silhouette as tier 1, in steel instead of cloth and bone: the
+      // helm and its horns supersede the band and the bound nubs rather than
+      // covering them, so no bone edge pokes out from behind the steel.
       { slot: 'head', hidesHair: true,
+        supersedes: ['w-horn-l', 'w-horn-r', 'w-band', 'w-band-lo'],
         d: `M81,32 C80,13 89,6 100,6 C111,6 120,13 119,32 L119,30 C119,32 118,33 117,33 L83,33
             C82,33 81,32 81,30 Z`, fill: 'var(--av-metal)' },
       { slot: 'head', d: `M100,6 C111,6 120,13 119,32 C119,32 118,33 117,33 L104,33 C108,24 107,13 100,6 Z`,
