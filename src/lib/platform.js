@@ -74,7 +74,7 @@ export async function initNativeShell() {
 
   try {
     await StatusBar.setStyle({ style: Style.Dark });
-    if (platform === 'android') await StatusBar.setBackgroundColor({ color: '#0D0F14' });
+    if (platform === 'android') await StatusBar.setBackgroundColor({ color: '#0B1A24' });
   } catch { /* status bar not critical */ }
 
   setTimeout(() => SplashScreen.hide().catch(() => {}), 400);

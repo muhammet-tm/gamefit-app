@@ -133,7 +133,7 @@ export default function Coach() {
           showBackButton={false}
           rightAction={!isPremium && (
             <div className="px-3 py-1.5 rounded-xl font-body text-xs font-medium"
-              style={{ backgroundColor: atLimit ? 'rgba(239,68,68,0.15)' : 'var(--gf-bg-elevated)', color: atLimit ? '#EF4444' : 'var(--gf-text-secondary)' }}>
+              style={{ backgroundColor: atLimit ? 'rgba(239,68,68,0.15)' : 'var(--gf-bg-elevated)', color: atLimit ? '#E5614A' : 'var(--gf-text-secondary)' }}>
               {user.ai_requests_this_month} / {AI_LIMIT}
             </div>
           )}
@@ -165,7 +165,7 @@ export default function Coach() {
           {/* Days */}
           <div>
             <label className="font-heading font-black text-base mb-3 block" style={{ color: 'var(--gf-text-primary)' }}>
-              Days per week: <span style={{ color: 'var(--gf-purple)' }}>{days}</span>
+              Days per week: <span style={{ color: 'var(--gf-gold-text)' }}>{days}</span>
             </label>
             <div className="flex items-center gap-4">
               <button onClick={() => setDays(d => Math.max(1, d - 1))}
@@ -201,7 +201,7 @@ export default function Coach() {
                 <button key={e} onClick={() => toggleEquipment(e)}
                   className="px-3 py-2 rounded-xl font-body text-sm font-medium transition-all"
                   style={{
-                    backgroundColor: equipment.includes(e) ? 'rgba(124,58,237,0.2)' : 'var(--gf-bg-elevated)',
+                    backgroundColor: equipment.includes(e) ? 'rgba(127, 187, 212,0.2)' : 'var(--gf-bg-elevated)',
                     color: equipment.includes(e) ? 'var(--gf-purple)' : 'var(--gf-text-secondary)',
                     border: `1px solid ${equipment.includes(e) ? 'var(--gf-purple)' : 'var(--gf-border)'}`,
                   }}>
@@ -232,7 +232,7 @@ export default function Coach() {
                   style={{ backgroundColor: 'var(--gf-bg-elevated)', border: '1px solid var(--gf-border)' }}>
                   <span className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>{plan}</span>
                   <span className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium"
-                    style={{ backgroundColor: 'rgba(124,58,237,0.2)', color: 'var(--gf-purple)' }}>
+                    style={{ backgroundColor: 'rgba(127, 187, 212,0.2)', color: 'var(--gf-gold-text)' }}>
                     <Lock size={12} /> Premium
                   </span>
                 </div>
@@ -267,7 +267,7 @@ export default function Coach() {
                 </div>
               )}
               {planRating && (
-                <p className="text-center text-sm mt-3 font-body" style={{ color: 'var(--gf-green)' }}>✓ Thanks for your feedback!</p>
+                <p className="text-center text-sm mt-3 font-body" style={{ color: 'var(--gf-gold-text)' }}>✓ Thanks for your feedback!</p>
               )}
             </motion.div>
           )}
@@ -292,7 +292,7 @@ export default function Coach() {
             {QUICK_PROMPTS.map(p => (
               <button key={p} onClick={() => handleChat(p)}
                 className="flex-shrink-0 px-3 py-1.5 rounded-xl font-body text-xs font-medium whitespace-nowrap transition-all"
-                style={{ backgroundColor: 'rgba(124,58,237,0.15)', color: 'var(--gf-purple)', border: '1px solid rgba(124,58,237,0.3)' }}>
+                style={{ backgroundColor: 'rgba(127, 187, 212,0.15)', color: 'var(--gf-gold-text)', border: '1px solid rgba(127, 187, 212,0.3)' }}>
                 {p}
               </button>
             ))}
@@ -305,9 +305,9 @@ export default function Coach() {
                 <div className="max-w-[85%]">
                   <div className={`px-4 py-3 rounded-2xl font-body text-sm leading-relaxed`}
                     style={{
-                      backgroundColor: msg.role === 'user' ? 'rgba(200,255,0,0.15)' : 'rgba(124,58,237,0.15)',
+                      backgroundColor: msg.role === 'user' ? 'rgba(244, 176, 68,0.15)' : 'rgba(127, 187, 212,0.15)',
                       color: 'var(--gf-text-primary)',
-                      border: `1px solid ${msg.role === 'user' ? 'rgba(200,255,0,0.3)' : 'rgba(124,58,237,0.3)'}`,
+                      border: `1px solid ${msg.role === 'user' ? 'rgba(244, 176, 68,0.3)' : 'rgba(127, 187, 212,0.3)'}`,
                       borderRadius: msg.role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
                     }}>
                     {msg.role === 'user' ? msg.content : <CoachMarkdown text={msg.content} />}
@@ -331,7 +331,7 @@ export default function Coach() {
             ))}
             {chatLoading && (
               <div className="flex justify-start">
-                <div className="px-4 py-3 rounded-2xl" style={{ backgroundColor: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.3)' }}>
+                <div className="px-4 py-3 rounded-2xl" style={{ backgroundColor: 'rgba(127, 187, 212,0.15)', border: '1px solid rgba(127, 187, 212,0.3)' }}>
                   <div className="flex gap-1">
                     {[0, 0.2, 0.4].map((d, i) => (
                       <motion.div key={i} className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--gf-purple)' }}

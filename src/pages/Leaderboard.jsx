@@ -123,7 +123,7 @@ export default function Leaderboard() {
             onClick={() => isPremium ? setTab('friends') : setShowPremium(true)}
             className="flex-1 py-2 rounded-lg font-body font-medium text-sm transition-all flex items-center justify-center gap-1.5"
             style={{ backgroundColor: tab === 'friends' ? 'var(--gf-bg-surface)' : 'transparent', color: tab === 'friends' ? 'var(--gf-text-primary)' : 'var(--gf-text-secondary)' }}>
-            {!isPremium && <Lock size={12} style={{ color: 'var(--gf-amber)' }} />}
+            {!isPremium && <Lock size={12} style={{ color: 'var(--gf-ember-text)' }} />}
             👥 Friends
           </button>
         </div>
@@ -172,7 +172,7 @@ export default function Leaderboard() {
                       <EntryAvatar entry={entry} size={podiumRank === 1 ? 60 : 48} />
                     </div>
                     <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-black"
-                      style={{ backgroundColor: medalColor, color: '#0D0F14' }}>
+                      style={{ backgroundColor: medalColor, color: '#0B1A24' }}>
                       {podiumRank}
                     </span>
                   </div>
@@ -198,8 +198,8 @@ export default function Leaderboard() {
                 <motion.div key={entry.user_id}
                   className="flex items-center gap-3 rounded-2xl px-4 py-3"
                   style={{
-                    backgroundColor: isMe ? 'rgba(200,255,0,0.08)' : 'var(--gf-bg-surface)',
-                    border: `1px solid ${isMe ? 'rgba(200,255,0,0.3)' : 'var(--gf-border)'}`,
+                    backgroundColor: isMe ? 'rgba(244, 176, 68,0.08)' : 'var(--gf-bg-surface)',
+                    border: `1px solid ${isMe ? 'rgba(244, 176, 68,0.3)' : 'var(--gf-border)'}`,
                   }}
                   initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: Math.min(0.05 * i, 0.4) }}>
                   <span className="font-heading font-black text-base w-6 text-center" style={{ color: 'var(--gf-text-secondary)' }}>
@@ -226,17 +226,17 @@ export default function Leaderboard() {
           {myEntry && !inList && (
             <div className="sticky bottom-20">
               <div className="rounded-2xl px-4 py-3 flex items-center gap-3"
-                style={{ backgroundColor: 'rgba(200,255,0,0.1)', border: '1.5px solid rgba(200,255,0,0.5)', backdropFilter: 'blur(8px)' }}>
+                style={{ backgroundColor: 'rgba(244, 176, 68,0.1)', border: '1.5px solid rgba(244, 176, 68,0.5)', backdropFilter: 'blur(8px)' }}>
                 <RankEmblem level={myEntry.current_level} size={26} />
                 <div className="flex-1">
-                  <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-green)' }}>
+                  <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-gold-text)' }}>
                     {myEntry.display_name} (You)
                   </p>
                   <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>
                     {(myEntry.total_xp || 0).toLocaleString()} XP
                   </p>
                 </div>
-                <p className="font-heading font-black text-sm" style={{ color: 'var(--gf-green)' }}>
+                <p className="font-heading font-black text-sm" style={{ color: 'var(--gf-gold-text)' }}>
                   #{myEntry.rank}{topPct ? ` · Top ${topPct}%` : ''}
                 </p>
               </div>

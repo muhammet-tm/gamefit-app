@@ -34,9 +34,9 @@ function useCountUp(target, duration = 900, run = true) {
 const EXERCISE_TYPES = ['Running','Cycling','Weight Training','Swimming','Yoga','HIIT','Boxing','Basketball','Football','Walking','Other'];
 const DURATION_PRESETS = [15, 30, 45, 60, 90];
 const INTENSITIES = [
-  { label: 'Low', color: '#22C55E', bg: 'rgba(34,197,94,0.15)', multiplier: '×1' },
-  { label: 'Medium', color: '#FFB800', bg: 'rgba(255,184,0,0.15)', multiplier: '×1.5' },
-  { label: 'High', color: '#EF4444', bg: 'rgba(239,68,68,0.15)', multiplier: '×2' },
+  { label: 'Low', color: '#5FBF7C', bg: 'rgba(34,197,94,0.15)', multiplier: '×1' },
+  { label: 'Medium', color: '#E0680E', bg: 'rgba(224, 104, 14,0.15)', multiplier: '×1.5' },
+  { label: 'High', color: '#E5614A', bg: 'rgba(239,68,68,0.15)', multiplier: '×2' },
 ];
 const EXERCISE_EMOJI = { 'Running':'🏃','Cycling':'🚴','Weight Training':'🏋️','Swimming':'🏊','Yoga':'🧘','HIIT':'⚡','Boxing':'🥊','Basketball':'🏀','Football':'⚽','Walking':'🚶','Other':'💪' };
 
@@ -107,36 +107,36 @@ export default function Train() {
   if (phase === 'timer') {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6"
-        style={{ backgroundColor: '#0D0F14' }}>
-        <p className="font-heading font-black text-xl mb-2" style={{ color: '#8A8F9E' }}>
+        style={{ backgroundColor: '#0B1A24' }}>
+        <p className="font-heading font-black text-xl mb-2" style={{ color: '#88A5B7' }}>
           {EXERCISE_EMOJI[exerciseType]} {exerciseType}
         </p>
-        <p className="font-body text-sm mb-8" style={{ color: '#8A8F9E' }}>{intensity} intensity</p>
+        <p className="font-body text-sm mb-8" style={{ color: '#88A5B7' }}>{intensity} intensity</p>
 
         {/* Circular timer */}
         <div className="relative w-56 h-56 mb-8">
           <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="44" fill="none" stroke="#1E2330" strokeWidth="8" />
-            <circle cx="50" cy="50" r="44" fill="none" stroke="#C8FF00" strokeWidth="8"
+            <circle cx="50" cy="50" r="44" fill="none" stroke="#1A3242" strokeWidth="8" />
+            <circle cx="50" cy="50" r="44" fill="none" stroke="#F4B044" strokeWidth="8"
               strokeDasharray={`${2 * Math.PI * 44}`}
               strokeDashoffset={`${2 * Math.PI * 44 * (1 - progress)}`}
               strokeLinecap="round" style={{ transition: 'stroke-dashoffset 1s linear' }} />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <p className="font-heading font-black text-5xl text-white">{formatTime(timeLeft)}</p>
-            <p className="font-body text-xs mt-1" style={{ color: '#8A8F9E' }}>remaining</p>
+            <p className="font-body text-xs mt-1" style={{ color: '#88A5B7' }}>remaining</p>
           </div>
         </div>
 
         <div className="flex gap-4">
           <button onClick={finishWorkout}
             className="flex items-center gap-2 px-6 py-4 rounded-2xl font-heading font-black text-lg"
-            style={{ backgroundColor: '#C8FF00', color: '#0D0F14' }}>
+            style={{ backgroundColor: '#F4B044', color: '#0B1A24' }}>
             <Check size={20} /> Finish Early
           </button>
           <button onClick={() => { clearInterval(intervalRef.current); setPhase('setup'); }}
             className="flex items-center gap-2 px-6 py-4 rounded-2xl font-heading font-black text-lg"
-            style={{ backgroundColor: '#1E2330', color: '#8A8F9E', border: '1px solid #2A2F3A' }}>
+            style={{ backgroundColor: '#1A3242', color: '#88A5B7', border: '1px solid #24455A' }}>
             <Square size={20} /> Cancel
           </button>
         </div>
@@ -189,7 +189,7 @@ export default function Train() {
                 className="px-2 py-2.5 rounded-xl font-body text-xs font-medium transition-all active:scale-95 text-center"
                 style={{
                   backgroundColor: exerciseType === type ? 'var(--gf-green)' : 'var(--gf-bg-elevated)',
-                  color: exerciseType === type ? '#0D0F14' : 'var(--gf-text-secondary)',
+                  color: exerciseType === type ? '#0B1A24' : 'var(--gf-text-secondary)',
                   border: `1px solid ${exerciseType === type ? 'var(--gf-green)' : 'var(--gf-border)'}`,
                 }}>
                 {EXERCISE_EMOJI[type]} {type}
@@ -207,7 +207,7 @@ export default function Train() {
                 className="px-4 py-2 rounded-xl font-body font-medium text-sm transition-all"
                 style={{
                   backgroundColor: duration === d && !customDuration ? 'var(--gf-green)' : 'var(--gf-bg-elevated)',
-                  color: duration === d && !customDuration ? '#0D0F14' : 'var(--gf-text-secondary)',
+                  color: duration === d && !customDuration ? '#0B1A24' : 'var(--gf-text-secondary)',
                   border: `1px solid ${duration === d && !customDuration ? 'var(--gf-green)' : 'var(--gf-border)'}`,
                 }}>
                 {d} min
@@ -262,28 +262,28 @@ export default function Train() {
 
         {/* XP Preview */}
         <div className="rounded-2xl p-4 flex items-center justify-between"
-          style={{ backgroundColor: 'rgba(200,255,0,0.08)', border: '1px solid rgba(200,255,0,0.3)' }}>
+          style={{ backgroundColor: 'rgba(244, 176, 68,0.08)', border: '1px solid rgba(244, 176, 68,0.3)' }}>
           <div>
-            <p className="font-body text-sm mb-0.5" style={{ color: '#8A8F9E' }}>You'll earn</p>
-            <p className="font-heading font-black text-2xl" style={{ color: '#C8FF00' }}>+{previewXP} XP</p>
+            <p className="font-body text-sm mb-0.5" style={{ color: '#88A5B7' }}>You'll earn</p>
+            <p className="font-heading font-black text-2xl" style={{ color: 'var(--gf-gold-text)' }}>+{previewXP} XP</p>
           </div>
           <div className="text-right">
-            <p className="font-body text-sm mb-0.5" style={{ color: '#8A8F9E' }}>and</p>
-            <p className="font-heading font-black text-2xl" style={{ color: '#FFB800' }}>🪙 {previewCoins}</p>
+            <p className="font-body text-sm mb-0.5" style={{ color: '#88A5B7' }}>and</p>
+            <p className="font-heading font-black text-2xl" style={{ color: '#E0680E' }}>🪙 {previewCoins}</p>
           </div>
         </div>
 
         {/* Start Button */}
         {durationError && (
           <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
-            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#E5614A', border: '1px solid rgba(239,68,68,0.3)' }}>
             {durationError}
           </div>
         )}
         <button onClick={startWorkout}
           disabled={!activeDuration}
           className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all active:scale-95"
-          style={{ backgroundColor: activeDuration ? 'var(--gf-green)' : 'var(--gf-border)', color: activeDuration ? '#0D0F14' : 'var(--gf-text-secondary)' }}>
+          style={{ backgroundColor: activeDuration ? 'var(--gf-green)' : 'var(--gf-border)', color: activeDuration ? '#0B1A24' : 'var(--gf-text-secondary)' }}>
           <Play size={22} /> Start Workout
         </button>
       </div>
@@ -301,8 +301,8 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
   useEffect(() => {
     if (saveError) return;
     // two quick bursts in brand colors
-    confetti({ particleCount: 70, spread: 75, origin: { y: 0.35 }, colors: ['#C8FF00', '#FFB800', '#9664FF'] });
-    const t = setTimeout(() => confetti({ particleCount: 40, spread: 100, origin: { y: 0.3 }, colors: ['#C8FF00', '#FFFFFF'] }), 350);
+    confetti({ particleCount: 70, spread: 75, origin: { y: 0.35 }, colors: ['#F4B044', '#E0680E', '#9664FF'] });
+    const t = setTimeout(() => confetti({ particleCount: 40, spread: 100, origin: { y: 0.3 }, colors: ['#F4B044', '#FFFFFF'] }), 350);
     return () => clearTimeout(t);
   }, [saveError]);
 
@@ -310,7 +310,7 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-10"
-      style={{ backgroundColor: '#0D0F14' }}>
+      style={{ backgroundColor: '#0B1A24' }}>
       <motion.div className="text-center w-full max-w-sm" initial={{ scale: 0.6, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 14 }}>
 
@@ -323,35 +323,35 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
         <h2 className="font-heading font-black text-4xl text-white mb-1">
           {saveError ? 'Not Saved' : 'Workout Complete!'}
         </h2>
-        <p className="font-body mb-6" style={{ color: '#8A8F9E' }}>
+        <p className="font-body mb-6" style={{ color: '#88A5B7' }}>
           {EXERCISE_EMOJI_LOCAL[exerciseType]} {duration} min {exerciseType}
         </p>
 
         {saveError ? (
           <div className="mb-6 px-4 py-3 rounded-xl text-sm font-body"
-            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#E5614A', border: '1px solid rgba(239,68,68,0.3)' }}>
             {saveError}
           </div>
         ) : (
           <>
             {/* counters */}
             <div className="flex gap-3 justify-center mb-4">
-              <div className="flex-1 px-4 py-4 rounded-2xl" style={{ backgroundColor: '#1E2330', border: '1px solid rgba(200,255,0,0.3)' }}>
-                <p className="font-heading font-black text-3xl" style={{ color: '#C8FF00' }}>+{xpShown}</p>
-                <p className="font-body text-xs mt-0.5" style={{ color: '#8A8F9E' }}>XP EARNED</p>
+              <div className="flex-1 px-4 py-4 rounded-2xl" style={{ backgroundColor: '#1A3242', border: '1px solid rgba(244, 176, 68,0.3)' }}>
+                <p className="font-heading font-black text-3xl" style={{ color: 'var(--gf-gold-text)' }}>+{xpShown}</p>
+                <p className="font-body text-xs mt-0.5" style={{ color: '#88A5B7' }}>XP EARNED</p>
               </div>
-              <div className="flex-1 px-4 py-4 rounded-2xl" style={{ backgroundColor: '#1E2330', border: '1px solid rgba(255,184,0,0.3)' }}>
-                <p className="font-heading font-black text-3xl" style={{ color: '#FFB800' }}>🪙 {coinsShown}</p>
-                <p className="font-body text-xs mt-0.5" style={{ color: '#8A8F9E' }}>COINS</p>
+              <div className="flex-1 px-4 py-4 rounded-2xl" style={{ backgroundColor: '#1A3242', border: '1px solid rgba(224, 104, 14,0.3)' }}>
+                <p className="font-heading font-black text-3xl" style={{ color: '#E0680E' }}>🪙 {coinsShown}</p>
+                <p className="font-body text-xs mt-0.5" style={{ color: '#88A5B7' }}>COINS</p>
               </div>
             </div>
 
             {/* streak */}
             <motion.div className="flex items-center justify-center gap-2 mb-4 px-4 py-3 rounded-2xl"
-              style={{ backgroundColor: 'rgba(255,184,0,0.08)', border: '1px solid rgba(255,184,0,0.3)' }}
+              style={{ backgroundColor: 'rgba(224, 104, 14,0.08)', border: '1px solid rgba(224, 104, 14,0.3)' }}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-              <Flame size={18} color="#FFB800" fill="#FFB800" />
-              <span className="font-heading font-black text-lg" style={{ color: '#FFB800' }}>
+              <Flame size={18} color="#E0680E" fill="#E0680E" />
+              <span className="font-heading font-black text-lg" style={{ color: '#E0680E' }}>
                 {streak} day streak
               </span>
             </motion.div>
@@ -374,7 +374,7 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
 
         <button onClick={onDone}
           className="w-full py-4 rounded-2xl font-heading font-black text-xl mt-2"
-          style={{ backgroundColor: '#C8FF00', color: '#0D0F14' }}>
+          style={{ backgroundColor: '#F4B044', color: '#0B1A24' }}>
           Back to Dashboard
         </button>
       </motion.div>

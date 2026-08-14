@@ -43,7 +43,7 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-heading font-black text-xl" style={{ color: 'var(--gf-text-primary)' }}>Accessory Shop</h3>
         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-body text-sm font-semibold"
-          style={{ backgroundColor: 'rgba(255,184,0,0.15)', color: 'var(--gf-amber)', border: '1px solid rgba(255,184,0,0.3)' }}>
+          style={{ backgroundColor: 'rgba(224, 104, 14,0.15)', color: 'var(--gf-ember-text)', border: '1px solid rgba(224, 104, 14,0.3)' }}>
           <Coins size={14} /> {coins.toLocaleString()}
         </div>
       </div>
@@ -56,7 +56,7 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
             className="flex-shrink-0 px-3 py-1.5 rounded-xl font-body text-xs font-medium transition-all"
             style={{
               backgroundColor: activeCategory === cat ? 'var(--gf-green)' : 'var(--gf-bg-elevated)',
-              color: activeCategory === cat ? '#0D0F14' : 'var(--gf-text-secondary)',
+              color: activeCategory === cat ? '#0B1A24' : 'var(--gf-text-secondary)',
             }}>
             {cat === 'all' ? '🎒 All' : CATEGORY_LABELS[cat]}
           </button>
@@ -74,15 +74,15 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
             <motion.div key={item.id}
               className="rounded-2xl p-3 flex flex-col gap-2 relative"
               style={{
-                backgroundColor: equipped ? 'rgba(200,255,0,0.08)' : 'var(--gf-bg-surface)',
-                border: `1.5px solid ${equipped ? 'var(--gf-green)' : owned ? 'rgba(200,255,0,0.25)' : 'var(--gf-border)'}`,
+                backgroundColor: equipped ? 'rgba(244, 176, 68,0.08)' : 'var(--gf-bg-surface)',
+                border: `1.5px solid ${equipped ? 'var(--gf-green)' : owned ? 'rgba(244, 176, 68,0.25)' : 'var(--gf-border)'}`,
               }}
               whileTap={{ scale: 0.97 }}>
 
               {equipped && (
                 <span className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center"
                   style={{ backgroundColor: 'var(--gf-green)' }}>
-                  <Check size={11} color="#0D0F14" strokeWidth={3} />
+                  <Check size={11} color="#0B1A24" strokeWidth={3} />
                 </span>
               )}
 
@@ -97,7 +97,7 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
                   onClick={() => onEquip(equipped ? null : item.id)}
                   className="w-full py-2 rounded-xl font-body text-xs font-semibold transition-all"
                   style={{
-                    backgroundColor: equipped ? 'rgba(200,255,0,0.15)' : 'var(--gf-bg-elevated)',
+                    backgroundColor: equipped ? 'rgba(244, 176, 68,0.15)' : 'var(--gf-bg-elevated)',
                     color: equipped ? 'var(--gf-green)' : 'var(--gf-text-secondary)',
                     border: `1px solid ${equipped ? 'var(--gf-green)' : 'var(--gf-border)'}`,
                   }}>
@@ -109,9 +109,9 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
                   disabled={!canAfford}
                   className="w-full py-2 rounded-xl font-body text-xs font-semibold flex items-center justify-center gap-1 transition-all"
                   style={{
-                    backgroundColor: canAfford ? 'rgba(255,184,0,0.15)' : 'var(--gf-bg-elevated)',
+                    backgroundColor: canAfford ? 'rgba(224, 104, 14,0.15)' : 'var(--gf-bg-elevated)',
                     color: canAfford ? 'var(--gf-amber)' : 'var(--gf-text-secondary)',
-                    border: `1px solid ${canAfford ? 'rgba(255,184,0,0.4)' : 'var(--gf-border)'}`,
+                    border: `1px solid ${canAfford ? 'rgba(224, 104, 14,0.4)' : 'var(--gf-border)'}`,
                     opacity: canAfford ? 1 : 0.5,
                   }}>
                   {canAfford ? <><Coins size={11} /> {item.cost}</> : <><Lock size={11} /> {item.cost}</>}
@@ -120,7 +120,7 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
 
               {buyFeedback === item.id && (
                 <motion.div className="absolute inset-0 rounded-2xl flex items-center justify-center"
-                  style={{ backgroundColor: 'rgba(200,255,0,0.15)' }}
+                  style={{ backgroundColor: 'rgba(244, 176, 68,0.15)' }}
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <span className="text-2xl">🎉</span>
                 </motion.div>
@@ -148,8 +148,8 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
               </div>
               <div className="flex items-center justify-center gap-2 py-3 rounded-xl mb-4"
                 style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
-                <Coins size={16} style={{ color: 'var(--gf-amber)' }} />
-                <span className="font-heading font-black text-xl" style={{ color: 'var(--gf-amber)' }}>{confirmItem.cost} coins</span>
+                <Coins size={16} style={{ color: 'var(--gf-ember-text)' }} />
+                <span className="font-heading font-black text-xl" style={{ color: 'var(--gf-ember-text)' }}>{confirmItem.cost} coins</span>
               </div>
               <div className="flex gap-3">
                 <button onClick={() => setConfirmItem(null)}
@@ -159,7 +159,7 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
                 </button>
                 <button onClick={confirmBuy}
                   className="flex-1 py-3 rounded-xl font-heading font-black text-base"
-                  style={{ backgroundColor: 'var(--gf-amber)', color: '#0D0F14' }}>
+                  style={{ backgroundColor: 'var(--gf-amber)', color: '#0B1A24' }}>
                   Buy Now
                 </button>
               </div>

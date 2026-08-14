@@ -117,7 +117,7 @@ export default function PersonalRecords({ onBadges }) {
         </h3>
         <button onClick={() => { setShowForm(v => !v); setFormError(''); }}
           className="px-3 py-1.5 rounded-xl font-body text-xs font-semibold flex items-center gap-1 transition-all active:scale-95"
-          style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14' }}>
+          style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
           {showForm ? <X size={13} /> : <Plus size={13} />} {showForm ? 'Close' : 'Log PR'}
         </button>
       </div>
@@ -142,18 +142,18 @@ export default function PersonalRecords({ onBadges }) {
               onChange={e => setForm(f => ({ ...f, reps: e.target.value }))}
               className="w-24 px-4 py-3 rounded-xl font-body text-sm outline-none" style={inputStyle} />
           </div>
-          {formError && <p className="font-body text-xs" style={{ color: '#EF4444' }}>{formError}</p>}
+          {formError && <p className="font-body text-xs" style={{ color: '#E5614A' }}>{formError}</p>}
           <button onClick={submit} disabled={saving}
             className="w-full py-3 rounded-xl font-heading font-black text-base transition-all active:scale-95"
-            style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14', opacity: saving ? 0.6 : 1 }}>
+            style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24', opacity: saving ? 0.6 : 1 }}>
             {saving ? 'Saving…' : 'Save Record'}
           </button>
         </div>
       )}
 
       {celebration && (
-        <div className="mx-4 mt-3 px-4 py-3 rounded-xl" style={{ backgroundColor: 'rgba(200,255,0,0.10)', border: '1px solid var(--gf-green)' }}>
-          <p className="font-heading font-black text-sm" style={{ color: 'var(--gf-green)' }}>🏆 NEW PERSONAL RECORD!</p>
+        <div className="mx-4 mt-3 px-4 py-3 rounded-xl" style={{ backgroundColor: 'rgba(244, 176, 68,0.10)', border: '1px solid var(--gf-green)' }}>
+          <p className="font-heading font-black text-sm" style={{ color: 'var(--gf-gold-text)' }}>🏆 NEW PERSONAL RECORD!</p>
           <p className="font-body text-xs mt-0.5" style={{ color: 'var(--gf-text-primary)' }}>
             {celebration.exercise}: <strong>{Number(celebration.weight)} kg × {celebration.reps}</strong>
             {celebration.previous && (
@@ -194,7 +194,7 @@ export default function PersonalRecords({ onBadges }) {
                     {r.exercise}
                     {isRecent(r.achieved_on) && (
                       <span className="ml-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold"
-                        style={{ backgroundColor: 'rgba(200,255,0,0.15)', color: 'var(--gf-green)' }}>PR!</span>
+                        style={{ backgroundColor: 'rgba(244, 176, 68,0.15)', color: 'var(--gf-gold-text)' }}>PR!</span>
                     )}
                   </td>
                   <td className="py-2.5 pr-2 font-heading font-black whitespace-nowrap" style={{ color: 'var(--gf-text-primary)' }}>

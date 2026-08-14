@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=Hanken+Grotesk:wght@300..800&family=JetBrains+Mono:wght@400..700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,131 +6,150 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222 15% 7%;
+    --background: 203 29% 95%;
+    --foreground: 204 53% 9%;
     --card: 0 0% 100%;
-    --card-foreground: 222 15% 7%;
+    --card-foreground: 204 53% 9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 15% 7%;
-    --primary: 74 100% 50%;
-    --primary-foreground: 222 15% 7%;
-    --secondary: 220 13% 92%;
-    --secondary-foreground: 222 15% 7%;
-    --muted: 220 13% 92%;
-    --muted-foreground: 220 10% 36%;
-    --accent: 74 100% 50%;
-    --accent-foreground: 222 15% 7%;
-    --destructive: 0 84% 60%;
+    --popover-foreground: 204 53% 9%;
+    /* Fills use the true brand gold with navy text (9.38:1). Only gold *text*
+       on a light surface needs the darkened --gf-gold-text (5.25:1); the
+       brand colour itself does not change between themes. */
+    --primary: 37 89% 61%;
+    --primary-foreground: 204 53% 9%;
+    --secondary: 204 31% 90%;
+    --secondary-foreground: 204 53% 9%;
+    --muted: 204 31% 90%;
+    --muted-foreground: 204 23% 38%;
+    --accent: 37 89% 61%;
+    --accent-foreground: 204 53% 9%;
+    --destructive: 8 73% 41%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 85%;
-    --input: 220 13% 85%;
-    --ring: 74 100% 50%;
+    --border: 203 28% 82%;
+    --input: 203 28% 82%;
+    --ring: 38 92% 28%;   /* focus ring needs contrast against a light page */
     --radius: 0.75rem;
-    --font-heading: 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
-    --font-body: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
-    --font-mono: ui-monospace, monospace;
+    --font-heading: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-    /* GameFit light mode tokens */
-    --gf-bg-primary: #F4F6FA;
+    /* GameFit light mode tokens.
+       The accent darkens in light mode: #F4B044 measures ~1.9:1 on white and
+       cannot carry text. #8A5A06 is the same hue at 5.25:1 on the page bg. */
+    --gf-bg-primary: #EDF2F5;
     --gf-bg-surface: #FFFFFF;
-    --gf-bg-elevated: #E8ECF4;
-    --gf-text-primary: #0D0F14;
-    --gf-text-secondary: #5A6072;
-    --gf-border: #D0D5E0;
-    --gf-green: #C8FF00;
-    --gf-amber: #FFB800;
-    --gf-purple: #7C3AED;
-    --gf-success: #22C55E;
-    --gf-error: #EF4444;
+    --gf-bg-elevated: #DFE8EE;
+    --gf-text-primary: #0B1A24;
+    --gf-text-secondary: #4A6577;
+    --gf-border: #C3D3DD;
+    --gf-gold: #F4B044;        /* fills, emblems, large marks */
+    --gf-gold-text: #8A5A06;   /* gold as TEXT on a light surface (5.25:1) */
+    --gf-ember: #B34D06;
+    --gf-ember-text: #B34D06;  /* 4.68:1 on --gf-bg-primary */
+    --gf-success: #1F7A45;
+    --gf-error: #B3301C;
+    /* Back-compat aliases: 37 files still reference the old names. Kept so the
+       token swap is one commit, then removed as components are migrated. */
+    --gf-green: var(--gf-gold);
+    --gf-amber: var(--gf-ember);
+    --gf-purple: var(--gf-gold);
     /* Chart tokens (bklit charts) — mapped onto the GameFit palette above */
-    --chart-1: #C8FF00;
-    --chart-2: #7C3AED;
-    --chart-3: #FFB800;
-    --chart-4: #22C55E;
-    --chart-5: #EF4444;
+    --chart-1: #8A5A06;
+    --chart-2: #256B8A;
+    --chart-3: #B34D06;
+    --chart-4: #1F7A45;
+    --chart-5: #B3301C;
     --chart-background: #FFFFFF;
-    --chart-foreground: #0D0F14;
-    --chart-foreground-muted: #5A6072;
+    --chart-foreground: #0B1A24;
+    --chart-foreground-muted: #4A6577;
     --chart-line-primary: var(--chart-1);
     --chart-line-secondary: var(--chart-2);
-    --chart-crosshair: #D0D5E0;
-    --chart-grid: #D0D5E0;
+    --chart-crosshair: #C3D3DD;
+    --chart-grid: #C3D3DD;
     --chart-brush-border: var(--chart-grid);
     /* Tooltip stays dark in both themes — it floats over the chart surface. */
-    --chart-tooltip-background: rgb(13 15 20 / 0.92);
-    --chart-tooltip-foreground: #FFFFFF;
-    --chart-tooltip-muted: #8A8F9E;
+    --chart-tooltip-background: rgb(11 26 36 / 0.94);
+    --chart-tooltip-foreground: #F2F5F7;
+    --chart-tooltip-muted: #88A5B7;
     --chart-marker-background: #FFFFFF;
-    --chart-marker-border: #D0D5E0;
-    --chart-marker-foreground: #0D0F14;
-    --chart-label: #5A6072;
-    --chart-scale-01: #F2FFC4;
-    --chart-scale-02: #E4FF8A;
-    --chart-scale-03: #D6FF4D;
-    --chart-scale-04: #C8FF00;
-    --chart-scale-05: #9ACC00;
-    --chart-scale-pattern-color: #F4F6FA;
+    --chart-marker-border: #C3D3DD;
+    --chart-marker-foreground: #0B1A24;
+    --chart-label: #4A6577;
+    --chart-scale-01: #FBEBCF;
+    --chart-scale-02: #F5D194;
+    --chart-scale-03: #E8A63F;
+    --chart-scale-04: #B8801A;
+    --chart-scale-05: #8A5A06;
+    --chart-scale-pattern-color: #EDF2F5;
   }
 
   .dark {
-    --background: 222 20% 7%;
-    --foreground: 0 0% 100%;
-    --card: 222 18% 11%;
-    --card-foreground: 0 0% 100%;
-    --popover: 222 18% 11%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 74 100% 50%;
-    --primary-foreground: 222 15% 7%;
-    --secondary: 222 16% 16%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 222 16% 16%;
-    --muted-foreground: 220 8% 55%;
-    --accent: 74 100% 50%;
-    --accent-foreground: 222 15% 7%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 222 14% 18%;
-    --input: 222 14% 18%;
-    --ring: 74 100% 50%;
+    --background: 204 53% 9%;
+    --foreground: 204 24% 96%;
+    --card: 204 49% 13%;
+    --card-foreground: 204 24% 96%;
+    --popover: 204 43% 18%;
+    --popover-foreground: 204 24% 96%;
+    --primary: 37 89% 61%;
+    --primary-foreground: 204 53% 9%;
+    --secondary: 204 43% 18%;
+    --secondary-foreground: 204 24% 96%;
+    --muted: 204 43% 18%;
+    --muted-foreground: 203 25% 63%;
+    --accent: 37 89% 61%;
+    --accent-foreground: 204 53% 9%;
+    --destructive: 9 75% 59%;
+    --destructive-foreground: 204 53% 9%;
+    --border: 203 43% 25%;
+    --input: 203 43% 25%;
+    --ring: 37 89% 61%;
 
-    /* GameFit dark mode tokens */
-    --gf-bg-primary: #0D0F14;
-    --gf-bg-surface: #161A22;
-    --gf-bg-elevated: #1E2330;
-    --gf-text-primary: #FFFFFF;
-    --gf-text-secondary: #8A8F9E;
-    --gf-border: #2A2F3A;
-    --gf-green: #C8FF00;
-    --gf-amber: #FFB800;
-    --gf-purple: #7C3AED;
-    --gf-success: #22C55E;
-    --gf-error: #EF4444;
+    /* GameFit dark mode tokens — the primary theme.
+       Ratios against --gf-bg-primary: text 16.15, muted 6.83, gold 9.38,
+       ember 5.18. All AA body. Ember drops to 3.90 on --gf-bg-elevated, so
+       on that surface it is for fills and text >=18px only. */
+    --gf-bg-primary: #0B1A24;
+    --gf-bg-surface: #112532;
+    --gf-bg-elevated: #1A3242;
+    --gf-text-primary: #F2F5F7;
+    --gf-text-secondary: #88A5B7;
+    --gf-border: #24455A;
+    --gf-gold: #F4B044;
+    --gf-gold-text: #F4B044;   /* on navy the brand gold already reads at 9.38:1 */
+    --gf-ember: #E0680E;
+    --gf-ember-text: #E0680E;  /* 5.18:1 on --gf-bg-primary */
+    --gf-success: #5FBF7C;
+    --gf-error: #E5614A;
+    /* Back-compat aliases — see the light block. */
+    --gf-green: var(--gf-gold);
+    --gf-amber: var(--gf-ember);
+    --gf-purple: var(--gf-gold);
     /* Chart tokens (bklit charts) — dark surfaces, same brand series colors */
-    --chart-1: #C8FF00;
-    --chart-2: #A78BFA;
-    --chart-3: #FFB800;
-    --chart-4: #22C55E;
-    --chart-5: #EF4444;
-    --chart-background: #161A22;
-    --chart-foreground: #FFFFFF;
-    --chart-foreground-muted: #8A8F9E;
-    --chart-crosshair: #2A2F3A;
-    --chart-grid: #2A2F3A;
+    --chart-1: #F4B044;
+    --chart-2: #7FBBD4;
+    --chart-3: #E0680E;
+    --chart-4: #5FBF7C;
+    --chart-5: #E5614A;
+    --chart-background: #112532;
+    --chart-foreground: #F2F5F7;
+    --chart-foreground-muted: #88A5B7;
+    --chart-crosshair: #24455A;
+    --chart-grid: #24455A;
     --chart-brush-border: var(--chart-grid);
-    --chart-tooltip-background: rgb(30 35 48 / 0.94);
-    --chart-tooltip-foreground: #FFFFFF;
-    --chart-tooltip-muted: #8A8F9E;
-    --chart-marker-background: #1E2330;
-    --chart-marker-border: #2A2F3A;
-    --chart-marker-foreground: #FFFFFF;
-    --chart-label: #8A8F9E;
-    --chart-scale-01: #2A3300;
-    --chart-scale-02: #4D5C00;
-    --chart-scale-03: #7A9400;
-    --chart-scale-04: #A3C400;
-    --chart-scale-05: #C8FF00;
-    --chart-scale-pattern-color: #161A22;
+    --chart-tooltip-background: rgb(26 50 66 / 0.94);
+    --chart-tooltip-foreground: #F2F5F7;
+    --chart-tooltip-muted: #88A5B7;
+    --chart-marker-background: #1A3242;
+    --chart-marker-border: #24455A;
+    --chart-marker-foreground: #F2F5F7;
+    --chart-label: #88A5B7;
+    --chart-scale-01: #3A2A05;
+    --chart-scale-02: #6B4A08;
+    --chart-scale-03: #A8760F;
+    --chart-scale-04: #D0932A;
+    --chart-scale-05: #F4B044;
+    --chart-scale-pattern-color: #112532;
   }
 }
 
@@ -165,12 +184,17 @@
   .gf-text-primary { color: var(--gf-text-primary); }
   .gf-text-secondary { color: var(--gf-text-secondary); }
   .gf-border { border-color: var(--gf-border); }
-  .gf-green { color: var(--gf-green); }
-  .gf-amber { color: var(--gf-amber); }
-  .gf-purple { color: var(--gf-purple); }
-  .bg-gf-green { background-color: var(--gf-green); }
-  .bg-gf-amber { background-color: var(--gf-amber); }
-  .bg-gf-purple { background-color: var(--gf-purple); }
+  .gf-gold { color: var(--gf-gold); }
+  .gf-ember { color: var(--gf-ember); }
+  .bg-gf-gold { background-color: var(--gf-gold); }
+  .bg-gf-ember { background-color: var(--gf-ember); }
+  /* Back-compat aliases — removed once components migrate to gold/ember. */
+  .gf-green { color: var(--gf-gold); }
+  .gf-amber { color: var(--gf-ember); }
+  .gf-purple { color: var(--gf-gold); }
+  .bg-gf-green { background-color: var(--gf-gold); }
+  .bg-gf-amber { background-color: var(--gf-ember); }
+  .bg-gf-purple { background-color: var(--gf-gold); }
   .bg-gf-surface { background-color: var(--gf-bg-surface); }
   .bg-gf-elevated { background-color: var(--gf-bg-elevated); }
   .bg-gf-primary { background-color: var(--gf-bg-primary); }
@@ -178,9 +202,11 @@
   .font-heading { font-family: var(--font-heading); }
   .font-body { font-family: var(--font-body); }
   .text-gf-secondary { color: var(--gf-text-secondary); }
-  .text-gf-green { color: var(--gf-green); }
-  .text-gf-amber { color: var(--gf-amber); }
-  .text-gf-purple { color: var(--gf-purple); }
+  .text-gf-gold { color: var(--gf-gold); }
+  .text-gf-ember { color: var(--gf-ember); }
+  .text-gf-green { color: var(--gf-gold); }
+  .text-gf-amber { color: var(--gf-ember); }
+  .text-gf-purple { color: var(--gf-gold); }
 }
 /* ============ Avatar system animations ============ */
 @keyframes av-breathe {

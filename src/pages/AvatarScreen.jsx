@@ -113,7 +113,7 @@ export default function AvatarScreen() {
           {[['avatar','🎭 Avatar'],['shop','🛒 Shop'],['connect','🔗 Connect']].map(([t, label]) => (
             <button key={t} onClick={() => setActiveTab(t)}
               className="flex-1 py-2.5 rounded-lg font-body font-medium text-sm transition-all"
-              style={{ backgroundColor: activeTab === t ? 'var(--gf-green)' : 'transparent', color: activeTab === t ? '#0D0F14' : 'var(--gf-text-secondary)' }}>
+              style={{ backgroundColor: activeTab === t ? 'var(--gf-green)' : 'transparent', color: activeTab === t ? '#0B1A24' : 'var(--gf-text-secondary)' }}>
               {label}
             </button>
           ))}
@@ -172,7 +172,7 @@ export default function AvatarScreen() {
                       <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-text-primary)' }}>{app.name}</p>
                       {app.comingSoon && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded font-body font-semibold"
-                          style={{ backgroundColor: 'rgba(255,184,0,0.15)', color: '#FFB800' }}>SOON</span>
+                          style={{ backgroundColor: 'rgba(224, 104, 14,0.15)', color: '#E0680E' }}>SOON</span>
                       )}
                     </div>
                     <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>{app.desc}</p>
@@ -226,7 +226,7 @@ export default function AvatarScreen() {
         <div className="px-5 pt-5 pb-6">
           {shopError && (
             <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
-              style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+              style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#E5614A', border: '1px solid rgba(239,68,68,0.3)' }}>
               {shopError}
             </div>
           )}
@@ -275,12 +275,12 @@ export default function AvatarScreen() {
                 <div className="text-center mt-3 z-10">
                   <div className="flex items-center justify-center gap-2 mb-1">
                     <span className="px-3 py-1 rounded-full font-heading font-black text-sm"
-                      style={{ backgroundColor: tierCfg.color, color: currentTier >= 4 ? '#1A1A1A' : '#0D0F14' }}>
+                      style={{ backgroundColor: tierCfg.color, color: currentTier >= 4 ? '#1A1A1A' : '#0B1A24' }}>
                       LVL {level}
                     </span>
                     <span className="font-heading font-black text-xl" style={{ color: 'var(--gf-text-primary)' }}>{tierCfg.label}</span>
                   </div>
-                  {equippedItem && <p className="font-body text-sm" style={{ color: 'var(--gf-amber)' }}>{equippedItem.label}</p>}
+                  {equippedItem && <p className="font-body text-sm" style={{ color: 'var(--gf-ember-text)' }}>{equippedItem.label}</p>}
                   <p className="font-body text-xs mt-1" style={{ color: tierCfg.color }}>
                     {currentTier === 1 && 'Keep training to unlock your first gear upgrade! ⚔️'}
                     {currentTier === 2 && 'Silver gear unlocked — reach Level 5 for Gold gear 🥇'}
@@ -307,7 +307,7 @@ export default function AvatarScreen() {
             <p className="font-body text-xs text-center" style={{ color: 'var(--gf-text-secondary)' }}>
               {xpToNext > 0 ? `${xpToNext.toLocaleString()} XP to next evolution` : 'Max level reached! 🔥'}
             </p>
-            <p className="font-body text-[10px] text-center mt-1" style={{ color: 'rgba(200,255,0,0.5)' }}>
+            <p className="font-body text-[10px] text-center mt-1" style={{ color: 'rgba(244, 176, 68,0.5)' }}>
               ⚡ XP synced from your real workout logs
             </p>
           </div>
@@ -325,7 +325,7 @@ export default function AvatarScreen() {
                   <button key={b} onClick={() => updateAvatar('body', b)}
                     className="flex items-center justify-center gap-2 py-2 rounded-xl transition-all"
                     style={{
-                      backgroundColor: selected ? 'rgba(200,255,0,0.10)' : 'var(--gf-bg-elevated)',
+                      backgroundColor: selected ? 'rgba(244, 176, 68,0.10)' : 'var(--gf-bg-elevated)',
                       border: `1.5px solid ${selected ? 'var(--gf-green)' : 'var(--gf-border)'}`,
                     }}>
                     <Avatar avatarClass={avatarCfg.class} tier={currentTier} body={b}
@@ -389,7 +389,7 @@ export default function AvatarScreen() {
                 return (
                   <button key={style} onClick={() => updateAvatar('hair', `${style}_${currentColor}`)}
                     className="flex-1 py-2.5 rounded-xl font-body font-medium text-xs capitalize transition-all"
-                    style={{ backgroundColor: selected ? 'var(--gf-green)' : 'var(--gf-bg-elevated)', color: selected ? '#0D0F14' : 'var(--gf-text-secondary)', border: `1px solid ${selected ? 'var(--gf-green)' : 'var(--gf-border)'}` }}>
+                    style={{ backgroundColor: selected ? 'var(--gf-green)' : 'var(--gf-bg-elevated)', color: selected ? '#0B1A24' : 'var(--gf-text-secondary)', border: `1px solid ${selected ? 'var(--gf-green)' : 'var(--gf-border)'}` }}>
                     {style}
                   </button>
                 );

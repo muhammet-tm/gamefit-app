@@ -63,7 +63,7 @@ export default function ProgressChart() {
         <h3 className="font-heading font-black text-lg" style={{ color: 'var(--gf-text-primary)' }}>
           XP · Last 14 Days
         </h3>
-        <span className="font-heading font-black text-sm" style={{ color: 'var(--gf-green)' }}>
+        <span className="font-heading font-black text-sm" style={{ color: 'var(--gf-gold-text)' }}>
           {total14.toLocaleString()} XP
         </span>
       </div>
@@ -90,7 +90,7 @@ export default function ProgressChart() {
           <XAxis numTicks={4} />
           <ChartTooltip
             rows={(point) => [
-              { label: 'XP', value: point.xp, color: 'var(--gf-green)' },
+              { label: 'XP', value: point.xp, color: 'var(--gf-gold-text)' },
             ]}
           />
         </AreaChart>

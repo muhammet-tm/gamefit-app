@@ -54,7 +54,7 @@ export default function PremiumModal({ onClose }) {
                 {b === 'annual' ? 'Annual' : 'Monthly'}
                 {b === 'annual' && (
                   <span className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-bold"
-                    style={{ backgroundColor: '#C8FF00', color: '#0D0F14' }}>-40%</span>
+                    style={{ backgroundColor: '#F4B044', color: '#0B1A24' }}>-40%</span>
                 )}
               </button>
             ))}
@@ -62,8 +62,8 @@ export default function PremiumModal({ onClose }) {
 
           {/* Price */}
           <div className="text-center mb-5 py-4 rounded-2xl"
-            style={{ backgroundColor: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.3)' }}>
-            <p className="font-heading font-black text-4xl" style={{ color: 'var(--gf-purple)' }}>
+            style={{ backgroundColor: 'rgba(127, 187, 212,0.1)', border: '1px solid rgba(127, 187, 212,0.3)' }}>
+            <p className="font-heading font-black text-4xl" style={{ color: 'var(--gf-gold-text)' }}>
               {billing === 'monthly' ? 'AED 29.99' : 'AED 214.99'}
             </p>
             <p className="font-body text-sm mt-1" style={{ color: 'var(--gf-text-secondary)' }}>
@@ -76,20 +76,20 @@ export default function PremiumModal({ onClose }) {
             <div className="grid grid-cols-3 px-4 py-2" style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
               <p className="font-body text-xs font-semibold" style={{ color: 'var(--gf-text-secondary)' }}>Feature</p>
               <p className="font-body text-xs font-semibold text-center" style={{ color: 'var(--gf-text-secondary)' }}>Free</p>
-              <p className="font-body text-xs font-semibold text-center" style={{ color: 'var(--gf-purple)' }}>Premium</p>
+              <p className="font-body text-xs font-semibold text-center" style={{ color: 'var(--gf-gold-text)' }}>Premium</p>
             </div>
             {FEATURES.map((f, i) => (
               <div key={i} className="grid grid-cols-3 px-4 py-3 items-center"
                 style={{ borderTop: '1px solid var(--gf-border)', backgroundColor: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
                 <p className="font-body text-xs" style={{ color: 'var(--gf-text-primary)' }}>{f.label}</p>
                 <div className="flex justify-center">
-                  {f.free === true ? <Check size={16} color="#22C55E" /> :
-                   f.free === false ? <XIcon size={16} color="#EF4444" /> :
+                  {f.free === true ? <Check size={16} color="#5FBF7C" /> :
+                   f.free === false ? <XIcon size={16} color="#E5614A" /> :
                    <span className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>{f.free}</span>}
                 </div>
                 <div className="flex justify-center">
-                  {f.premium === true ? <Check size={16} color="#7C3AED" /> :
-                   <span className="font-body text-xs font-semibold" style={{ color: '#7C3AED' }}>{f.premium}</span>}
+                  {f.premium === true ? <Check size={16} color="#7FBBD4" /> :
+                   <span className="font-body text-xs font-semibold" style={{ color: '#7FBBD4' }}>{f.premium}</span>}
                 </div>
               </div>
             ))}
@@ -104,7 +104,7 @@ export default function PremiumModal({ onClose }) {
           ) : (
             <button onClick={handleUpgrade}
               className="w-full py-4 rounded-2xl font-heading font-black text-xl transition-all active:scale-95"
-              style={{ background: 'linear-gradient(135deg, #7C3AED, #A855F7)', color: '#FFFFFF' }}>
+              style={{ background: 'linear-gradient(135deg, #7FBBD4, #A855F7)', color: '#FFFFFF' }}>
               Start Premium ⚡
             </button>
           )}

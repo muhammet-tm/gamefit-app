@@ -10,7 +10,7 @@ import {
 // real bold/headings/lists, scrollable tables, and native charts for
 // ```chart fenced blocks ({"type":"bar"|"pie","title":...,"data":[{label,value}]}).
 
-const CHART_COLORS = ['#C8FF00', '#7C3AED', '#F59E0B', '#EF4444', '#3B82F6', '#22C55E'];
+const CHART_COLORS = ['#F4B044', '#7FBBD4', '#F59E0B', '#E5614A', '#3B82F6', '#5FBF7C'];
 
 const tooltipStyle = {
   backgroundColor: 'var(--gf-bg-surface)',
@@ -95,7 +95,7 @@ function CodeBlock({ className, children }) {
   }
   return (
     <code className="px-1.5 py-0.5 rounded text-[0.85em]"
-      style={{ backgroundColor: 'var(--gf-bg-surface)', color: 'var(--gf-green)' }}>
+      style={{ backgroundColor: 'var(--gf-bg-surface)', color: 'var(--gf-gold-text)' }}>
       {text}
     </code>
   );
@@ -121,7 +121,7 @@ const components = {
   ol: ({ children }) => <ol className="list-decimal ml-4 mb-2 space-y-1">{children}</ol>,
   li: ({ children }) => <li className="leading-relaxed">{children}</li>,
   a: ({ href, children }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--gf-green)' }}>
+    <a href={href} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--gf-gold-text)' }}>
       {children}
     </a>
   ),

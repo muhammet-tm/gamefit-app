@@ -10,10 +10,10 @@ import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import ReactMarkdown from 'react-markdown';
 
 const STAT_CONFIG = [
-  { key: 'strength', label: 'STR', icon: Swords, color: '#EF4444', bg: 'rgba(239,68,68,0.15)', fontSize: 'text-xs' },
+  { key: 'strength', label: 'STR', icon: Swords, color: '#E5614A', bg: 'rgba(239,68,68,0.15)', fontSize: 'text-xs' },
   { key: 'endurance', label: 'END', icon: Wind, color: '#3B82F6', bg: 'rgba(59,130,246,0.15)', fontSize: 'text-xs' },
-  { key: 'agility', label: 'AGI', icon: Zap, color: '#C8FF00', bg: 'rgba(200,255,0,0.15)', fontSize: 'text-xs' },
-  { key: 'recovery', label: 'REC', icon: Heart, color: '#22C55E', bg: 'rgba(34,197,94,0.15)', fontSize: 'text-xs' },
+  { key: 'agility', label: 'AGI', icon: Zap, color: 'var(--gf-gold-text)', bg: 'rgba(244, 176, 68,0.15)', fontSize: 'text-xs' },
+  { key: 'recovery', label: 'REC', icon: Heart, color: '#5FBF7C', bg: 'rgba(34,197,94,0.15)', fontSize: 'text-xs' },
 ];
 
 function StatBar({ stat, value }) {
@@ -48,14 +48,14 @@ function MessageBubble({ message }) {
     >
       {!isUser && (
         <div className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center text-sm font-heading font-black"
-          style={{ backgroundColor: 'rgba(200,255,0,0.15)', color: 'var(--gf-green)', border: '1px solid rgba(200,255,0,0.3)' }}>
+          style={{ backgroundColor: 'rgba(244, 176, 68,0.15)', color: 'var(--gf-gold-text)', border: '1px solid rgba(244, 176, 68,0.3)' }}>
           G
         </div>
       )}
       <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm font-body leading-relaxed ${isUser ? 'rounded-tr-sm' : 'rounded-tl-sm'}`}
         style={{
           backgroundColor: isUser ? 'var(--gf-green)' : 'var(--gf-bg-elevated)',
-          color: isUser ? '#0D0F14' : 'var(--gf-text-primary)',
+          color: isUser ? '#0B1A24' : 'var(--gf-text-primary)',
           border: isUser ? 'none' : '1px solid var(--gf-border)',
         }}>
         {isUser ? message.content : (
@@ -63,7 +63,7 @@ function MessageBubble({ message }) {
             className="prose prose-sm max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
             components={{
               p: ({ children }) => <p className="my-1 leading-relaxed" style={{ color: 'var(--gf-text-primary)' }}>{children}</p>,
-              strong: ({ children }) => <strong style={{ color: 'var(--gf-green)' }}>{children}</strong>,
+              strong: ({ children }) => <strong style={{ color: 'var(--gf-gold-text)' }}>{children}</strong>,
               ul: ({ children }) => <ul className="my-1 ml-4 list-disc space-y-0.5">{children}</ul>,
               li: ({ children }) => <li style={{ color: 'var(--gf-text-primary)' }}>{children}</li>,
             }}
@@ -164,7 +164,7 @@ export default function AvatarCoach() {
         {messages.length === 0 && !loading && (
           <motion.div className="text-center pt-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="w-16 h-16 mx-auto rounded-2xl mb-3 flex items-center justify-center text-2xl font-heading font-black"
-              style={{ backgroundColor: 'rgba(200,255,0,0.15)', color: 'var(--gf-green)', border: '1px solid rgba(200,255,0,0.3)' }}>
+              style={{ backgroundColor: 'rgba(244, 176, 68,0.15)', color: 'var(--gf-gold-text)', border: '1px solid rgba(244, 176, 68,0.3)' }}>
               G
             </div>
             <p className="font-heading font-black text-lg mb-1" style={{ color: 'var(--gf-text-primary)' }}>Coach G is ready</p>
@@ -192,12 +192,12 @@ export default function AvatarCoach() {
         {loading && (
           <motion.div className="flex gap-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center text-sm font-heading font-black"
-              style={{ backgroundColor: 'rgba(200,255,0,0.15)', color: 'var(--gf-green)', border: '1px solid rgba(200,255,0,0.3)' }}>
+              style={{ backgroundColor: 'rgba(244, 176, 68,0.15)', color: 'var(--gf-gold-text)', border: '1px solid rgba(244, 176, 68,0.3)' }}>
               G
             </div>
             <div className="px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-2"
               style={{ backgroundColor: 'var(--gf-bg-elevated)', border: '1px solid var(--gf-border)' }}>
-              <Loader2 size={14} className="animate-spin" style={{ color: 'var(--gf-green)' }} />
+              <Loader2 size={14} className="animate-spin" style={{ color: 'var(--gf-gold-text)' }} />
               <span className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>Analyzing your stats...</span>
             </div>
           </motion.div>
@@ -225,7 +225,7 @@ export default function AvatarCoach() {
             disabled={!input.trim() || loading || !conversation}
             className="w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-40"
             style={{ backgroundColor: 'var(--gf-green)' }}>
-            <Send size={16} color="#0D0F14" />
+            <Send size={16} color="#0B1A24" />
           </button>
         </div>
       </div>

@@ -14,7 +14,7 @@ function BurstParticles() {
       id: i,
       x: Math.cos(rad) * distance,
       y: Math.sin(rad) * distance,
-      color: ['#C8FF00', '#FFB800', '#7C3AED', '#22C55E', '#FFFFFF'][i % 5],
+      color: ['#F4B044', '#E0680E', '#7FBBD4', '#5FBF7C', '#FFFFFF'][i % 5],
       size: 6 + Math.random() * 8,
       delay: Math.random() * 0.3,
     };
@@ -38,7 +38,7 @@ function BurstParticles() {
 
 // Falling confetti
 function Confetti() {
-  const colors = ['#C8FF00', '#FFB800', '#7C3AED', '#22C55E', '#EF4444', '#FFFFFF'];
+  const colors = ['#F4B044', '#E0680E', '#7FBBD4', '#5FBF7C', '#E5614A', '#FFFFFF'];
   const particles = Array.from({ length: 60 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
@@ -73,7 +73,7 @@ function GlowRings() {
         <motion.div
           key={i}
           className="absolute rounded-full border-2"
-          style={{ borderColor: '#C8FF00', width: 160 + i * 60, height: 160 + i * 60 }}
+          style={{ borderColor: '#F4B044', width: 160 + i * 60, height: 160 + i * 60 }}
           initial={{ scale: 0.5, opacity: 0.8 }}
           animate={{ scale: [0.5, 1.5], opacity: [0.6, 0] }}
           transition={{ duration: 1.5, delay: i * 0.25, repeat: Infinity, ease: 'easeOut' }}
@@ -99,7 +99,7 @@ function LevelBanner({ newLevel, title, onClose }) {
       transition={{ type: 'spring', damping: 18 }}
     >
       <div className="rounded-2xl px-5 py-4 flex items-center gap-4 shadow-2xl"
-        style={{ background: 'linear-gradient(135deg, #7C3AED, #4F1DB5)', border: '1px solid rgba(200,255,0,0.4)' }}>
+        style={{ background: 'linear-gradient(135deg, #7FBBD4, #4F1DB5)', border: '1px solid rgba(244, 176, 68,0.4)' }}>
         {/* Animated icon */}
         <motion.div
           className="text-3xl flex-shrink-0"
@@ -109,7 +109,7 @@ function LevelBanner({ newLevel, title, onClose }) {
           🎮
         </motion.div>
         <div className="flex-1 min-w-0">
-          <div className="font-heading font-black text-lg leading-none" style={{ color: '#C8FF00' }}>
+          <div className="font-heading font-black text-lg leading-none" style={{ color: 'var(--gf-gold-text)' }}>
             LEVEL {newLevel} REACHED!
           </div>
           <div className="font-body text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.8)' }}>
@@ -119,7 +119,7 @@ function LevelBanner({ newLevel, title, onClose }) {
         {/* Progress pulse dot */}
         <motion.div
           className="w-3 h-3 rounded-full flex-shrink-0"
-          style={{ backgroundColor: '#C8FF00' }}
+          style={{ backgroundColor: '#F4B044' }}
           animate={{ scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
           transition={{ repeat: Infinity, duration: 1 }}
         />
@@ -166,7 +166,7 @@ export default function LevelUpOverlay() {
           >
             {/* Dark backdrop with subtle radial glow */}
             <div className="absolute inset-0"
-              style={{ background: 'radial-gradient(ellipse at center, rgba(124,58,237,0.3) 0%, rgba(0,0,0,0.95) 70%)' }} />
+              style={{ background: 'radial-gradient(ellipse at center, rgba(127, 187, 212,0.3) 0%, rgba(0,0,0,0.95) 70%)' }} />
 
             <Confetti />
 
@@ -185,7 +185,7 @@ export default function LevelUpOverlay() {
                   {/* Level badge flash */}
                   <motion.div
                     className="font-heading font-black text-6xl mb-4"
-                    style={{ color: '#C8FF00', textShadow: '0 0 40px rgba(200,255,0,0.8)' }}
+                    style={{ color: 'var(--gf-gold-text)', textShadow: '0 0 40px rgba(244, 176, 68,0.8)' }}
                     initial={{ scale: 2, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.1, type: 'spring', damping: 12 }}
@@ -202,7 +202,7 @@ export default function LevelUpOverlay() {
                   >
                     <motion.div
                       className="absolute inset-0 rounded-full blur-3xl"
-                      style={{ backgroundColor: '#C8FF00', opacity: 0.5 }}
+                      style={{ backgroundColor: '#F4B044', opacity: 0.5 }}
                       animate={{ scale: [1, 1.4, 1] }}
                       transition={{ repeat: Infinity, duration: 1.8 }}
                     />
@@ -216,11 +216,11 @@ export default function LevelUpOverlay() {
                     transition={{ delay: 0.3 }}
                   >
                     <p className="font-heading text-3xl font-black text-white">
-                      You are now Level <span style={{ color: '#C8FF00' }}>{levelUpData.newLevel}</span>
+                      You are now Level <span style={{ color: 'var(--gf-gold-text)' }}>{levelUpData.newLevel}</span>
                     </p>
                     <motion.div
                       className="mt-2 px-5 py-2 rounded-xl inline-block font-heading text-xl font-black"
-                      style={{ background: 'linear-gradient(135deg, #7C3AED, #9F5CF7)', color: '#FFFFFF' }}
+                      style={{ background: 'linear-gradient(135deg, #7FBBD4, #9F5CF7)', color: '#FFFFFF' }}
                       animate={{ scale: [1, 1.04, 1] }}
                       transition={{ repeat: Infinity, duration: 2 }}
                     >
@@ -232,7 +232,7 @@ export default function LevelUpOverlay() {
                   {levelUpData.newTier > 1 && (
                     <motion.div
                       className="mt-3 px-4 py-2 rounded-xl text-sm font-medium"
-                      style={{ borderColor: '#C8FF00', color: '#C8FF00', border: '1px solid rgba(200,255,0,0.5)', backgroundColor: 'rgba(200,255,0,0.08)' }}
+                      style={{ borderColor: '#F4B044', color: 'var(--gf-gold-text)', border: '1px solid rgba(244, 176, 68,0.5)', backgroundColor: 'rgba(244, 176, 68,0.08)' }}
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.45 }}
@@ -244,7 +244,7 @@ export default function LevelUpOverlay() {
                   {/* Coins reward */}
                   <motion.div
                     className="flex items-center gap-3 mt-4 px-6 py-3 rounded-2xl w-full justify-center"
-                    style={{ backgroundColor: 'rgba(255,184,0,0.12)', border: '1px solid rgba(255,184,0,0.35)' }}
+                    style={{ backgroundColor: 'rgba(224, 104, 14,0.12)', border: '1px solid rgba(224, 104, 14,0.35)' }}
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 }}
@@ -254,7 +254,7 @@ export default function LevelUpOverlay() {
                       animate={{ rotate: [0, 20, -20, 0] }}
                       transition={{ repeat: Infinity, duration: 1.5, delay: 0.6 }}
                     >🪙</motion.span>
-                    <span className="font-heading text-2xl font-black" style={{ color: '#FFB800' }}>
+                    <span className="font-heading text-2xl font-black" style={{ color: '#E0680E' }}>
                       +{levelUpData.bonusCoins} Bonus Coins!
                     </span>
                   </motion.div>
@@ -269,7 +269,7 @@ export default function LevelUpOverlay() {
                   >
                     <motion.div
                       className="h-full rounded-xl"
-                      style={{ backgroundColor: '#C8FF00' }}
+                      style={{ backgroundColor: '#F4B044' }}
                       initial={{ width: '0%' }}
                       animate={{ width: '5%' }}
                       transition={{ delay: 0.7, duration: 0.8, ease: 'easeOut' }}
@@ -282,7 +282,7 @@ export default function LevelUpOverlay() {
                   {/* CTA button */}
                   <motion.button
                     className="w-full py-4 rounded-2xl font-heading font-black text-xl mt-5"
-                    style={{ backgroundColor: claimed ? 'rgba(200,255,0,0.3)' : '#C8FF00', color: '#0D0F14' }}
+                    style={{ backgroundColor: claimed ? 'rgba(244, 176, 68,0.3)' : '#F4B044', color: '#0B1A24' }}
                     whileTap={{ scale: 0.96 }}
                     onClick={handleClaim}
                     disabled={claimed}

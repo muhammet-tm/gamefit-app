@@ -30,7 +30,7 @@ function CalorieRing({ consumed, goal }) {
       <svg width="144" height="144" className="-rotate-90">
         <circle cx="72" cy="72" r={radius} fill="none" stroke="var(--gf-border)" strokeWidth="10" />
         <circle cx="72" cy="72" r={radius} fill="none"
-          stroke={over ? '#EF4444' : 'var(--gf-green)'}
+          stroke={over ? '#E5614A' : 'var(--gf-green)'}
           strokeWidth="10"
           strokeDasharray={circ}
           strokeDashoffset={circ * (1 - pct)}
@@ -39,7 +39,7 @@ function CalorieRing({ consumed, goal }) {
         />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="font-heading font-black text-2xl leading-none" style={{ color: over ? '#EF4444' : 'var(--gf-text-primary)' }}>
+        <span className="font-heading font-black text-2xl leading-none" style={{ color: over ? '#E5614A' : 'var(--gf-text-primary)' }}>
           {over ? consumed - goal : remaining}
         </span>
         <span className="font-body text-[10px] mt-0.5" style={{ color: 'var(--gf-text-secondary)' }}>
@@ -102,7 +102,7 @@ function AddMealModal({ onSave, onClose }) {
             style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-border)' }} />
         </div>
         <div className="grid grid-cols-3 gap-3">
-          {[['protein_g', 'Protein (g)', '#EF4444'], ['carbs_g', 'Carbs (g)', '#3B82F6'], ['fat_g', 'Fat (g)', '#F59E0B']].map(([k, label, color]) => (
+          {[['protein_g', 'Protein (g)', '#E5614A'], ['carbs_g', 'Carbs (g)', '#3B82F6'], ['fat_g', 'Fat (g)', '#F59E0B']].map(([k, label, color]) => (
             <input key={k} placeholder={label} type="number" value={form[k]} onChange={e => set(k, e.target.value)}
               className="px-3 py-3 rounded-xl font-body text-xs outline-none"
               style={{ backgroundColor: 'var(--gf-bg-elevated)', color, border: `1px solid ${form[k] ? color + '60' : 'var(--gf-border)'}` }} />
@@ -110,7 +110,7 @@ function AddMealModal({ onSave, onClose }) {
         </div>
         <button onClick={() => valid && onSave(form)} disabled={!valid}
           className="w-full py-4 rounded-2xl font-heading font-black text-lg flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-40"
-          style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14' }}>
+          style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
           <Plus size={20} /> Save Meal
         </button>
       </motion.div>
@@ -151,9 +151,9 @@ function SnapResultSheet({ result, onSave, onRetry, onClose }) {
               <div className="flex items-center gap-2 mt-1">
                 <span className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>Health Score</span>
                 <div className="flex-1 h-1.5 w-24 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--gf-border)' }}>
-                  <div className="h-full rounded-full" style={{ width: `${result.health_score * 10}%`, backgroundColor: '#22C55E' }} />
+                  <div className="h-full rounded-full" style={{ width: `${result.health_score * 10}%`, backgroundColor: '#5FBF7C' }} />
                 </div>
-                <span className="font-body text-xs font-bold" style={{ color: '#22C55E' }}>{result.health_score}/10</span>
+                <span className="font-body text-xs font-bold" style={{ color: '#5FBF7C' }}>{result.health_score}/10</span>
               </div>
             )}
           </div>
@@ -167,7 +167,7 @@ function SnapResultSheet({ result, onSave, onRetry, onClose }) {
           </div>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: 'Protein', value: result.protein_g, emoji: '🥩', color: '#EF4444' },
+              { label: 'Protein', value: result.protein_g, emoji: '🥩', color: '#E5614A' },
               { label: 'Carbs', value: result.carbs_g, emoji: '🌾', color: '#3B82F6' },
               { label: 'Fats', value: result.fat_g, emoji: '🫒', color: '#F59E0B' },
             ].map(m => (
@@ -338,21 +338,21 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
             </div>
             <div className="flex justify-between font-body text-sm">
               <span style={{ color: 'var(--gf-text-secondary)' }}>Exercise</span>
-              <span className="font-heading font-black" style={{ color: 'var(--gf-green)' }}>+0</span>
+              <span className="font-heading font-black" style={{ color: 'var(--gf-gold-text)' }}>+0</span>
             </div>
           </div>
         </div>
 
         {isPremium ? (
           <div className="flex gap-4 mt-4 pt-4" style={{ borderTop: '1px solid var(--gf-border)' }}>
-            <MacroBar label="Protein" consumed={totals.protein_g} goal={goals.protein_g} color="#EF4444" />
+            <MacroBar label="Protein" consumed={totals.protein_g} goal={goals.protein_g} color="#E5614A" />
             <MacroBar label="Carbs" consumed={totals.carbs_g} goal={goals.carbs_g} color="#3B82F6" />
             <MacroBar label="Fat" consumed={totals.fat_g} goal={goals.fat_g} color="#F59E0B" />
           </div>
         ) : (
           <button onClick={onLimitHit}
             className="w-full mt-4 pt-4 flex items-center justify-center gap-2 font-body text-sm"
-            style={{ borderTop: '1px solid var(--gf-border)', color: 'var(--gf-purple)' }}>
+            style={{ borderTop: '1px solid var(--gf-border)', color: 'var(--gf-gold-text)' }}>
             <Crown size={14} /> <span className="font-semibold">Press to View Macros</span>
           </button>
         )}
@@ -368,7 +368,7 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
               onClick={() => !snapLoading && fileInputRef.current?.click()}
               disabled={snapLoading}
               className="w-full py-4 rounded-2xl font-heading font-black text-lg flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-70"
-              style={{ background: 'linear-gradient(135deg, #7C3AED, #C026D3)', color: '#FFFFFF' }}>
+              style={{ background: 'linear-gradient(135deg, #7FBBD4, #C026D3)', color: '#FFFFFF' }}>
               {snapLoading ? (
                 <><Loader2 size={20} className="animate-spin" /> Analyzing meal...</>
               ) : (
@@ -382,11 +382,11 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
         ) : (
           <button onClick={onLimitHit}
             className="w-full py-4 rounded-2xl font-heading font-black text-lg flex items-center justify-center gap-2"
-            style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.3), rgba(192,38,211,0.3))', border: '1px dashed rgba(124,58,237,0.5)', color: 'rgba(255,255,255,0.6)' }}>
+            style={{ background: 'linear-gradient(135deg, rgba(127, 187, 212,0.3), rgba(192,38,211,0.3))', border: '1px dashed rgba(127, 187, 212,0.5)', color: 'rgba(255,255,255,0.6)' }}>
             <Lock size={18} />
             <span>Snap a Photo</span>
             <span className="ml-1 text-xs px-2 py-0.5 rounded-full font-body font-semibold"
-              style={{ backgroundColor: 'rgba(124,58,237,0.3)', color: '#C084FC' }}>PREMIUM</span>
+              style={{ backgroundColor: 'rgba(127, 187, 212,0.3)', color: '#C084FC' }}>PREMIUM</span>
           </button>
         )}
 
@@ -429,14 +429,14 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
                   <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>{meal.meal_type}</p>
                   {isPremium && (meal.protein_g > 0 || meal.carbs_g > 0 || meal.fat_g > 0) && (
                     <div className="flex gap-2 mt-0.5">
-                      <span className="font-body text-[10px]" style={{ color: '#EF4444' }}>P {meal.protein_g}g</span>
+                      <span className="font-body text-[10px]" style={{ color: '#E5614A' }}>P {meal.protein_g}g</span>
                       <span className="font-body text-[10px]" style={{ color: '#3B82F6' }}>C {meal.carbs_g}g</span>
                       <span className="font-body text-[10px]" style={{ color: '#F59E0B' }}>F {meal.fat_g}g</span>
                     </div>
                   )}
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="font-heading font-black text-base" style={{ color: 'var(--gf-green)' }}>{meal.calories}</p>
+                  <p className="font-heading font-black text-base" style={{ color: 'var(--gf-gold-text)' }}>{meal.calories}</p>
                   <p className="font-body text-[10px]" style={{ color: 'var(--gf-text-secondary)' }}>kcal</p>
                 </div>
                 <button onClick={() => handleDeleteMeal(meal.id)} className="ml-1 p-1.5 rounded-lg transition-all active:scale-90"

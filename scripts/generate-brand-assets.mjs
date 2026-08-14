@@ -5,10 +5,10 @@
 import { Resvg } from '@resvg/resvg-js';
 import fs from 'node:fs';
 
-const CHARCOAL = '#0D0F14';
-const SURFACE = '#161A22';
-const GREEN = '#C8FF00';
-const GREEN_DARK = '#8FBF00';
+const CHARCOAL = '#0B1A24';
+const SURFACE = '#112532';
+const GREEN = '#F4B044';
+const GREEN_DARK = '#C98A1E';
 
 // The GameFit mark: a lightning bolt striking through a dumbbell — energy
 // meets iron. Drawn bold enough to read at 48px.
@@ -55,13 +55,13 @@ function ogSvg() {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="${CHARCOAL}"/>
   <circle cx="1050" cy="80" r="300" fill="${GREEN}" opacity="0.06"/>
-  <circle cx="120" cy="560" r="240" fill="#9664FF" opacity="0.07"/>
+  <circle cx="120" cy="560" r="240" fill="#E0680E" opacity="0.07"/>
   <g transform="translate(90,145)">${mark}</g>
   <text x="490" y="270" font-family="Arial Black, Arial, sans-serif" font-weight="900"
     font-size="86" fill="#FFFFFF">GAME<tspan fill="${GREEN}">FIT</tspan></text>
-  <text x="493" y="330" font-family="Arial, sans-serif" font-size="34" fill="#8A8F9E">Fitness, Gamified.</text>
-  <text x="493" y="410" font-family="Arial, sans-serif" font-size="27" fill="#B9BFCC">Earn XP · Keep streaks · Evolve your avatar</text>
-  <text x="493" y="452" font-family="Arial, sans-serif" font-size="27" fill="#B9BFCC">Train with an AI coach</text>
+  <text x="493" y="330" font-family="Arial, sans-serif" font-size="34" fill="#88A5B7">Fitness, Gamified.</text>
+  <text x="493" y="410" font-family="Arial, sans-serif" font-size="27" fill="#B9C4CC">Earn XP · Keep streaks · Evolve your avatar</text>
+  <text x="493" y="452" font-family="Arial, sans-serif" font-size="27" fill="#B9C4CC">Train with an AI coach</text>
 </svg>`;
 }
 

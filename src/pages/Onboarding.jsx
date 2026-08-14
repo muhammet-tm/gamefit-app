@@ -15,25 +15,25 @@ import {
 function Mascot({ size = 70 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80">
-      <ellipse cx="40" cy="42" rx="22" ry="26" fill="#1E2330" />
-      <ellipse cx="30" cy="42" rx="8" ry="7" fill="#1E2330" />
-      <ellipse cx="50" cy="42" rx="8" ry="7" fill="#1E2330" />
+      <ellipse cx="40" cy="42" rx="22" ry="26" fill="#1A3242" />
+      <ellipse cx="30" cy="42" rx="8" ry="7" fill="#1A3242" />
+      <ellipse cx="50" cy="42" rx="8" ry="7" fill="#1A3242" />
       <ellipse cx="30" cy="40" rx="5" ry="4.5" fill="#2A3040" />
       <ellipse cx="50" cy="40" rx="5" ry="4.5" fill="#2A3040" />
-      <ellipse cx="40" cy="26" rx="16" ry="14" fill="#1E2330" />
-      <rect x="28" y="18" width="24" height="8" rx="4" fill="#C8FF00" />
+      <ellipse cx="40" cy="26" rx="16" ry="14" fill="#1A3242" />
+      <rect x="28" y="18" width="24" height="8" rx="4" fill="#F4B044" />
       <circle cx="33" cy="27" r="4" fill="#F1EDE6" />
       <circle cx="47" cy="27" r="4" fill="#F1EDE6" />
-      <circle cx="34" cy="27" r="2.2" fill="#0D0F14" />
-      <circle cx="48" cy="27" r="2.2" fill="#0D0F14" />
-      <circle cx="34.7" cy="26.3" r="0.8" fill="#C8FF00" />
-      <circle cx="48.7" cy="26.3" r="0.8" fill="#C8FF00" />
-      <path d="M36 32 Q40 35 44 32" stroke="#C8FF00" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+      <circle cx="34" cy="27" r="2.2" fill="#0B1A24" />
+      <circle cx="48" cy="27" r="2.2" fill="#0B1A24" />
+      <circle cx="34.7" cy="26.3" r="0.8" fill="#F4B044" />
+      <circle cx="48.7" cy="26.3" r="0.8" fill="#F4B044" />
+      <path d="M36 32 Q40 35 44 32" stroke="#F4B044" strokeWidth="1.4" fill="none" strokeLinecap="round" />
       <ellipse cx="40" cy="38" rx="6" ry="4" fill="#2A3040" />
-      <path d="M30 52 Q28 62 30 68" stroke="#1E2330" strokeWidth="6" strokeLinecap="round" fill="none" />
-      <path d="M50 52 Q52 62 50 68" stroke="#1E2330" strokeWidth="6" strokeLinecap="round" fill="none" />
-      <ellipse cx="30" cy="68" rx="5" ry="3" fill="#C8FF00" />
-      <ellipse cx="50" cy="68" rx="5" ry="3" fill="#C8FF00" />
+      <path d="M30 52 Q28 62 30 68" stroke="#1A3242" strokeWidth="6" strokeLinecap="round" fill="none" />
+      <path d="M50 52 Q52 62 50 68" stroke="#1A3242" strokeWidth="6" strokeLinecap="round" fill="none" />
+      <ellipse cx="30" cy="68" rx="5" ry="3" fill="#F4B044" />
+      <ellipse cx="50" cy="68" rx="5" ry="3" fill="#F4B044" />
     </svg>
   );
 }
@@ -42,11 +42,11 @@ function SpeechBubble({ text }) {
   return (
     <div className="relative max-w-xs mx-auto mb-6">
       <div className="px-5 py-3 rounded-2xl rounded-bl-sm font-body text-base text-white text-center"
-        style={{ backgroundColor: '#1E2330', border: '1px solid #2A2F3A' }}>
+        style={{ backgroundColor: '#1A3242', border: '1px solid #24455A' }}>
         {text}
       </div>
       <div className="absolute -bottom-2 left-8 w-0 h-0"
-        style={{ borderLeft: '8px solid transparent', borderRight: '8px solid transparent', borderTop: '10px solid #1E2330' }} />
+        style={{ borderLeft: '8px solid transparent', borderRight: '8px solid transparent', borderTop: '10px solid #1A3242' }} />
     </div>
   );
 }
@@ -54,8 +54,8 @@ function SpeechBubble({ text }) {
 // ── Progress Bar ──────────────────────────────────────────────────────────────
 function ProgressBar({ current, total }) {
   return (
-    <div className="w-full h-1.5 rounded-full mb-6" style={{ backgroundColor: '#2A2F3A' }}>
-      <motion.div className="h-full rounded-full" style={{ backgroundColor: '#C8FF00' }}
+    <div className="w-full h-1.5 rounded-full mb-6" style={{ backgroundColor: '#24455A' }}>
+      <motion.div className="h-full rounded-full" style={{ backgroundColor: '#F4B044' }}
         animate={{ width: `${(current / total) * 100}%` }} transition={{ duration: 0.4 }} />
     </div>
   );
@@ -67,17 +67,17 @@ function OptionRow({ label, sublabel, emoji, selected, onSelect }) {
     <button onClick={onSelect}
       className="w-full flex items-center justify-between px-5 py-4 rounded-2xl mb-3 transition-all active:scale-98"
       style={{
-        backgroundColor: selected ? 'rgba(200,255,0,0.10)' : '#161A22',
-        border: `1.5px solid ${selected ? '#C8FF00' : '#2A2F3A'}`,
+        backgroundColor: selected ? 'rgba(244, 176, 68,0.10)' : '#112532',
+        border: `1.5px solid ${selected ? '#F4B044' : '#24455A'}`,
       }}>
       <div className="flex items-center gap-3">
         {emoji && <span className="text-xl">{emoji}</span>}
         <span className="font-body font-semibold text-base text-white">{label}</span>
       </div>
       <div className="flex items-center gap-2">
-        {sublabel && <span className="font-body text-sm" style={{ color: '#8A8F9E' }}>{sublabel}</span>}
-        {selected && <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: '#C8FF00' }}>
-          <Check size={12} color="#0D0F14" strokeWidth={3} />
+        {sublabel && <span className="font-body text-sm" style={{ color: '#88A5B7' }}>{sublabel}</span>}
+        {selected && <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: '#F4B044' }}>
+          <Check size={12} color="#0B1A24" strokeWidth={3} />
         </div>}
       </div>
     </button>
@@ -112,7 +112,7 @@ function ScrollPicker({ value, onChange, min, max, unit, step = 1 }) {
     <div className="relative flex flex-col items-center" style={{ width: 240 }}>
       {/* Center highlight — sits behind the scroll list */}
       <div className="absolute pointer-events-none rounded-2xl z-10"
-        style={{ top: ITEM_H, height: ITEM_H, left: 0, right: 0, border: '2px solid #C8FF00', backgroundColor: 'rgba(200,255,0,0.08)' }} />
+        style={{ top: ITEM_H, height: ITEM_H, left: 0, right: 0, border: '2px solid #F4B044', backgroundColor: 'rgba(244, 176, 68,0.08)' }} />
 
       <div ref={listRef} onScroll={handleScroll}
         className="overflow-y-scroll no-scrollbar relative z-0"
@@ -128,7 +128,7 @@ function ScrollPicker({ value, onChange, min, max, unit, step = 1 }) {
               {isSelected ? (
                 <div className="flex items-baseline gap-1.5">
                   <span className="font-heading font-black text-5xl text-white leading-none">{v}</span>
-                  {unit && <span className="font-body font-semibold text-xl" style={{ color: '#8A8F9E' }}>{unit}</span>}
+                  {unit && <span className="font-body font-semibold text-xl" style={{ color: '#88A5B7' }}>{unit}</span>}
                 </div>
               ) : (
                 <span className="font-heading font-black text-2xl" style={{ color: '#4A5065' }}>{v}</span>
@@ -167,8 +167,8 @@ function HealthIntegrations({ onConnectStrava, stravaBusy }) {
           disabled={app.comingSoon || stravaBusy}
           className="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl mb-3 transition-all active:scale-98"
           style={{
-            backgroundColor: '#161A22',
-            border: '1.5px solid #2A2F3A',
+            backgroundColor: '#112532',
+            border: '1.5px solid #24455A',
             opacity: app.comingSoon ? 0.55 : 1,
           }}>
           <div className="flex items-center gap-3">
@@ -178,11 +178,11 @@ function HealthIntegrations({ onConnectStrava, stravaBusy }) {
             </div>
             <div className="text-left">
               <p className="font-body font-semibold text-sm text-white">{app.name}</p>
-              <p className="font-body text-xs" style={{ color: '#8A8F9E' }}>{app.desc}</p>
+              <p className="font-body text-xs" style={{ color: '#88A5B7' }}>{app.desc}</p>
             </div>
           </div>
           {app.comingSoon ? (
-            <span className="text-xs font-body font-semibold px-3 py-1 rounded-lg" style={{ backgroundColor: '#2A2F3A', color: '#8A8F9E' }}>
+            <span className="text-xs font-body font-semibold px-3 py-1 rounded-lg" style={{ backgroundColor: '#24455A', color: '#88A5B7' }}>
               Soon
             </span>
           ) : (
@@ -304,11 +304,11 @@ export default function Onboarding() {
                 <button key={val} onClick={() => pickGender(val)}
                   className="rounded-2xl py-10 flex flex-col items-center gap-3 transition-all active:scale-95"
                   style={{
-                    backgroundColor: selected ? 'rgba(200,255,0,0.10)' : '#161A22',
-                    border: `2px solid ${selected ? '#C8FF00' : '#2A2F3A'}`,
+                    backgroundColor: selected ? 'rgba(244, 176, 68,0.10)' : '#112532',
+                    border: `2px solid ${selected ? '#F4B044' : '#24455A'}`,
                   }}>
-                  <span className="text-4xl leading-none" style={{ color: selected ? '#C8FF00' : '#8A8F9E' }}>{symbol}</span>
-                  <span className="font-heading font-black text-lg" style={{ color: selected ? '#C8FF00' : '#FFFFFF' }}>{label}</span>
+                  <span className="text-4xl leading-none" style={{ color: selected ? '#F4B044' : '#88A5B7' }}>{symbol}</span>
+                  <span className="font-heading font-black text-lg" style={{ color: selected ? '#F4B044' : '#FFFFFF' }}>{label}</span>
                 </button>
               );
             })}
@@ -330,14 +330,14 @@ export default function Onboarding() {
                 <button key={cls} onClick={() => setAvatarClass(cls)}
                   className="rounded-2xl p-3 flex flex-col items-center gap-1.5 transition-all active:scale-95"
                   style={{
-                    backgroundColor: selected ? `${cc.glow}14` : '#161A22',
-                    border: `2px solid ${selected ? cc.glow : '#2A2F3A'}`,
+                    backgroundColor: selected ? `${cc.glow}14` : '#112532',
+                    border: `2px solid ${selected ? cc.glow : '#24455A'}`,
                   }}>
                   <Avatar avatarClass={cls} tier={2} body={body} skinTone={skinTone} hair={hair} size={72} animate={false} />
                   <span className="font-heading font-black text-base" style={{ color: selected ? cc.glow : '#FFFFFF' }}>
                     {CLASS_LABELS[cls]}
                   </span>
-                  <span className="font-body text-[10px] text-center leading-tight" style={{ color: '#8A8F9E' }}>
+                  <span className="font-body text-[10px] text-center leading-tight" style={{ color: '#88A5B7' }}>
                     {CLASS_TAGLINES[cls]}
                   </span>
                 </button>
@@ -363,9 +363,9 @@ export default function Onboarding() {
         <div className="w-full flex flex-col items-center">
           <ScrollPicker value={weightKg} onChange={setWeightKg} min={30} max={200} unit="kg" />
           {bmi && (
-            <div className="mt-4 px-5 py-3 rounded-2xl w-full" style={{ backgroundColor: '#161A22', border: '1px solid #2A2F3A' }}>
-              <p className="font-body text-sm text-center" style={{ color: '#8A8F9E' }}>
-                ⓘ Your BMI is <span className="text-white font-semibold">{bmi}</span> — <span style={{ color: '#C8FF00' }}>{bmiLabel}</span>
+            <div className="mt-4 px-5 py-3 rounded-2xl w-full" style={{ backgroundColor: '#112532', border: '1px solid #24455A' }}>
+              <p className="font-body text-sm text-center" style={{ color: '#88A5B7' }}>
+                ⓘ Your BMI is <span className="text-white font-semibold">{bmi}</span> — <span style={{ color: 'var(--gf-gold-text)' }}>{bmiLabel}</span>
               </p>
             </div>
           )}
@@ -442,29 +442,29 @@ export default function Onboarding() {
         <div className="w-full flex flex-col items-center">
           <motion.div className="w-full" initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 180 }}>
             <h2 className="font-heading font-black text-3xl text-white text-center mb-2">Make it yours</h2>
-            <p className="font-body text-sm text-center mb-5" style={{ color: '#8A8F9E' }}>
+            <p className="font-body text-sm text-center mb-5" style={{ color: '#88A5B7' }}>
               Your avatar grows as you get stronger!
             </p>
             <div className="flex justify-center mb-6">
               <div className="p-6 rounded-3xl relative overflow-hidden"
-                style={{ backgroundColor: '#161A22', border: '2px solid #C8FF00' }}>
-                <div className="absolute inset-0 opacity-10" style={{ background: 'radial-gradient(circle at 50% 40%, #C8FF00, transparent 60%)' }} />
+                style={{ backgroundColor: '#112532', border: '2px solid #F4B044' }}>
+                <div className="absolute inset-0 opacity-10" style={{ background: 'radial-gradient(circle at 50% 40%, #F4B044, transparent 60%)' }} />
                 <Avatar avatarClass={avatarClass || 'warrior'} body={body} skinTone={skinTone} hair={hair} size={150} tier={1} />
               </div>
             </div>
 
-            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#8A8F9E' }}>Skin tone</p>
+            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#88A5B7' }}>Skin tone</p>
             <div className="flex gap-2.5 justify-center mb-4">
               {Object.keys(SKIN_TONES).map(s => (
                 <button key={s} onClick={() => setSkinTone(s)}
                   className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
-                  style={{ backgroundColor: SKIN_TONES[s].base, border: `3px solid ${skinTone === s ? '#C8FF00' : 'transparent'}` }}>
+                  style={{ backgroundColor: SKIN_TONES[s].base, border: `3px solid ${skinTone === s ? '#F4B044' : 'transparent'}` }}>
                   {skinTone === s && <Check size={13} color="white" strokeWidth={3} />}
                 </button>
               ))}
             </div>
 
-            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#8A8F9E' }}>Hair</p>
+            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#88A5B7' }}>Hair</p>
             <div className="flex gap-2 mb-3">
               {hairStylesFor(body).map(style => {
                 const cur = hair.split('_');
@@ -472,7 +472,7 @@ export default function Onboarding() {
                 return (
                   <button key={style} onClick={() => setHair(`${style}_${cur[1] || 'black'}`)}
                     className="flex-1 py-2 rounded-xl font-body font-medium text-xs capitalize transition-all"
-                    style={{ backgroundColor: selected ? '#C8FF00' : '#161A22', color: selected ? '#0D0F14' : '#8A8F9E', border: `1px solid ${selected ? '#C8FF00' : '#2A2F3A'}` }}>
+                    style={{ backgroundColor: selected ? '#F4B044' : '#112532', color: selected ? '#0B1A24' : '#88A5B7', border: `1px solid ${selected ? '#F4B044' : '#24455A'}` }}>
                     {style}
                   </button>
                 );
@@ -485,7 +485,7 @@ export default function Onboarding() {
                 return (
                   <button key={c} onClick={() => setHair(`${cur[0] || 'short'}_${c}`)}
                     className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
-                    style={{ backgroundColor: HAIR_COLORS[c].base, border: `3px solid ${selected ? '#C8FF00' : 'transparent'}` }}>
+                    style={{ backgroundColor: HAIR_COLORS[c].base, border: `3px solid ${selected ? '#F4B044' : 'transparent'}` }}>
                     {selected && <Check size={13} color="white" strokeWidth={3} />}
                   </button>
                 );
@@ -501,7 +501,7 @@ export default function Onboarding() {
       content: (
         <div className="w-full">
           <h2 className="font-heading font-black text-2xl text-white mb-1">Health Connect</h2>
-          <p className="font-body text-sm mb-5" style={{ color: '#8A8F9E' }}>
+          <p className="font-body text-sm mb-5" style={{ color: '#88A5B7' }}>
             Connect your health apps to automatically sync your fitness data with GameFit.
           </p>
           <HealthIntegrations onConnectStrava={connectStrava} stravaBusy={stravaBusy} />
@@ -514,12 +514,12 @@ export default function Onboarding() {
   const isLast = step === TOTAL_STEPS - 1;
 
   return (
-    <div className="min-h-screen flex flex-col px-5 pb-8 pt-12" style={{ backgroundColor: '#0D0F14' }}>
+    <div className="min-h-screen flex flex-col px-5 pb-8 pt-12" style={{ backgroundColor: '#0B1A24' }}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         {step > 0 ? (
-          <button onClick={back} className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#1E2330' }}>
-            <ChevronLeft size={18} color="#8A8F9E" />
+          <button onClick={back} className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#1A3242' }}>
+            <ChevronLeft size={18} color="#88A5B7" />
           </button>
         ) : <div className="w-9" />}
         <div className="flex-1">
@@ -551,8 +551,8 @@ export default function Onboarding() {
         <button onClick={next} disabled={!canProceed() || saving}
           className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all active:scale-95"
           style={{
-            backgroundColor: canProceed() ? '#C8FF00' : '#2A2F3A',
-            color: canProceed() ? '#0D0F14' : '#4A5065',
+            backgroundColor: canProceed() ? '#F4B044' : '#24455A',
+            color: canProceed() ? '#0B1A24' : '#4A5065',
           }}>
           {saving ? 'Setting up your profile...' : isLast ? "Let's Go! 🚀" : 'NEXT'}
           {!saving && !isLast && <ChevronRight size={22} />}

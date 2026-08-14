@@ -111,7 +111,7 @@ export default function MonthlySummary() {
             <motion.div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
               <div className="flex items-center gap-2 mb-2">
-                <Dumbbell size={18} color="#EF4444" />
+                <Dumbbell size={18} color="#E5614A" />
                 <p className="font-body text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--gf-text-secondary)' }}>Weight Lifted</p>
               </div>
               <p className="font-heading font-black text-3xl" style={{ color: 'var(--gf-text-primary)' }}>
@@ -177,7 +177,7 @@ export default function MonthlySummary() {
                         {data.count} sessions · {data.duration} min
                       </p>
                     </div>
-                    <span className="font-heading font-black text-base" style={{ color: 'var(--gf-green)' }}>
+                    <span className="font-heading font-black text-base" style={{ color: 'var(--gf-gold-text)' }}>
                       +{data.xp} XP
                     </span>
                   </div>
@@ -188,13 +188,13 @@ export default function MonthlySummary() {
 
           {/* Best Day */}
           {stats.bestDay && (
-            <div className="rounded-2xl p-4" style={{ backgroundColor: 'linear-gradient(135deg, rgba(200,255,0,0.1), rgba(124,58,237,0.1))', border: '1px solid var(--gf-border)' }}>
+            <div className="rounded-2xl p-4" style={{ backgroundColor: 'linear-gradient(135deg, rgba(244, 176, 68,0.1), rgba(127, 187, 212,0.1))', border: '1px solid var(--gf-border)' }}>
               <h3 className="font-heading font-black text-base mb-2" style={{ color: 'var(--gf-text-primary)' }}>🔥 Best Day of the Month</h3>
               <div className="space-y-1">
                 <p className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>
                   {new Date(stats.bestDay.date).toLocaleDateString()} · {stats.bestDay.exercise}
                 </p>
-                <p className="font-heading font-black text-2xl" style={{ color: 'var(--gf-green)' }}>
+                <p className="font-heading font-black text-2xl" style={{ color: 'var(--gf-gold-text)' }}>
                   +{stats.bestDay.xp} XP
                 </p>
                 <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>

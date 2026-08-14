@@ -17,13 +17,13 @@ const EXERCISE_MUSCLE_MAP = {
 };
 
 const MUSCLE_META = {
-  'Chest':     { emoji: '💪', color: '#EF4444', bg: 'rgba(239,68,68,0.12)' },
+  'Chest':     { emoji: '💪', color: '#E5614A', bg: 'rgba(239,68,68,0.12)' },
   'Back':      { emoji: '🏋️', color: '#3B82F6', bg: 'rgba(59,130,246,0.12)' },
   'Arms':      { emoji: '🦾', color: '#F97316', bg: 'rgba(249,115,22,0.12)' },
-  'Legs':      { emoji: '🦵', color: '#22C55E', bg: 'rgba(34,197,94,0.12)' },
-  'Core':      { emoji: '🎯', color: '#FFB800', bg: 'rgba(255,184,0,0.12)' },
+  'Legs':      { emoji: '🦵', color: '#5FBF7C', bg: 'rgba(34,197,94,0.12)' },
+  'Core':      { emoji: '🎯', color: '#E0680E', bg: 'rgba(224, 104, 14,0.12)' },
   'Cardio':    { emoji: '❤️', color: '#EC4899', bg: 'rgba(236,72,153,0.12)' },
-  'Full Body': { emoji: '⚡', color: '#C8FF00', bg: 'rgba(200,255,0,0.12)' },
+  'Full Body': { emoji: '⚡', color: 'var(--gf-gold-text)', bg: 'rgba(244, 176, 68,0.12)' },
 };
 
 const ALL_MUSCLE_GROUPS = ['Legs', 'Core', 'Cardio', 'Back', 'Arms', 'Chest', 'Full Body'];
@@ -111,9 +111,9 @@ export default function BodyAnalysis({ workouts }) {
       {/* Suggestion */}
       {leastTrained && leastTrained.count === 0 && (
         <div className="mx-4 mb-4 px-3 py-2.5 rounded-xl flex items-center gap-2"
-          style={{ backgroundColor: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.3)' }}>
+          style={{ backgroundColor: 'rgba(127, 187, 212,0.1)', border: '1px solid rgba(127, 187, 212,0.3)' }}>
           <span className="text-lg">{MUSCLE_META[leastTrained.name]?.emoji}</span>
-          <p className="font-body text-xs" style={{ color: '#A78BFA' }}>
+          <p className="font-body text-xs" style={{ color: '#7FBBD4' }}>
             You haven't trained <strong>{leastTrained.name}</strong> yet — try mixing it in!
           </p>
         </div>
