@@ -8,9 +8,10 @@ import { useGameFit } from '@/lib/GameFitContext';
 import { getNextLevelXP, getCurrentLevelXP, getAvatarTier } from '@/lib/mockData';
 import Avatar from '@/components/avatar/Avatar';
 import {
-  AVATAR_CLASSES, CLASS_LABELS, CLASS_TAGLINES, CLASS_COLORS, SKIN_TONES, HAIR_COLORS,
+  AVATAR_CLASSES, CLASS_LABELS, CLASS_TAGLINES, classColors, SKIN_TONES, HAIR_COLORS,
   BODY_TYPES, BODY_LABELS, hairStylesFor, hairForBody,
 } from '@/components/avatar/palettes';
+import { useAvatarTheme } from '@/components/avatar/theme';
 import { TIER_CONFIG } from '@/components/avatar/tiers';
 import { normalizeAvatarConfig } from '@/components/avatar/migrate';
 import BottomNav from '@/components/gamefit/BottomNav';
@@ -29,6 +30,7 @@ const HEALTH_APPS = [
 export default function AvatarScreen() {
   const { user, workouts, updateUser, purchaseAccessory, equipAccessory } = useGameFit();
   const [activeTab, setActiveTab] = useState('avatar');
+  const avatarTheme = useAvatarTheme();
   const [connectedApps, setConnectedApps] = useState(() => user.connected_apps || []);
   const [connectingApp, setConnectingApp] = useState(null);
   const [shopError, setShopError] = useState('');
@@ -261,7 +263,8 @@ export default function AvatarScreen() {
                 <div className="relative z-10 mt-2">
                   <Avatar avatarClass={avatarCfg.class} tier={currentTier} body={avatarCfg.body}
                     skinTone={avatarCfg.skin_tone} hair={avatarCfg.hair}
-                    accessories={equippedAccessory ? [equippedAccessory] : []} size={170} />
+                    accessories={equippedAccessory ? [equippedAccessory] : []} size={170}
+                    interactive />
                   {equippedItem && (
                     <motion.div className="absolute -top-3 -right-3 text-3xl"
                       initial={{ scale: 0 }} animate={{ scale: 1 }} key={equippedItem.id}
@@ -344,7 +347,7 @@ export default function AvatarScreen() {
             <div className="grid grid-cols-5 gap-2 mb-1">
               {AVATAR_CLASSES.map(cls => {
                 const selected = avatarCfg.class === cls;
-                const cc = CLASS_COLORS[cls];
+                const cc = classColors(cls, avatarTheme);
                 return (
                   <button key={cls} onClick={() => updateAvatar('class', cls)}
                     className="flex flex-col items-center gap-1 py-2 rounded-xl transition-all"
@@ -355,7 +358,7 @@ export default function AvatarScreen() {
                     <Avatar avatarClass={cls} tier={currentTier} body={avatarCfg.body}
                       skinTone={avatarCfg.skin_tone} hair={avatarCfg.hair} size={36} animate={false} />
                     <span className="font-body text-[10px] font-semibold"
-                      style={{ color: selected ? cc.glow : 'var(--gf-text-secondary)' }}>
+                      style={{ color: selected ? cc.text : 'var(--gf-text-secondary)' }}>
                       {CLASS_LABELS[cls]}
                     </span>
                   </button>

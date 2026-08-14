@@ -187,14 +187,86 @@ resolves each text node's actual painted background through alpha layers and
 checks it at the right threshold for its size and weight. Zero failures in
 both themes. The site additionally runs axe on every route in CI.
 
-Phases 1-4 are shipped and live on both surfaces. Remaining: **5 motion**
-(the fill cadence is already in XPMeter; the site's hero wipe and ladder
-stagger are not) and **6 avatars**.
+Phases 1-5 are shipped and live on both surfaces. **Phase 6 (avatars) is done
+on branch `feat/avatars`, not yet merged** — see below.
+
+## Phase 6: avatars (branch `feat/avatars`, 2026-08-14)
+
+The diagnosis came from rendering contact sheets on the grounds the avatars
+actually sit on, which is the thing to repeat before touching this again:
+
+```bash
+npx tsx scripts/render-avatars.mjs <outDir> --bg=#1A3242
+```
+
+`--bg` matters. The script used to bake `#161A22`, the near-black phase 1
+deleted, so every previous art review judged the rigs against a background that
+no longer exists. The real grounds are `#1A3242` (AvatarScreen hero), `#112532`
+(leaderboard rows, class picker) and `#DFE8EE`/`#FFFFFF` in light theme.
+
+Three things were wrong, and only the first was suspected:
+
+1. **Colour.** Every class's trim was under 1.35:1 on a card and ninja's
+   *primary* was 1.05 — invisible. `palettes.js` and the five class art files
+   each kept private hex tables that the phase 1 token migration never reached.
+   `#9664FF` turned out to be every class's tier-5 aura, not mage's, so all
+   five glowed the same violet.
+2. **Skin.** Ebony measured 1.18 on a dark card, porcelain 1.13 on a light one.
+   Not fixable by recolouring: skin tone is user identity. Solved structurally
+   with a contour.
+3. **Identity.** Every class put all its headwear at tier 4, so at 46px — the
+   size people see each other at — four of five classes were the same picture.
+
+What shipped:
+
+- `CLASS_PALETTES` / `RIG_PALETTES` carry dark and light variants. `classColors(cls, theme)`
+  and `rigColors(theme)` resolve them; `avatarCssVars`/`bakeAvatarVars` are
+  shared by `<Avatar/>` and the render scripts so the two cannot drift.
+- A `text` value per class, because the pickers colour *labels* with it and a
+  label answers to 4.5:1, not the 2.2:1 a filled shape needs. Same split as
+  `--gf-gold` / `--gf-gold-text`.
+- **The contour** (`--av-contour`): a 2.4px stroke with `paint-order: stroke`
+  on the silhouette shapes of both rigs. It sits opposite the ground — light on
+  dark, dark on light — and that direction is load-bearing. No single line
+  colour clears all six tones; it does not need to, because a body reads if the
+  tone beats the card OR the line beats both the card and that tone. Invert
+  either value and the tones it exists to rescue vanish.
+- Class identity at tier 1, material escalating after: warrior bone horns →
+  steel helm, mage cowl → hood up, archer feather + cap → cowl, knight mail
+  coif → plate helm, ninja band + tails → charged seam + mask. They read as
+  spikes / point / diagonal / mass / horizontal. Knight is deliberately the one
+  with no spike.
+- `cumulativeGear` gained `supersedes`, so a later tier *replaces* a piece
+  instead of drawing over it (no bone horn poking out from behind steel).
+- `<Avatar interactive/>` (tap/click/Enter) and `revealFromTier` (rank-up gear
+  animates in). **The reaction clears on a timer, not only `animationend`** —
+  under `prefers-reduced-motion` the rule is `animation: none`, so
+  `animationend` never fires and the state would latch on forever after one tap.
+- `scripts/check-avatar-contrast.mjs` gates all of it: ground contrast, label
+  contrast, pairwise class separation (ΔE > 25), intra-kit separation, and the
+  skin/contour disjunction. Exits non-zero. **Run it after any palette edit.**
+- `/avatar-gallery` (dev-only route) gained an interaction bench, because both
+  behaviours otherwise only exist behind auth.
+- `store-assets/` and `gamefit-web/public/screens/` regenerated. Only dashboard,
+  avatar and leaderboard changed; the other three are byte-identical, which is
+  the expected shape of that diff.
+
+Fixed in passing: the right arm's shadow ran ~7px past the arm (invisible until
+the contour drew where the arm ends), and `LevelUpOverlay` announced "Avatar
+evolved to Tier N" on any level-up above tier 1 — levelling 7→8 stays inside
+tier 4, so it claimed an evolution that had not happened.
+
+Still open on this branch: **shop accessories have no light-theme variants.**
+Ten item-identity colours remain hardcoded in `layers/accessories.js`; wings at
+`#FFFFFF` measure 1.0 on a white card, and these are items users pay coins for.
+Each item's identity colour is its own design decision, so it was left separate.
 
 Not in any phase yet, flagged rather than forgotten: ~109 emoji remain in
 Onboarding, AvatarScreen, Coach, Marketplace, AccessoryShop, NutritionTab
 and NotificationsPanel. AccessoryShop and Marketplace are cosmetic item art
-and belong with the avatar work; the rest need their own pass.
+and belong with the accessory pass above; the rest need their own. The
+regenerated store screenshots show these plainly — the Avatar screen header
+alone carries 🎮 🎭 🛒 🔗 ⚔️.
 
 ## Known limitations (disclosed, not hidden)
 

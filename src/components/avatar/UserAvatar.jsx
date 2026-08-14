@@ -6,7 +6,10 @@ import { normalizeAvatarConfig } from './migrate';
  * Convenience wrapper: render a user object's avatar. Accepts any historical
  * avatar_config shape and the user's equipped shop accessory.
  */
-export default function UserAvatar({ user, tier, size = 120, animate = true, className = '', style }) {
+export default function UserAvatar({
+  user, tier, size = 120, animate = true, className = '', style,
+  interactive = false, onActivate, revealFromTier,
+}) {
   const cfg = normalizeAvatarConfig(user?.avatar_config, { gender: user?.gender });
   return (
     <Avatar
@@ -20,6 +23,9 @@ export default function UserAvatar({ user, tier, size = 120, animate = true, cla
       animate={animate}
       className={className}
       style={style}
+      interactive={interactive}
+      onActivate={onActivate}
+      revealFromTier={revealFromTier}
     />
   );
 }

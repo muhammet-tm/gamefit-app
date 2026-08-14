@@ -6,7 +6,7 @@ import { useGameFit } from '@/lib/GameFitContext';
 import { invokeFunction } from '@/api/supabase';
 import Avatar from '@/components/avatar/Avatar';
 import {
-  AVATAR_CLASSES, CLASS_LABELS, CLASS_TAGLINES, CLASS_COLORS,
+  AVATAR_CLASSES, CLASS_LABELS, CLASS_TAGLINES, classColors,
   SKIN_TONES, HAIR_COLORS, DEFAULT_CONFIG,
   hairStylesFor, hairForBody, DEFAULT_HAIR_BY_BODY,
 } from '@/components/avatar/palettes';
@@ -325,7 +325,9 @@ export default function Onboarding() {
           <div className="grid grid-cols-2 gap-3">
             {AVATAR_CLASSES.map(cls => {
               const selected = avatarClass === cls;
-              const cc = CLASS_COLORS[cls];
+              // Onboarding paints its own dark ground (#112532, white text)
+              // regardless of the app theme, so it pins the dark palette.
+              const cc = classColors(cls, 'dark');
               return (
                 <button key={cls} onClick={() => setAvatarClass(cls)}
                   className="rounded-2xl p-3 flex flex-col items-center gap-1.5 transition-all active:scale-95"
@@ -333,8 +335,8 @@ export default function Onboarding() {
                     backgroundColor: selected ? `${cc.glow}14` : '#112532',
                     border: `2px solid ${selected ? cc.glow : '#24455A'}`,
                   }}>
-                  <Avatar avatarClass={cls} tier={2} body={body} skinTone={skinTone} hair={hair} size={72} animate={false} />
-                  <span className="font-heading font-black text-base" style={{ color: selected ? cc.glow : '#FFFFFF' }}>
+                  <Avatar avatarClass={cls} tier={2} body={body} skinTone={skinTone} hair={hair} size={72} animate={false} theme="dark" />
+                  <span className="font-heading font-black text-base" style={{ color: selected ? cc.text : '#FFFFFF' }}>
                     {CLASS_LABELS[cls]}
                   </span>
                   <span className="font-body text-[10px] text-center leading-tight" style={{ color: '#88A5B7' }}>
@@ -449,7 +451,7 @@ export default function Onboarding() {
               <div className="p-6 rounded-3xl relative overflow-hidden"
                 style={{ backgroundColor: '#112532', border: '2px solid #F4B044' }}>
                 <div className="absolute inset-0 opacity-10" style={{ background: 'radial-gradient(circle at 50% 40%, #F4B044, transparent 60%)' }} />
-                <Avatar avatarClass={avatarClass || 'warrior'} body={body} skinTone={skinTone} hair={hair} size={150} tier={1} />
+                <Avatar avatarClass={avatarClass || 'warrior'} body={body} skinTone={skinTone} hair={hair} size={150} tier={1} theme="dark" />
               </div>
             </div>
 
