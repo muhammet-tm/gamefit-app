@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Camera, Plus, Trash2, Loader2, Crown, X } from 'lucide-react';
+import {
+  Lock, Camera, Plus, Trash2, Loader2, Crown, X, Sunrise, Apple, Salad, Cookie,
+  UtensilsCrossed, Moon, Flame, Beef, Wheat, Droplet, Wand2, Pencil,
+} from 'lucide-react';
 import { supabase, updateProfile, invokeFunction } from '@/api/supabase';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 
@@ -12,9 +15,9 @@ const today = () => {
 };
 
 const MEAL_TYPES = ['Breakfast', 'Morning Snack', 'Lunch', 'Afternoon Snack', 'Dinner', 'Evening Snack'];
-const MEAL_EMOJIS = {
-  'Breakfast': '🌅', 'Morning Snack': '🍎', 'Lunch': '🥗',
-  'Afternoon Snack': '🥜', 'Dinner': '🍽️', 'Evening Snack': '🌙',
+const MEAL_ICONS = {
+  'Breakfast': Sunrise, 'Morning Snack': Apple, 'Lunch': Salad,
+  'Afternoon Snack': Cookie, 'Dinner': UtensilsCrossed, 'Evening Snack': Moon,
 };
 
 const DEFAULT_GOALS = { calories: 2000, protein_g: 150, carbs_g: 200, fat_g: 65 };
@@ -159,7 +162,7 @@ function SnapResultSheet({ result, onSave, onRetry, onClose }) {
           </div>
           <div className="rounded-2xl p-4 flex items-center gap-4"
             style={{ backgroundColor: 'var(--gf-bg-elevated)', border: '1px solid var(--gf-border)' }}>
-            <span className="text-3xl">🔥</span>
+            <Flame size={30} strokeWidth={2} style={{ color: 'var(--gf-ember-text)' }} aria-hidden="true" />
             <div>
               <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>Calories</p>
               <p className="font-heading font-black text-4xl" style={{ color: 'var(--gf-text-primary)' }}>{result.calories}</p>
@@ -167,13 +170,13 @@ function SnapResultSheet({ result, onSave, onRetry, onClose }) {
           </div>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: 'Protein', value: result.protein_g, emoji: '🥩', color: '#E5614A' },
-              { label: 'Carbs', value: result.carbs_g, emoji: '🌾', color: '#7FBBD4' },
-              { label: 'Fats', value: result.fat_g, emoji: '🫒', color: '#F59E0B' },
+              { label: 'Protein', value: result.protein_g, Icon: Beef, color: '#E5614A' },
+              { label: 'Carbs', value: result.carbs_g, Icon: Wheat, color: '#7FBBD4' },
+              { label: 'Fats', value: result.fat_g, Icon: Droplet, color: '#F59E0B' },
             ].map(m => (
               <div key={m.label} className="rounded-2xl p-3 text-center"
                 style={{ backgroundColor: 'var(--gf-bg-elevated)', border: `1px solid ${m.color}30` }}>
-                <span className="text-xl">{m.emoji}</span>
+                <m.Icon size={19} strokeWidth={2.1} className="mx-auto" style={{ color: m.color }} aria-hidden="true" />
                 <p className="font-body text-[10px] mt-1" style={{ color: 'var(--gf-text-secondary)' }}>{m.label}</p>
                 <p className="font-heading font-black text-xl" style={{ color: m.color }}>{m.value}g</p>
               </div>
@@ -183,7 +186,7 @@ function SnapResultSheet({ result, onSave, onRetry, onClose }) {
             <button onClick={onRetry}
               className="flex-1 py-3 rounded-2xl font-heading font-black text-base flex items-center justify-center gap-2"
               style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-border)' }}>
-              ✦ Fix Results
+              <Wand2 size={16} strokeWidth={2.2} aria-hidden="true" /> Fix Results
             </button>
             <button onClick={() => onSave(result)}
               className="flex-1 py-3 rounded-2xl font-heading font-black text-base flex items-center justify-center gap-2"
@@ -328,7 +331,7 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
               ) : (
                 <button onClick={() => setEditingGoal(true)} className="flex items-center gap-1">
                   <span className="font-heading font-black" style={{ color: 'var(--gf-text-primary)' }}>{goals.calories.toLocaleString()}</span>
-                  <span className="text-xs">✏️</span>
+                  <Pencil size={11} strokeWidth={2.4} aria-hidden="true" />
                 </button>
               )}
             </div>
@@ -406,7 +409,7 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
           </div>
         ) : meals.length === 0 ? (
           <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}>
-            <p className="text-3xl mb-2">🍽️</p>
+            <UtensilsCrossed size={30} strokeWidth={1.8} className="mx-auto mb-2" style={{ color: 'var(--gf-text-secondary)' }} aria-hidden="true" />
             <p className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>No meals logged today. Add your first meal!</p>
           </div>
         ) : (
@@ -419,9 +422,13 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
                 {meal.image_url ? (
                   <img src={meal.image_url} alt={meal.meal_name} className="w-12 h-12 rounded-xl object-cover flex-shrink-0" />
                 ) : (
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
-                    {MEAL_EMOJIS[meal.meal_type] || '🍽️'}
+                    {(() => {
+                      const MealIcon = MEAL_ICONS[meal.meal_type] || UtensilsCrossed;
+                      return <MealIcon size={22} strokeWidth={2}
+                        style={{ color: 'var(--gf-text-secondary)' }} aria-hidden="true" />;
+                    })()}
                   </div>
                 )}
                 <div className="flex-1 min-w-0">

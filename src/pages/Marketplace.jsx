@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Copy, Check } from 'lucide-react';
+import {
+  Lock, Copy, Check, VenetianMask, Tag, Coins, Construction, Gift, PartyPopper,
+} from 'lucide-react';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import { useGameFit } from '@/lib/GameFitContext';
@@ -8,7 +10,7 @@ import { MOCK_REWARDS } from '@/lib/mockData';
 import BottomNav from '@/components/gamefit/BottomNav';
 
 const CATEGORIES = ['All', 'Avatar Items', 'Discount Codes'];
-const REWARD_ICONS = { AvatarItem: '🎭', DiscountCode: '🏷️' };
+const REWARD_ICONS = { AvatarItem: VenetianMask, DiscountCode: Tag };
 
 export default function Marketplace() {
   const { user } = useGameFit();
@@ -43,12 +45,12 @@ export default function Marketplace() {
     <div className="min-h-screen pb-20" style={{ backgroundColor: 'var(--gf-bg-primary)' }}>
       <ScreenTransition direction="forward">
       <ScreenHeader 
-        title="🛒 Marketplace"
+        title="Marketplace"
         subtitle="Spend your coins wisely"
         showBackButton={false}
         rightAction={<div className="flex items-center gap-2 px-3 py-1.5 rounded-xl"
           style={{ backgroundColor: 'rgba(224, 104, 14,0.1)', border: '1px solid rgba(224, 104, 14,0.3)' }}>
-          <span className="text-base">🪙</span>
+          <Coins size={16} strokeWidth={2.3} style={{ color: '#E0680E' }} aria-hidden="true" />
           <span className="font-heading font-black text-lg" style={{ color: '#E0680E' }}>{user.coins}</span>
         </div>}
       />
@@ -71,7 +73,8 @@ export default function Marketplace() {
         {/* Honest state: partner rewards are previews until real deals exist */}
         <div className="mb-4 px-4 py-3 rounded-xl flex items-center gap-3"
           style={{ backgroundColor: 'rgba(224, 104, 14,0.08)', border: '1px solid rgba(224, 104, 14,0.3)' }}>
-          <span className="text-xl">🚧</span>
+          <Construction size={20} strokeWidth={2.1} className="flex-shrink-0"
+            style={{ color: 'var(--gf-ember-text)' }} aria-hidden="true" />
           <p className="font-body text-xs leading-relaxed" style={{ color: 'var(--gf-text-secondary)' }}>
             <strong style={{ color: 'var(--gf-ember-text)' }}>Partner rewards are coming soon.</strong>{' '}
             Preview what you'll be able to redeem — your coins are safe in the meantime.
@@ -94,7 +97,11 @@ export default function Marketplace() {
                 {/* Image/icon area */}
                 <div className="h-28 flex items-center justify-center relative"
                   style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
-                  <span className="text-5xl">{REWARD_ICONS[reward.reward_type] || '🎁'}</span>
+                  {(() => {
+                    const RewardIcon = REWARD_ICONS[reward.reward_type] || Gift;
+                    return <RewardIcon size={44} strokeWidth={1.5}
+                      style={{ color: 'var(--gf-gold-text)' }} aria-hidden="true" />;
+                  })()}
                   {isPremiumLocked && (
                     <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-lg"
                       style={{ backgroundColor: 'rgba(127, 187, 212,0.9)' }}>
@@ -109,7 +116,9 @@ export default function Marketplace() {
                   <p className="font-body text-xs leading-relaxed flex-1" style={{ color: 'var(--gf-text-secondary)' }}>{reward.description}</p>
 
                   <div className="flex items-center justify-between">
-                    <span className="font-heading font-black text-sm" style={{ color: '#E0680E' }}>🪙 {reward.cost_coins}</span>
+                    <span className="font-heading font-black text-sm flex items-center gap-1" style={{ color: '#E0680E' }}>
+                      <Coins size={13} strokeWidth={2.4} aria-hidden="true" />{reward.cost_coins}
+                    </span>
                   </div>
 
                   <button
@@ -120,7 +129,11 @@ export default function Marketplace() {
                       color: 'var(--gf-text-secondary)',
                       border: '1px solid var(--gf-border)',
                     }}>
-                    {isPremiumLocked ? '🔒 Premium Only' : 'SOON'}
+                    {isPremiumLocked ? (
+                      <span className="flex items-center justify-center gap-1">
+                        <Lock size={12} strokeWidth={2.6} aria-hidden="true" /> Premium Only
+                      </span>
+                    ) : 'SOON'}
                   </button>
                 </div>
               </motion.div>
@@ -142,13 +155,13 @@ export default function Marketplace() {
               <div className="text-center mb-5">
                 <span className="text-5xl">{REWARD_ICONS[confirmReward.reward_type]}</span>
                 <h3 className="font-heading font-black text-xl mt-3" style={{ color: 'var(--gf-text-primary)' }}>
-                  Spend {confirmReward.cost_coins} 🪙 on
+                  Spend {confirmReward.cost_coins} coins on
                 </h3>
                 <p className="font-heading font-black text-2xl mt-1" style={{ color: 'var(--gf-ember-text)' }}>
                   {confirmReward.reward_name}?
                 </p>
                 <p className="font-body text-sm mt-2" style={{ color: 'var(--gf-text-secondary)' }}>
-                  You have {user.coins} 🪙 · {user.coins - confirmReward.cost_coins} remaining after
+                  You have {user.coins} coins · {user.coins - confirmReward.cost_coins} remaining after
                 </p>
               </div>
               <div className="flex gap-3">
@@ -177,7 +190,7 @@ export default function Marketplace() {
             <motion.div className="w-full max-w-sm rounded-3xl p-6 text-center"
               style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}
               initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}>
-              <span className="text-5xl">🎉</span>
+              <PartyPopper size={44} strokeWidth={1.7} style={{ color: 'var(--gf-gold-text)' }} aria-hidden="true" />
               <h3 className="font-heading font-black text-2xl mt-3 mb-1" style={{ color: 'var(--gf-text-primary)' }}>Redeemed!</h3>
               <p className="font-heading font-black text-base mb-4" style={{ color: 'var(--gf-ember-text)' }}>{successCode.reward.reward_name}</p>
 

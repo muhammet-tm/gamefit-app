@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Zap, Lock } from 'lucide-react';
+import {
+  Send, Zap, Lock, ClipboardList, Salad, MessageCircle, ThumbsUp, ThumbsDown,
+  Check, Stethoscope, Loader2,
+} from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import BottomNav from '@/components/gamefit/BottomNav';
 import PremiumModal from '@/components/gamefit/PremiumModal';
@@ -53,7 +56,7 @@ export default function Coach() {
 
   // Chat state
   const [messages, setMessages] = useState([
-    { role: 'ai', content: "Hey! I'm Coach G 🤖 Your AI fitness coach. Ask me anything about workouts, nutrition, recovery, or training plans. I'm here to help you level up!" }
+    { role: 'ai', content: "Hey! I'm Coach G, your AI fitness coach. Ask me anything about workouts, nutrition, recovery, or training plans. I'm here to help you level up!" }
   ]);
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
@@ -141,18 +144,22 @@ export default function Coach() {
         
         {/* Medical disclaimer — always visible on the coaching surface */}
         <p className="px-5 pt-2 font-body text-[10px] leading-snug" style={{ color: 'var(--gf-text-secondary)' }}>
-          ⚕️ Coach G gives general fitness guidance only — not medical advice. Consult a
+          <Stethoscope size={11} strokeWidth={2.2} className="inline-block align-[-1px] mr-0.5" aria-hidden="true" />
+          Coach G gives general fitness guidance only — not medical advice. Consult a
           professional before starting a new program.
         </p>
 
         {/* Tabs */}
         <div className="px-5 pt-2 pb-2">
           <div className="flex rounded-xl p-1" style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
-            {[['plan','📋 Plan'], ['nutrition','🥗 Nutrition'], ['chat','💬 Chat']].map(([t, label]) => (
+            {[['plan', 'Plan', ClipboardList], ['nutrition', 'Nutrition', Salad], ['chat', 'Chat', MessageCircle]].map(([t, label, TabIcon]) => (
               <button key={t} onClick={() => setTab(t)}
                 className="flex-1 py-2.5 rounded-lg font-body font-medium text-sm transition-all"
                 style={{ backgroundColor: tab === t ? 'var(--gf-purple)' : 'transparent', color: tab === t ? '#FFFFFF' : 'var(--gf-text-secondary)' }}>
-                {label}
+                <span className="flex items-center justify-center gap-1.5">
+                  <TabIcon size={15} strokeWidth={2.2} aria-hidden="true" />
+                  {label}
+                </span>
               </button>
             ))}
           </div>
@@ -245,7 +252,7 @@ export default function Coach() {
             className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all active:scale-95"
             style={{ backgroundColor: atLimit ? 'var(--gf-border)' : 'var(--gf-purple)', color: '#FFFFFF', opacity: planLoading ? 0.7 : 1 }}>
             {planLoading ? (
-              <><motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}>⚙️</motion.span> Generating...</>
+              <><motion.span className="inline-flex" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}><Loader2 size={18} strokeWidth={2.4} aria-hidden="true" /></motion.span> Generating...</>
             ) : atLimit ? (<><Lock size={20} /> Limit Reached</>) : (<><Zap size={20} /> Generate Plan</>)}
           </button>
 
@@ -257,17 +264,19 @@ export default function Coach() {
               {!planRating && (
                 <div className="flex gap-2 mt-4 pt-4" style={{ borderTop: '1px solid var(--gf-border)' }}>
                   <p className="font-body text-xs mr-auto" style={{ color: 'var(--gf-text-secondary)' }}>Rate this plan:</p>
-                  {[{ label: '👍 Too Easy', val: 'too_easy' }, { label: '✅ Just Right', val: 'just_right' }, { label: '👎 Too Hard', val: 'too_hard' }].map(r => (
+                  {[{ label: 'Too Easy', Icon: ThumbsUp, val: 'too_easy' }, { label: 'Just Right', Icon: Check, val: 'just_right' }, { label: 'Too Hard', Icon: ThumbsDown, val: 'too_hard' }].map(r => (
                     <button key={r.val} onClick={() => setPlanRating(r.val)}
                       className="px-2 py-1 rounded-lg font-body text-xs transition-all active:scale-95"
                       style={{ backgroundColor: 'var(--gf-bg-surface)', color: 'var(--gf-text-secondary)', border: '1px solid var(--gf-border)' }}>
-                      {r.label}
+                      <span className="flex items-center gap-1">
+                        <r.Icon size={12} strokeWidth={2.4} aria-hidden="true" />{r.label}
+                      </span>
                     </button>
                   ))}
                 </div>
               )}
               {planRating && (
-                <p className="text-center text-sm mt-3 font-body" style={{ color: 'var(--gf-gold-text)' }}>✓ Thanks for your feedback!</p>
+                <p className="text-center text-sm mt-3 font-body" style={{ color: 'var(--gf-gold-text)' }}><Check size={12} strokeWidth={3} className="inline-block align-[-1px] mr-0.5" aria-hidden="true" />Thanks for your feedback!</p>
               )}
             </motion.div>
           )}
@@ -314,17 +323,18 @@ export default function Coach() {
                   </div>
                   {msg.showRating && !msg.rated && (
                     <div className="flex gap-1 mt-1 justify-end">
-                      {[{ label: '👍', val: 'too_easy' }, { label: '✅', val: 'just_right' }, { label: '👎', val: 'too_hard' }].map(r => (
+                      {[{ label: 'Too easy', Icon: ThumbsUp, val: 'too_easy' }, { label: 'Just right', Icon: Check, val: 'just_right' }, { label: 'Too hard', Icon: ThumbsDown, val: 'too_hard' }].map(r => (
                         <button key={r.val} onClick={() => rateMessage(i, r.val)}
                           className="w-8 h-8 rounded-full text-sm flex items-center justify-center transition-all"
                           style={{ backgroundColor: 'var(--gf-bg-elevated)', border: '1px solid var(--gf-border)' }}>
-                          {r.label}
+                          <r.Icon size={14} strokeWidth={2.3} aria-label={r.label}
+                            style={{ color: 'var(--gf-text-secondary)' }} />
                         </button>
                       ))}
                     </div>
                   )}
                   {msg.rated && (
-                    <p className="text-xs text-right mt-1 font-body" style={{ color: 'var(--gf-text-secondary)' }}>Feedback saved ✓</p>
+                    <p className="text-xs text-right mt-1 font-body" style={{ color: 'var(--gf-text-secondary)' }}>Feedback saved</p>
                   )}
                 </div>
               </div>

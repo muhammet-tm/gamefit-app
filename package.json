@@ -8,8 +8,12 @@
     "build": "vite build",
     "lint": "eslint . --quiet",
     "lint:fix": "eslint . --fix",
+    "check:avatar": "tsx scripts/check-avatar-contrast.mjs",
+    "check:emoji": "tsx scripts/check-no-emoji.mjs",
+    "check:onboarding": "node scripts/check-onboarding-render.mjs",
     "typecheck": "tsc -p ./jsconfig.json",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "verify": "npm run lint && npm run check:emoji && npm run check:avatar && npm run build"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.2",
