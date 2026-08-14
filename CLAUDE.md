@@ -187,8 +187,14 @@ resolves each text node's actual painted background through alpha layers and
 checks it at the right threshold for its size and weight. Zero failures in
 both themes. The site additionally runs axe on every route in CI.
 
-Remaining phases: 2 pictograms (replaces emoji in 15 files) · 3 app hierarchy
-pass · 4 marketing site rebuild · 5 motion · 6 avatars.
+Phases 1-4 are shipped and live on both surfaces. Remaining: **5 motion**
+(the fill cadence is already in XPMeter; the site's hero wipe and ladder
+stagger are not) and **6 avatars**.
+
+Not in any phase yet, flagged rather than forgotten: ~109 emoji remain in
+Onboarding, AvatarScreen, Coach, Marketplace, AccessoryShop, NutritionTab
+and NotificationsPanel. AccessoryShop and Marketplace are cosmetic item art
+and belong with the avatar work; the rest need their own pass.
 
 ## Known limitations (disclosed, not hidden)
 
@@ -209,14 +215,13 @@ pass · 4 marketing site rebuild · 5 motion · 6 avatars.
 
 ## Open issues / things to watch
 
-- **⚠️ The marketing site's product screenshots are stale (2026-08-14).**
-  `gamefit-web/public/screens/*.webp` are real captures of the app in the old
-  lime palette, so the site's hero now shows a lime phone on a navy page. The
-  site's token branch (`feat/design-tokens-gold-navy`, committed, **not
-  merged**) is deliberately held back for this reason. There is no script for
-  those images — they were produced ad hoc — and phase 3 changes those exact
-  screens, so they are regenerated once in phase 4 rather than twice.
-  `store-assets/` is stale for the same reason.
+- **Regenerating the marketing site's screenshots is now one command**
+  (resolved 2026-08-14). `gamefit-web/scripts/capture-screens.mjs` logs in
+  with the QA account against a running app dev server and writes
+  `public/screens/*-420.webp` and `-840.webp`. Run it whenever the app's
+  design changes, or the site silently goes stale — which is exactly what
+  happened after the palette swap. `scripts/store-screenshots.mjs` in this
+  repo does the same job for `store-assets/`.
 
 - **`.claude/` broke `npm run lint` and now has a global ignore.** ~269 agent
   skills are installed there, and ESLint's flat config was linting their JS.
