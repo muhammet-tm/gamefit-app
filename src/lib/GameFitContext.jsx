@@ -220,6 +220,10 @@ export function GameFitProvider({ children }) {
         setLevelUpData({
           newLevel: res.level_up.new_level,
           newTier: res.level_up.new_tier,
+          // The tier before this level-up, so the overlay can animate in only
+          // the gear that was actually earned — and so it can tell an evolution
+          // from a plain level-up inside the same tier.
+          prevTier: prevUser?.avatar_tier ?? res.level_up.new_tier,
           bonusCoins: res.level_up.bonus_coins,
         });
       }

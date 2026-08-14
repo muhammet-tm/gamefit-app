@@ -263,7 +263,8 @@ export default function AvatarScreen() {
                 <div className="relative z-10 mt-2">
                   <Avatar avatarClass={avatarCfg.class} tier={currentTier} body={avatarCfg.body}
                     skinTone={avatarCfg.skin_tone} hair={avatarCfg.hair}
-                    accessories={equippedAccessory ? [equippedAccessory] : []} size={170} />
+                    accessories={equippedAccessory ? [equippedAccessory] : []} size={170}
+                    interactive />
                   {equippedItem && (
                     <motion.div className="absolute -top-3 -right-3 text-3xl"
                       initial={{ scale: 0 }} animate={{ scale: 1 }} key={equippedItem.id}

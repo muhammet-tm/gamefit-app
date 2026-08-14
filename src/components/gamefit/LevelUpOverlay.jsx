@@ -243,7 +243,8 @@ export default function LevelUpOverlay() {
                       animate={{ opacity: 0.42 }}
                       transition={{ duration: 0.8, ease: 'easeOut' }}
                     />
-                    <UserAvatar user={user} tier={levelUpData.newTier} size={130} />
+                    <UserAvatar user={user} tier={levelUpData.newTier} size={130}
+                      revealFromTier={levelUpData.prevTier} />
                   </motion.div>
 
                   {/* Level number */}
@@ -265,8 +266,11 @@ export default function LevelUpOverlay() {
                     </motion.div>
                   </motion.div>
 
-                  {/* Tier evolved badge */}
-                  {levelUpData.newTier > 1 && (
+                  {/* Tier evolved badge. Gated on the tier actually changing,
+                      not on it being above 1 — levelling 7 to 8 stays inside
+                      tier 4, and the old condition announced an evolution that
+                      had not happened. */}
+                  {levelUpData.newTier > (levelUpData.prevTier ?? 0) && (
                     <motion.div
                       className="mt-3 px-4 py-2 rounded-xl text-sm font-medium"
                       style={{ borderColor: '#F4B044', color: 'var(--gf-gold-text)', border: '1px solid rgba(244, 176, 68,0.5)', backgroundColor: 'rgba(244, 176, 68,0.08)' }}

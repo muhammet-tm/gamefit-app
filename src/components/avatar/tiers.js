@@ -53,7 +53,9 @@ export function cumulativeGear(classDef, tier) {
   const t = Math.min(Math.max(tier || 1, 1), 5);
   const pieces = [];
   for (let i = 1; i <= t; i++) {
-    if (classDef.gear[i]) pieces.push(...classDef.gear[i]);
+    // Each piece carries the tier it came from so the rank-up overlay can
+    // animate in only what was just earned.
+    if (classDef.gear[i]) pieces.push(...classDef.gear[i].map(p => ({ ...p, tier: i })));
   }
   const superseded = new Set();
   for (const p of pieces) {

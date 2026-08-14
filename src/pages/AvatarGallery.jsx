@@ -16,6 +16,8 @@ export default function AvatarGallery() {
   const [hairStyle, setHairStyle] = useState('short');
   const [hairColor, setHairColor] = useState('black');
   const [accessory, setAccessory] = useState('');
+  const [replay, setReplay] = useState(0);
+  const [revealTier, setRevealTier] = useState(3);
   const styles = hairStylesFor(body);
   // keep the style valid when the body (and so the style list) changes
   const hair = `${styles.includes(hairStyle) ? hairStyle : styles[0]}_${hairColor}`;
@@ -72,6 +74,42 @@ export default function AvatarGallery() {
             {a}
           </button>
         ))}
+      </div>
+
+      {/* Interaction bench. The two behavioural states only exist behind auth
+          on AvatarScreen and in the rank-up overlay, which makes them awkward
+          to review; this exercises both without a login. */}
+      <div className="mb-8 p-4 rounded-2xl" style={{ backgroundColor: '#1A3242', border: '1px solid #24455A' }}>
+        <h2 className="font-heading font-black text-lg mb-1" style={{ color: '#FFFFFF' }}>Interaction</h2>
+        <p className="font-body text-xs mb-3" style={{ color: '#88A5B7' }}>
+          Left: tap or focus and press Enter for the reaction. Right: the
+          rank-up reveal — only tier-{revealTier + 1} gear animates in. Use the
+          button to replay it.
+        </p>
+        <div className="flex gap-6 items-end flex-wrap">
+          <div className="flex flex-col items-center">
+            <Avatar avatarClass="warrior" tier={3} body={body} skinTone={skin} hair={hair}
+              size={130} interactive />
+            <span className="font-body text-xs mt-2" style={{ color: '#88A5B7' }}>interactive</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <Avatar key={replay} avatarClass="knight" tier={revealTier + 1} body={body}
+              skinTone={skin} hair={hair} size={130} revealFromTier={revealTier} />
+            <span className="font-body text-xs mt-2" style={{ color: '#88A5B7' }}>
+              tier {revealTier} → {revealTier + 1}
+            </span>
+          </div>
+          <button onClick={() => setReplay(r => r + 1)}
+            className="px-3 py-1.5 rounded text-xs font-body mb-6"
+            style={{ backgroundColor: '#F4B044', color: '#0B1A24' }}>
+            replay reveal
+          </button>
+          <button onClick={() => setRevealTier(t => (t >= 4 ? 1 : t + 1))}
+            className="px-3 py-1.5 rounded text-xs font-body mb-6"
+            style={{ backgroundColor: '#1A3242', color: '#88A5B7', border: '1px solid #24455A' }}>
+            next tier step
+          </button>
+        </div>
       </div>
 
       {/* the 5×5 grid */}

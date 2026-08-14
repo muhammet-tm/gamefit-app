@@ -292,6 +292,57 @@
   transform-origin: 50% 55%;
   transform-box: fill-box;
 }
+/* Tap reaction. Applied by <Avatar interactive/> to a wrapper around the whole
+   figure, and removed on animationend so a second tap retriggers it.
+
+   Constraints worth knowing before editing this:
+   - The rig is a static A-pose with no limb rigging, so only whole-body
+     transforms are available. Anything that would need an arm to move is out.
+   - transform-box/transform-origin are set below because SVG groups default to
+     the viewport origin, which would swing the figure instead of scaling it.
+   - The design system budgets routine feedback at 120-260ms and reserves the
+     ~1.4s authored sequence for the rank-up threshold. A tap sits between:
+     long enough to read as a character responding, short enough to repeat.
+
+   TODO(founder): write the keyframes. See the note in the chat — this is the
+   avatar's personality, and it should be your call rather than mine. */
+@keyframes av-react {
+  /* Placeholder: a flex. Replace with whatever the character should do. */
+  0%   { transform: scale(1)     translateY(0); }
+  35%  { transform: scale(1.045) translateY(-3px); }
+  100% { transform: scale(1)     translateY(0); }
+}
+.av-react {
+  animation: av-react 380ms var(--gf-e-out);
+  transform-origin: 50% 100%;
+  transform-box: fill-box;
+}
+
+/* Rank-up: the gear just earned arrives instead of already being there. This
+   is the threshold half of the fill-and-threshold thesis, applied to the
+   character rather than to a meter. Only pieces above the previous tier get
+   this class, so what animates is exactly what was won.
+
+   The stagger is deliberately slower than the streak calendar's 55ms: this
+   fires once per rank, not once per screen, and the point is to be watched. */
+@keyframes av-reveal {
+  from { opacity: 0; transform: scale(0.82); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .av-reveal {
+    animation: av-reveal 460ms var(--gf-e-out) both;
+    animation-delay: calc(var(--gf-i, 0) * 70ms + 260ms);
+    transform-origin: 50% 60%;
+    transform-box: fill-box;
+  }
+}
+
+/* Reduced motion keeps the outcome and drops the travel: the new gear is
+   simply present. It must never animate to opacity 0 and stay there. */
 @media (prefers-reduced-motion: reduce) {
-  .av-breathe, .av-pulse, .av-flicker, .av-aura-wrap { animation: none; }
+  .av-breathe, .av-pulse, .av-flicker, .av-aura-wrap, .av-react, .av-reveal {
+    animation: none;
+  }
 }

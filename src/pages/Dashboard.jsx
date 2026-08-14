@@ -93,7 +93,9 @@ export default function Dashboard() {
 
           <div className="flex items-center gap-4">
             <div className="relative">
-              <UserAvatar user={user} size={90} />
+              {/* The hero card is a plain container, not a link, so there is
+                  no competing tap target here. */}
+              <UserAvatar user={user} size={90} interactive />
               <span className="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full font-heading font-black text-xs"
                 style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
                 LVL {level}
