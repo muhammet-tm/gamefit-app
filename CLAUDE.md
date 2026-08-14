@@ -137,6 +137,59 @@ Shipped and **verified live on gamefit-app.vercel.app**:
 All merged to `main`, pushed, Vercel bundle confirmed deployed
 (`index-01qmpXQy.js` at last check), production endpoints spot-checked 200 OK.
 
+## Design system (phase 1 of the redesign — shipped 2026-08-14)
+
+The app and the marketing site share one palette and one type system. Both
+were swapped away from the original lime-on-near-black design, which was
+disciplined but is the most templated look in fitness software.
+
+**Palette** (`src/index.css`, mirrored in `gamefit-web/src/styles/tokens.css`):
+
+| Token | Dark | Light | Role |
+|---|---|---|---|
+| `--gf-bg-primary` | `#0B1A24` | `#EDF2F5` | Page ground |
+| `--gf-bg-surface` | `#112532` | `#FFFFFF` | Cards |
+| `--gf-bg-elevated` | `#1A3242` | `#DFE8EE` | Inputs, raised |
+| `--gf-text-primary` | `#F2F5F7` | `#0B1A24` | Text |
+| `--gf-text-secondary` | `#88A5B7` | `#4A6577` | Muted |
+| `--gf-gold` | `#F4B044` | `#F4B044` | The single accent — fills, rank, XP |
+| `--gf-gold-text` | `#F4B044` | `#8A5A06` | Gold **as text** (see below) |
+| `--gf-ember` | `#E0680E` | `#B34D06` | Streaks, intensity |
+
+Three rules that are easy to get wrong:
+
+1. **Gold cannot be one value across both themes.** `#F4B044` is ~1.9:1 on
+   white. Fills keep the brand gold with navy text (9.38:1); gold *text* on a
+   light surface must use `--gf-gold-text`. Same split for ember.
+2. **The surface is the binding ground, not the page.** Tier labels and card
+   text sit on `--gf-bg-surface`, which is lighter. Bronze shipped for one
+   build at `#B5754A` — 4.72 on the page, 4.20 on a card — and axe caught it.
+   It is now `#C08657`.
+3. **Ember is 3.90 on `--gf-bg-elevated`.** On that surface it is for fills
+   and text ≥18px only.
+
+Violet `#7C3AED` is gone entirely. It measured 3.36:1 and failed AA for body
+text, which the old `DESIGN.md` already recorded as a known failure. Apex tier
+moved from violet to ember as a result. Tier colours live in
+`src/components/avatar/tiers.js` and are mirrored in the site's `tokens.css` —
+**change both together**.
+
+**Type**: Archivo (variable, width axis, set at ~118%) for display, Hanken
+Grotesk for UI and body, JetBrains Mono for figures. The app loads these from
+Google Fonts; the site self-hosts them via `@fontsource` so its CSP and the
+GDPR posture are unchanged.
+
+Old token names (`--gf-green`, `--gf-amber`, `--gf-purple`) survive as aliases
+so the swap landed in one commit. They are removed as components migrate.
+
+Contrast is verified against the rendered DOM, not the token values: a scanner
+resolves each text node's actual painted background through alpha layers and
+checks it at the right threshold for its size and weight. Zero failures in
+both themes. The site additionally runs axe on every route in CI.
+
+Remaining phases: 2 pictograms (replaces emoji in 15 files) · 3 app hierarchy
+pass · 4 marketing site rebuild · 5 motion · 6 avatars.
+
 ## Known limitations (disclosed, not hidden)
 
 - **iOS builds need a Mac** — user is on Windows. `docs/STORE_SUBMISSION.md`
@@ -155,6 +208,22 @@ All merged to `main`, pushed, Vercel bundle confirmed deployed
   public launch.
 
 ## Open issues / things to watch
+
+- **⚠️ The marketing site's product screenshots are stale (2026-08-14).**
+  `gamefit-web/public/screens/*.webp` are real captures of the app in the old
+  lime palette, so the site's hero now shows a lime phone on a navy page. The
+  site's token branch (`feat/design-tokens-gold-navy`, committed, **not
+  merged**) is deliberately held back for this reason. There is no script for
+  those images — they were produced ad hoc — and phase 3 changes those exact
+  screens, so they are regenerated once in phase 4 rather than twice.
+  `store-assets/` is stale for the same reason.
+
+- **`.claude/` broke `npm run lint` and now has a global ignore.** ~269 agent
+  skills are installed there, and ESLint's flat config was linting their JS.
+  `eslint.config.js` gained an `ignores` block covering `.claude/`, `dist/`,
+  `android/`, `ios/`, `store-assets/`, `scratchpad/`. If lint starts failing
+  on a file nobody wrote, check that list first.
+
 
 - **Supabase was restored by the owner on 2026-08-08** — the project is
   Healthy again (eu-central-1 Frankfurt, nano compute). It had auto-paused
