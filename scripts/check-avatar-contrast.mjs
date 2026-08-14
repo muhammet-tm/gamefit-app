@@ -9,7 +9,9 @@
 //   1. A piece disappears into the card it sits on.       (ground contrast)
 //   2. Two classes look like the same player in a list.   (pairwise ΔE)
 //   3. A kit's primary and trim merge into one flat shape. (intra-class ΔE)
-import { CLASS_PALETTES, classColors, rigColors, SKIN_TONES } from '../src/components/avatar/palettes.js';
+import {
+  CLASS_PALETTES, classColors, rigColors, itemColors, SKIN_TONES,
+} from '../src/components/avatar/palettes.js';
 
 const VERBOSE = process.argv.includes('--verbose');
 
@@ -102,6 +104,29 @@ for (const theme of Object.keys(GROUNDS)) {
     }
   }
   console.log(`  closest class pair: ${closest.pair} at ΔE ${closest.d.toFixed(1)}`);
+
+  // Shop accessories. flames, wings, cape and the floating badges all extend
+  // past the body onto bare card, so they answer to the same fill floor as
+  // gear.
+  //
+  // Two are exempt, and the reason matters: they are shading painted over
+  // another item colour, never over the card. `highlight` is a catch light on
+  // a wing; `rubyDark` is the cape's far side over `ruby`. What has to clear
+  // the ground is the parent shape, and `ruby` does at 2.95. Forcing these to
+  // the floor would flatten them into their parent — the nearest passing value
+  // for rubyDark sits ΔE 4.8 from ruby, which is a cape with no form left.
+  const INTERIOR_SHADING = new Set(['highlight', 'rubyDark']);
+  const items = itemColors(theme);
+  for (const [name, hex] of Object.entries(items)) {
+    if (INTERIOR_SHADING.has(name)) continue;
+    for (const [gName, ground] of grounds) {
+      const ratio = contrast(hex, ground);
+      note(`item ${name} on ${gName}: ${ratio.toFixed(2)}`);
+      if (ratio < FILL_FLOOR) {
+        fail(`${theme} accessory ${name} (${hex}) is ${ratio.toFixed(2)} on ${gName}, needs ${FILL_FLOOR}`);
+      }
+    }
+  }
 
   // Skin is user identity and may not be "corrected" to hit a ratio, so the
   // test is not "does this tone beat the card". A body is legible when EITHER

@@ -173,6 +173,46 @@ export function rigColors(theme = 'dark') {
   return RIG_PALETTES[theme] || RIG_PALETTES.dark;
 }
 
+// Shop accessory colours. These are per-ITEM identity, not per-class: a crown's
+// gems are ruby and sapphire for every player, so they deliberately do not take
+// --av-c1/--av-c2. They still need both themes, because several of these pieces
+// (flames, wings, cape, the floating badges) extend past the body onto bare
+// card, and people pay coins for them — wings' highlight was #FFFFFF, which is
+// 1.0:1 on a white surface.
+//
+// Light values are darkened rather than re-hued, so a ruby stays a ruby.
+export const ITEM_PALETTES = {
+  dark: {
+    ruby:          '#B33A2B',  // crown centre gem, cape body
+    rubyDark:      '#7A2018',
+    rubyLight:     '#D4553F',
+    sapphire:      '#388BFF',  // crown side gems, shield face
+    sapphireLight: '#7FB4FF',
+    ember:         '#FF8C00',  // flame tongues
+    ice:           '#7FDBFF',  // diamond badge
+    iceLight:      '#B7ECFF',
+    iceDark:       '#3FA7D6',
+    highlight:     '#FFFFFF',  // wing feather catch
+  },
+  light: {
+    ruby:          '#A32F20',
+    rubyDark:      '#6E1D12',
+    rubyLight:     '#C2452C',
+    sapphire:      '#1D6FD1',
+    sapphireLight: '#3F86DE',
+    ember:         '#C25812',
+    ice:           '#2A86AD',
+    iceLight:      '#4FA6C9',
+    iceDark:       '#1B6480',
+    highlight:     '#F2F5F7',
+  },
+};
+
+/** Resolve shop-accessory colours for a theme. Pure — safe in Node. */
+export function itemColors(theme = 'dark') {
+  return ITEM_PALETTES[theme] || ITEM_PALETTES.dark;
+}
+
 /**
  * The complete CSS variable map for one avatar.
  *
@@ -187,6 +227,7 @@ export function avatarCssVars({ avatarClass, skinTone, hair, body = 'male', them
   const { color: hairColor } = hairPreset(hair, body);
   const c = classColors(avatarClass, theme);
   const rig = rigColors(theme);
+  const item = itemColors(theme);
   return {
     '--av-skin': skin.base,
     '--av-skin-shadow': skin.shadow,
@@ -211,6 +252,16 @@ export function avatarCssVars({ avatarClass, skinTone, hair, body = 'male', them
     '--av-wood-dark': rig.woodDark,
     '--av-gold': rig.gold,
     '--av-gold-light': rig.goldLight,
+    '--av-item-ruby': item.ruby,
+    '--av-item-ruby-dark': item.rubyDark,
+    '--av-item-ruby-light': item.rubyLight,
+    '--av-item-sapphire': item.sapphire,
+    '--av-item-sapphire-light': item.sapphireLight,
+    '--av-item-ember': item.ember,
+    '--av-item-ice': item.ice,
+    '--av-item-ice-light': item.iceLight,
+    '--av-item-ice-dark': item.iceDark,
+    '--av-item-highlight': item.highlight,
   };
 }
 
