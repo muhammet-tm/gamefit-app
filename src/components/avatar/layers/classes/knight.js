@@ -2,9 +2,9 @@
 // radiant aura. v2: darker steel with edge highlights, plate follows the
 // V-taper, helm actually encloses the head.
 
-const STEEL = '#8A93A8';
-const STEEL_DARK = '#5E667A';
-const STEEL_EDGE = '#B8C2D6';
+const STEEL = 'var(--av-steel)';
+const STEEL_DARK = 'var(--av-steel-dark)';
+const STEEL_EDGE = 'var(--av-steel-light)';
 
 export default {
   gear: {
@@ -12,11 +12,11 @@ export default {
       // scabbard angled out from the left hip
       { slot: 'back', d: `M72,138 L82,142 L62,200 C60,206 52,204 54,198 Z`, fill: 'var(--av-c2)' },
       { slot: 'back', d: `M77,140 L82,142 L62,200 C61,203 58,204 56,203 C63,182 71,158 77,140 Z`,
-        fill: '#22334A' },
+        fill: 'var(--av-c2)' },
       { slot: 'back', d: `M57,192 L66,196 L64,202 L55,198 Z`, fill: STEEL },
       // hilt: crossguard, grip, pommel
       { slot: 'gear', d: `M64,132 L88,142 L86,149 L62,139 Z`, fill: STEEL },
-      { slot: 'gear', d: `M78,128 L86,131 L82,143 C81,147 74,145 76,140 Z`, fill: '#4A3020' },
+      { slot: 'gear', d: `M78,128 L86,131 L82,143 C81,147 74,145 76,140 Z`, fill: 'var(--av-wood-dark)' },
       { slot: 'gear', d: `M81,124 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0`, fill: STEEL_EDGE },
       // baldric strap
       { slot: 'gear', d: `M126,78 L72,128 L77,137 L130,87 Z`, fill: 'var(--av-c2)' },
@@ -60,27 +60,27 @@ export default {
       { slot: 'head', d: `M100,7 C111,7 120,14 119,32 C119,42 116,50 110,55 C107,57 103,58 100,58
           C107,50 110,40 109,28 C109,18 105,10 100,7 Z`, fill: STEEL_DARK },
       // visor slit
-      { slot: 'head', d: `M85,30 L115,30 L114,35 L86,35 Z`, fill: '#12151D' },
+      { slot: 'head', d: `M85,30 L115,30 L114,35 L86,35 Z`, fill: 'var(--av-contour)' },
       { slot: 'head', d: `M85,30 L115,30 L115,31.5 L85,31.5 Z`, fill: STEEL_EDGE, opacity: 0.6 },
       // breath holes
-      { slot: 'head', d: `M96,44 m-1.2,0 a1.2,1.2 0 1,0 2.4,0 a1.2,1.2 0 1,0 -2.4,0`, fill: '#12151D' },
-      { slot: 'head', d: `M102,44 m-1.2,0 a1.2,1.2 0 1,0 2.4,0 a1.2,1.2 0 1,0 -2.4,0`, fill: '#12151D' },
+      { slot: 'head', d: `M96,44 m-1.2,0 a1.2,1.2 0 1,0 2.4,0 a1.2,1.2 0 1,0 -2.4,0`, fill: 'var(--av-contour)' },
+      { slot: 'head', d: `M102,44 m-1.2,0 a1.2,1.2 0 1,0 2.4,0 a1.2,1.2 0 1,0 -2.4,0`, fill: 'var(--av-contour)' },
       // plume arcing back
       { slot: 'head', d: `M94,10 C88,2 76,0 68,8 C74,8 80,10 84,14 C87,17 91,14 94,10 Z`,
         fill: 'var(--av-c1)' },
-      { slot: 'head', d: `M94,10 C90,5 82,2 74,4 C80,6 86,10 89,14 Z`, fill: '#2A4058' },
+      { slot: 'head', d: `M94,10 C90,5 82,2 74,4 C80,6 86,10 89,14 Z`, fill: 'var(--av-c2)' },
     ],
     5: [
       // radiant burst — points reach well past the body silhouette
       { slot: 'auraB', d: `M100,150 m-76,0 a76,76 0 1,0 152,0 a76,76 0 1,0 -152,0`,
-        fill: '#9664FF', opacity: 0.16, aura: true },
+        fill: 'var(--av-glow)', opacity: 0.16, aura: true },
       { slot: 'auraB', d: `M100,40 L112,114 L184,128 L114,144 L126,224 L100,156 L74,224 L86,144 L16,128 L88,114 Z`,
         fill: 'var(--av-glow)', opacity: 0.3, aura: true },
       { slot: 'auraB', d: `M100,72 L108,118 L156,127 L108,138 L116,194 L100,146 L84,194 L92,138 L44,127 L92,118 Z`,
-        fill: '#E8F1FF', opacity: 0.22, aura: true },
+        fill: 'var(--av-glow)', opacity: 0.22, aura: true },
       // corner glints
       { slot: 'auraB', d: `M40,72 l4,6 -4,6 -4,-6 Z`, fill: 'var(--av-glow)', opacity: 0.6, aura: true },
-      { slot: 'auraB', d: `M162,196 l4,6 -4,6 -4,-6 Z`, fill: '#9664FF', opacity: 0.6, aura: true },
+      { slot: 'auraB', d: `M162,196 l4,6 -4,6 -4,-6 Z`, fill: 'var(--av-glow)', opacity: 0.6, aura: true },
     ],
   },
 };

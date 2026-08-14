@@ -9,14 +9,27 @@ import React from 'react';
 // ribcage with a waist pinch, hip flare, slimmer limbs, longer leg line,
 // sports-bra + leggings kit, and a softer face (rounder jaw, larger eyes,
 // lashes, arched brows, fuller lips). Light source top-left.
-// CSS vars from <Avatar/>: --av-skin, --av-skin-shadow, --av-hair.
+// CSS vars from <Avatar/>: --av-skin, --av-skin-shadow, --av-hair, plus the
+// rig ramp (--av-kit, --av-shoe, --av-contour, ...).
+//
+// CONTOUR: same rule as the male rig — the silhouette-defining shapes carry a
+// stroke in --av-contour with paint-order:stroke, so any skin tone separates
+// from any card. See BaseBody.jsx for why this is structural and not chromatic.
 
-const KIT = '#232838';
-const KIT_SHADOW = '#191D29';
-const LEGGING = '#2A3040';
-const LEGGING_SHADOW = '#1F2430';
-const SHOE = '#3A4156';
-const SHOE_SOLE = '#C9CEDC';
+const KIT = 'var(--av-kit)';
+const KIT_SHADOW = 'var(--av-kit-shadow)';
+const LEGGING = 'var(--av-kit-alt)';
+const LEGGING_SHADOW = 'var(--av-kit-alt-shadow)';
+const SHOE = 'var(--av-shoe)';
+const SHOE_SOLE = 'var(--av-shoe-sole)';
+const KIT_HIGHLIGHT = 'var(--av-kit-alt)';
+
+const OUTLINE = {
+  stroke: 'var(--av-contour)',
+  strokeWidth: 2.4,
+  paintOrder: 'stroke',
+  strokeLinejoin: 'round',
+};
 
 export default function BaseBodyF() {
   return (
@@ -26,7 +39,7 @@ export default function BaseBodyF() {
         d="M81,166 C79,182 80,196 82,207 C85,215 86,223 85,231 C84,239 84,245 85,250 L96,250
            C97,244 97,236 96,229 C95,219 96,208 97,198 C98,186 98,174 97,166 Z"
         fill="var(--av-skin)"
-      />
+       {...OUTLINE}/>
       <path
         d="M91,170 C93,184 94,198 92,211 C91,225 91,240 92,250 L96,250 C97,242 97,232 96,222
            C95,210 96,196 97,184 L97,166 L92,166 Z"
@@ -36,7 +49,7 @@ export default function BaseBodyF() {
         d="M103,166 C102,174 102,186 103,198 C104,208 105,219 104,229 C103,236 103,244 104,250 L115,250
            C116,245 116,239 115,231 C114,223 115,215 118,207 C120,196 121,182 119,166 Z"
         fill="var(--av-skin)"
-      />
+       {...OUTLINE}/>
       <path
         d="M111,168 C114,182 115,198 113,212 C112,226 112,240 113,250 L115,250 C116,244 116,236 115,229
            C114,221 115,213 118,205 C120,195 120,180 119,168 Z"
@@ -45,10 +58,10 @@ export default function BaseBodyF() {
 
       {/* ============ SHOES ============ */}
       <path d="M83,250 C82,256 80,260 76,263 C73,265 74,268 78,268 L95,268 C98,268 99,265 98,262
-               C97,258 96,254 96,250 Z" fill={SHOE} />
+               C97,258 96,254 96,250 Z" fill={SHOE}  {...OUTLINE}/>
       <path d="M75,263 L98,263 C99,265 98,268 95,268 L78,268 C74,268 73,265 75,263 Z" fill={SHOE_SOLE} />
       <path d="M104,250 C104,254 103,258 102,262 C101,265 102,268 105,268 L122,268 C126,268 127,265 124,263
-               C120,260 118,256 117,250 Z" fill={SHOE} />
+               C120,260 118,256 117,250 Z" fill={SHOE}  {...OUTLINE}/>
       <path d="M102,263 L125,263 C127,265 126,268 122,268 L105,268 C102,268 101,265 102,263 Z" fill={SHOE_SOLE} />
 
       {/* ============ LEGGINGS (hip flare, high waist) ============ */}
@@ -56,42 +69,42 @@ export default function BaseBodyF() {
         d="M77,130 C74,140 73,151 74,161 C75,167 80,171 86,170 L96,168 L100,176 L104,168 L114,170
            C120,171 125,167 126,161 C127,151 126,140 123,130 Z"
         fill={LEGGING}
-      />
+       {...OUTLINE}/>
       <path d="M110,130 C114,142 116,154 115,168 L114,170 C120,171 125,167 126,161
                C127,151 126,140 123,130 Z" fill={LEGGING_SHADOW} />
       {/* waistband */}
       <path d="M77,130 L123,130 L124,134 L76,134 Z" fill={KIT_SHADOW} />
       {/* hip highlight keeps the flare readable against dark gear */}
       <path d="M76,142 C75,150 75,157 76,163 C74,157 74,148 75,141 Z"
-        fill="#3A4257" opacity="0.7" />
+        fill={KIT_HIGHLIGHT} opacity="0.7" />
 
       {/* ============ ARMS (slimmer, same deltoid centers) ============ */}
       <path
         d="M53,86 C51,73 62,66 73,70 C80,73 83,79 82,86 L80,104 C79,113 76,123 71,131 L65,149
            C63,155 61,159 60,162 L47,158 C48,151 50,144 53,136 L58,114 Z"
         fill="var(--av-skin)"
-      />
+       {...OUTLINE}/>
       <path
         d="M73,74 C78,81 79,93 76,105 C72,120 66,141 61,159 L60,162 L54,160 C57,148 61,133 65,119
            C69,105 71,88 70,76 Z"
         fill="var(--av-skin-shadow)" opacity="0.42"
       />
       <path d="M45,159 C49,154 57,155 60,161 C62,167 59,173 53,174 C47,175 43,169 44,164 Z"
-        fill="var(--av-skin)" />
+        fill="var(--av-skin)"  {...OUTLINE}/>
       <path d="M56,156 C60,159 61,166 58,170 C56,173 53,174 50,173 C55,170 58,163 56,156 Z"
         fill="var(--av-skin-shadow)" opacity="0.45" />
       <path
         d="M147,86 C149,73 138,66 127,70 C120,73 117,79 118,86 L120,104 C121,113 124,123 129,131 L135,149
            C137,155 139,159 140,162 L153,158 C152,151 150,144 147,136 L142,114 Z"
         fill="var(--av-skin)"
-      />
+       {...OUTLINE}/>
       <path
         d="M136,72 C143,78 147,87 145,99 C144,112 147,133 151,155 L153,158 L145,160 C142,146 137,129 134,113
            C131,99 132,84 133,74 Z"
         fill="var(--av-skin-shadow)" opacity="0.48"
       />
       <path d="M155,159 C151,154 143,155 140,161 C138,167 141,173 147,174 C153,175 157,169 156,164 Z"
-        fill="var(--av-skin)" />
+        fill="var(--av-skin)"  {...OUTLINE}/>
       <path d="M151,157 C155,161 156,167 152,171 C157,169 158,162 155,158 Z"
         fill="var(--av-skin-shadow)" opacity="0.5" />
 
@@ -101,7 +114,7 @@ export default function BaseBodyF() {
            C130,94 127,102 122,110 C119,117 118,126 119,134 L81,134
            C82,126 81,117 78,110 C73,102 70,94 68,84 Z"
         fill="var(--av-skin)"
-      />
+       {...OUTLINE}/>
       {/* right-side body shade */}
       <path d="M114,65 C124,68 130,74 132,84 C130,94 127,102 122,110 C119,117 118,126 119,134 L109,134
                C112,124 115,112 117,100 C119,88 117,73 114,65 Z"
@@ -119,7 +132,7 @@ export default function BaseBodyF() {
         d="M69,80 C72,69 83,62 100,62 C117,62 128,69 131,80
            C131,90 129,98 126,106 C117,111 83,111 74,106 C71,98 69,90 69,80 Z"
         fill={KIT}
-      />
+       {...OUTLINE}/>
       <path d="M113,64 C123,67 129,72 131,80 C131,90 129,98 126,106 C122,108 116,109 110,110
                C116,98 118,80 113,64 Z" fill={KIT_SHADOW} />
       {/* scoop neckline: skin notch */}
@@ -135,7 +148,7 @@ export default function BaseBodyF() {
       {/* underband */}
       <path d="M74,104 C86,109 114,109 126,104 L126,107 C114,112 86,112 74,107 Z" fill={KIT_SHADOW} />
       {/* strap highlight */}
-      <path d="M84,66 C82,72 81,79 81,86 C79,79 80,71 82,65 Z" fill="#333A4E" opacity="0.8" />
+      <path d="M84,66 C82,72 81,79 81,86 C79,79 80,71 82,65 Z" fill={KIT_HIGHLIGHT} opacity="0.8" />
 
       {/* trapezius / collarbone */}
       <path d="M82,61 C87,56 94,53 100,53 L100,63 C94,63 88,64 82,66 Z" fill="var(--av-skin)" />
@@ -153,6 +166,7 @@ export default function BaseBodyF() {
         d="M84,32 C84,18 90.5,11 100,11 C109.5,11 116,18 116,32
            C116,42 112,50 106,55 C103,57.2 97,57.2 94,55 C88,50 84,42 84,32 Z"
         fill="var(--av-skin)"
+        {...OUTLINE}
       />
       <path d="M104,12.5 C111,15 116,22 116,32 C116,42 112,50 106,55 C104.6,56 103,56.6 101.4,56.8
                C107,48 110,38 109,28 C108.6,21 106.6,15.6 104,12.5 Z"

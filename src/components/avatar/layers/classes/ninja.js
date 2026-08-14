@@ -7,27 +7,27 @@ export default {
     1: [
       // dual katana grips crossed over both shoulders (blades sheathed on
       // the back — the crossed hilts ARE the silhouette)
-      { slot: 'back', d: `M54,34 C51,31 55,25 59,28 L74,50 L68,56 Z`, fill: '#1C202A' },
-      { slot: 'back', d: `M56,32 L72,52 M60,28 L76,48`, stroke: '#3E4454', strokeWidth: 1.6, fill: 'none' },
+      { slot: 'back', d: `M54,34 C51,31 55,25 59,28 L74,50 L68,56 Z`, fill: 'var(--av-kit-shadow)' },
+      { slot: 'back', d: `M56,32 L72,52 M60,28 L76,48`, stroke: 'var(--av-steel-dark)', strokeWidth: 1.6, fill: 'none' },
       { slot: 'back', d: `M68,52 C72,48 78,48 81,52 C84,56 84,61 80,64 C76,67 70,66 68,62 C66,59 66,55 68,52 Z`,
         fill: 'var(--av-c2)' },
-      { slot: 'back', d: `M146,34 C149,31 145,25 141,28 L126,50 L132,56 Z`, fill: '#1C202A' },
-      { slot: 'back', d: `M144,32 L128,52 M140,28 L124,48`, stroke: '#3E4454', strokeWidth: 1.6, fill: 'none' },
+      { slot: 'back', d: `M146,34 C149,31 145,25 141,28 L126,50 L132,56 Z`, fill: 'var(--av-kit-shadow)' },
+      { slot: 'back', d: `M144,32 L128,52 M140,28 L124,48`, stroke: 'var(--av-steel-dark)', strokeWidth: 1.6, fill: 'none' },
       { slot: 'back', d: `M132,52 C128,48 122,48 119,52 C116,56 116,61 120,64 C124,67 130,66 132,62 C134,59 134,55 132,52 Z`,
         fill: 'var(--av-c2)' },
       // sheath lines peeking at both sides of the waist
-      { slot: 'back', d: `M70,120 L60,146 L66,149 L76,124 Z`, fill: '#1C202A' },
-      { slot: 'back', d: `M130,120 L140,146 L134,149 L124,124 Z`, fill: '#12151D' },
+      { slot: 'back', d: `M70,120 L60,146 L66,149 L76,124 Z`, fill: 'var(--av-kit-shadow)' },
+      { slot: 'back', d: `M130,120 L140,146 L134,149 L124,124 Z`, fill: 'var(--av-contour)' },
       // waist wrap + knot tails
       { slot: 'gear', d: `M76,128 L124,128 L125,141 L75,141 Z`, fill: 'var(--av-c1)' },
       { slot: 'gear', d: `M76,134 L124,134 L124,137 L76,137 Z`, fill: 'var(--av-c2)' },
       { slot: 'gear', d: `M75,136 C68,145 65,156 68,168 C73,161 78,150 80,141 Z`, fill: 'var(--av-c2)' },
-      { slot: 'gear', d: `M80,138 C76,146 74,155 76,164 C80,158 83,148 84,141 Z`, fill: '#1C202A' },
+      { slot: 'gear', d: `M80,138 C76,146 74,155 76,164 C80,158 83,148 84,141 Z`, fill: 'var(--av-kit-shadow)' },
       // forearm wraps
       { slot: 'gear', d: `M50,140 L64,144 L61,156 L47,152 Z`, fill: 'var(--av-c2)' },
       { slot: 'gear', d: `M136,144 L150,140 L153,152 L139,156 Z`, fill: 'var(--av-c2)' },
-      { slot: 'gear', d: `M50,145 L63,149 L62,152 L49,148 Z`, fill: '#12151D' },
-      { slot: 'gear', d: `M137,148 L150,144 L151,147 L138,151 Z`, fill: '#12151D' },
+      { slot: 'gear', d: `M50,145 L63,149 L62,152 L49,148 Z`, fill: 'var(--av-contour)' },
+      { slot: 'gear', d: `M137,148 L150,144 L151,147 L138,151 Z`, fill: 'var(--av-contour)' },
     ],
     2: [
       // scarf: neck wrap + big tail streaming left
@@ -40,8 +40,8 @@ export default {
       // shin guards
       { slot: 'gear', d: `M80,206 L98,206 L97,232 L82,232 Z`, fill: 'var(--av-c2)' },
       { slot: 'gear', d: `M103,206 L121,206 L119,232 L104,232 Z`, fill: 'var(--av-c2)' },
-      { slot: 'gear', d: `M80,206 L98,206 L98,210 L80,210 Z`, fill: '#12151D' },
-      { slot: 'gear', d: `M103,206 L121,206 L121,210 L103,210 Z`, fill: '#12151D' },
+      { slot: 'gear', d: `M80,206 L98,206 L98,210 L80,210 Z`, fill: 'var(--av-contour)' },
+      { slot: 'gear', d: `M103,206 L121,206 L121,210 L103,210 Z`, fill: 'var(--av-contour)' },
     ],
     3: [
       // glowing seams
@@ -69,7 +69,7 @@ export default {
       { slot: 'back', d: `M118,26 C130,24 142,28 150,38 C140,38 130,36 122,32 C119,30 117,28 118,26 Z`,
         fill: 'var(--av-c2)' },
       { slot: 'back', d: `M118,30 C128,34 138,44 142,56 C133,50 125,42 120,36 C118,34 117,32 118,30 Z`,
-        fill: '#1C202A' },
+        fill: 'var(--av-kit-shadow)' },
     ],
     5: [
       // shadow wisps
@@ -78,9 +78,9 @@ export default {
         fill: 'var(--av-glow)', opacity: 0.22, aura: true },
       { slot: 'auraB', d: `M150,222 C166,196 168,158 154,126 C152,144 146,158 136,166 C144,142 140,110 122,88
           C126,112 122,132 112,146 C126,160 138,188 138,214 C140,224 146,230 150,222 Z`,
-        fill: '#9664FF', opacity: 0.22, aura: true },
+        fill: 'var(--av-glow)', opacity: 0.22, aura: true },
       { slot: 'auraF', d: `M60,106 c2,-9 12,-11 16,-4 c-7,0 -12,4 -16,4 Z`, fill: 'var(--av-glow)', opacity: 0.4 },
-      { slot: 'auraF', d: `M140,118 c-2,-9 -12,-11 -16,-4 c7,0 12,4 16,4 Z`, fill: '#9664FF', opacity: 0.4 },
+      { slot: 'auraF', d: `M140,118 c-2,-9 -12,-11 -16,-4 c7,0 12,4 16,4 Z`, fill: 'var(--av-glow)', opacity: 0.4 },
     ],
   },
 };

@@ -3,7 +3,8 @@ import BaseBody from './layers/BaseBody';
 import BaseBodyF from './layers/BaseBodyF';
 import { HAIR_PATHS } from './layers/hair';
 import { ACCESSORY_LAYERS } from './layers/accessories';
-import { SKIN_TONES, CLASS_COLORS, hairPreset, DEFAULT_CONFIG } from './palettes';
+import { classColors, avatarCssVars, hairPreset, DEFAULT_CONFIG } from './palettes';
+import { useAvatarTheme } from './theme';
 import { TIER_GLOW, cumulativeGear } from './tiers';
 import warrior from './layers/classes/warrior';
 import mage from './layers/classes/mage';
@@ -47,6 +48,9 @@ function renderPiece(piece, key) {
  * @param {string[]} accessories equipped shop accessory ids
  * @param {number} size        rendered width in px (height = 1.4x)
  * @param {boolean} animate    idle breathing + aura motion
+ * @param {string} theme       'dark'|'light' — pins the palette. Omit in the
+ *                             app so it follows the live theme; render scripts
+ *                             pass it because they have no DOM to read.
  */
 export default function Avatar({
   avatarClass = DEFAULT_CONFIG.class,
@@ -59,13 +63,14 @@ export default function Avatar({
   animate = true,
   className = '',
   style,
+  theme,
 }) {
+  const activeTheme = useAvatarTheme(theme);
   const classDef = CLASS_DEFS[avatarClass] || CLASS_DEFS.warrior;
-  const colors = CLASS_COLORS[avatarClass] || CLASS_COLORS.warrior;
-  const skin = SKIN_TONES[skinTone] || SKIN_TONES[DEFAULT_CONFIG.skin_tone];
+  const colors = classColors(avatarClass, activeTheme);
   const bodyType = BASE_BODIES[body] ? body : DEFAULT_CONFIG.body;
   const Body = BASE_BODIES[bodyType];
-  const { style: hairStyle, color: hairColor } = hairPreset(hair, bodyType);
+  const { style: hairStyle } = hairPreset(hair, bodyType);
   const hairDef = HAIR_PATHS[hairStyle] || HAIR_PATHS.short;
 
   const t = Math.min(Math.max(Number(tier) || 1, 1), 5);
@@ -90,15 +95,7 @@ export default function Avatar({
   const glowColor = glow ? (glow.color === 'class' ? colors.glow : glow.color) : null;
 
   const cssVars = {
-    '--av-skin': skin.base,
-    '--av-skin-shadow': skin.shadow,
-    '--av-hair': hairColor.base,
-    '--av-hair-shadow': hairColor.shadow,
-    '--av-hair-light': hairColor.light,
-    '--av-c1': colors.c1,
-    '--av-c2': colors.c2,
-    '--av-metal': colors.metal,
-    '--av-glow': colors.glow,
+    ...avatarCssVars({ avatarClass, skinTone, hair, body: bodyType, theme: activeTheme }),
     ...style,
   };
 
