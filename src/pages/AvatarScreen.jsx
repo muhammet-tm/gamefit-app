@@ -11,7 +11,7 @@ import {
   AVATAR_CLASSES, CLASS_LABELS, CLASS_TAGLINES, CLASS_COLORS, SKIN_TONES, HAIR_COLORS,
   BODY_TYPES, BODY_LABELS, hairStylesFor, hairForBody,
 } from '@/components/avatar/palettes';
-import { TIER_CONFIG, TIER_BADGES } from '@/components/avatar/tiers';
+import { TIER_CONFIG } from '@/components/avatar/tiers';
 import { normalizeAvatarConfig } from '@/components/avatar/migrate';
 import BottomNav from '@/components/gamefit/BottomNav';
 import AccessoryShop, { ACCESSORIES } from '@/components/gamefit/AccessoryShop';
@@ -254,7 +254,6 @@ export default function AvatarScreen() {
                 {/* Tier badge top right */}
                 <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full font-body text-xs font-bold"
                   style={{ backgroundColor: `${tierCfg.color}20`, color: tierCfg.color, border: `1px solid ${tierCfg.border}` }}>
-                  <span>{TIER_BADGES[currentTier]}</span>
                   <span>{tierCfg.label}</span>
                 </div>
 
@@ -439,7 +438,6 @@ export default function AvatarScreen() {
                         skinTone={avatarCfg.skin_tone} hair={avatarCfg.hair}
                         size={44} animate={false} />
                     </div>
-                    <span className="text-sm">{TIER_BADGES[tier]}</span>
                     <span className="font-body text-[10px] font-semibold text-center leading-tight"
                       style={{ color: unlocked ? tc.color : 'var(--gf-text-secondary)' }}>
                       {tc.label}

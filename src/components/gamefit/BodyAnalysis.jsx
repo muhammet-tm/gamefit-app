@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { Activity } from 'lucide-react';
 
 // Maps each exercise type to the primary body parts it targets
 const EXERCISE_MUSCLE_MAP = {
@@ -16,14 +17,21 @@ const EXERCISE_MUSCLE_MAP = {
   'Other':          ['Full Body'],
 };
 
+// Body regions are identified by colour plus the text label rendered beside
+// them, not by an icon. Anatomical pictograms at this size were not legible,
+// and front-vs-back is not expressible on a 24px silhouette.
+//
+// The palette is a single ramp through the brand hues rather than the six
+// unrelated colours this used to carry (blue, orange, green, pink), which
+// were decoration — nothing distinguished the categories they marked.
 const MUSCLE_META = {
-  'Chest':     { emoji: '💪', color: '#E5614A', bg: 'rgba(239,68,68,0.12)' },
-  'Back':      { emoji: '🏋️', color: '#3B82F6', bg: 'rgba(59,130,246,0.12)' },
-  'Arms':      { emoji: '🦾', color: '#F97316', bg: 'rgba(249,115,22,0.12)' },
-  'Legs':      { emoji: '🦵', color: '#5FBF7C', bg: 'rgba(34,197,94,0.12)' },
-  'Core':      { emoji: '🎯', color: '#E0680E', bg: 'rgba(224, 104, 14,0.12)' },
-  'Cardio':    { emoji: '❤️', color: '#EC4899', bg: 'rgba(236,72,153,0.12)' },
-  'Full Body': { emoji: '⚡', color: 'var(--gf-gold-text)', bg: 'rgba(244, 176, 68,0.12)' },
+  'Chest':     { color: '#F4B044', bg: 'rgba(244,176,68,0.14)' },
+  'Back':      { color: '#E8A63F', bg: 'rgba(232,166,63,0.14)' },
+  'Arms':      { color: '#E0680E', bg: 'rgba(224,104,14,0.14)' },
+  'Legs':      { color: '#7FBBD4', bg: 'rgba(127,187,212,0.14)' },
+  'Core':      { color: '#B9C4CC', bg: 'rgba(185,196,204,0.14)' },
+  'Cardio':    { color: '#E5614A', bg: 'rgba(229,97,74,0.14)' },
+  'Full Body': { color: '#5FBF7C', bg: 'rgba(95,191,124,0.14)' },
 };
 
 const ALL_MUSCLE_GROUPS = ['Legs', 'Core', 'Cardio', 'Back', 'Arms', 'Chest', 'Full Body'];
@@ -57,7 +65,7 @@ export default function BodyAnalysis({ workouts }) {
   if (totalSessions === 0) {
     return (
       <div className="rounded-2xl p-5 text-center" style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}>
-        <div className="text-4xl mb-2">🫀</div>
+        <Activity size={34} strokeWidth={1.6} aria-hidden="true" className="mx-auto mb-2" style={{ color: 'var(--gf-text-secondary)' }} />
         <p className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>Log workouts to see your body analysis</p>
       </div>
     );
@@ -68,7 +76,8 @@ export default function BodyAnalysis({ workouts }) {
       {/* Header insight */}
       <div className="px-4 pt-4 pb-3 flex items-center gap-3"
         style={{ backgroundColor: topMuscle ? MUSCLE_META[topMuscle.name]?.bg : 'transparent', borderBottom: '1px solid var(--gf-border)' }}>
-        <span className="text-3xl">{topMuscle ? MUSCLE_META[topMuscle.name]?.emoji : '📊'}</span>
+        <span className="h-9 w-1.5 shrink-0 rounded-full" aria-hidden="true"
+          style={{ backgroundColor: topMuscle ? MUSCLE_META[topMuscle.name]?.color : 'var(--gf-text-secondary)' }} />
         <div>
           <p className="font-heading font-black text-base" style={{ color: 'var(--gf-text-primary)' }}>
             You train {topMuscle?.name} the most
@@ -87,7 +96,8 @@ export default function BodyAnalysis({ workouts }) {
             <div key={m.name}>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-base">{meta.emoji}</span>
+                  <span className="h-2.5 w-2.5 shrink-0 rounded-sm" aria-hidden="true"
+                    style={{ backgroundColor: meta.color }} />
                   <span className="font-body text-sm font-medium" style={{ color: 'var(--gf-text-primary)' }}>{m.name}</span>
                 </div>
                 <span className="font-body text-xs font-semibold" style={{ color: meta.color }}>
@@ -112,7 +122,8 @@ export default function BodyAnalysis({ workouts }) {
       {leastTrained && leastTrained.count === 0 && (
         <div className="mx-4 mb-4 px-3 py-2.5 rounded-xl flex items-center gap-2"
           style={{ backgroundColor: 'rgba(127, 187, 212,0.1)', border: '1px solid rgba(127, 187, 212,0.3)' }}>
-          <span className="text-lg">{MUSCLE_META[leastTrained.name]?.emoji}</span>
+          <span className="h-2.5 w-2.5 shrink-0 rounded-sm" aria-hidden="true"
+            style={{ backgroundColor: MUSCLE_META[leastTrained.name]?.color }} />
           <p className="font-body text-xs" style={{ color: '#7FBBD4' }}>
             You haven't trained <strong>{leastTrained.name}</strong> yet — try mixing it in!
           </p>

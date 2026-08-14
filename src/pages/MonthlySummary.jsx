@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Zap, Flame, Dumbbell, Calendar } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, Dumbbell, Flame, Inbox, Zap } from 'lucide-react';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import { callRpc } from '@/api/supabase';
@@ -77,7 +77,7 @@ export default function MonthlySummary() {
         </div>
       ) : !stats || stats.stats.totalWorkouts === 0 ? (
         <div className="px-5 pt-10 text-center">
-          <p className="text-4xl mb-3">📭</p>
+          <Inbox size={36} strokeWidth={1.5} aria-hidden="true" className="mx-auto mb-3" style={{ color: 'var(--gf-text-secondary)' }} />
           <p className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>
             No workouts logged in {MONTHS[month - 1]} {year}. Start training to build your summary!
           </p>
@@ -189,7 +189,7 @@ export default function MonthlySummary() {
           {/* Best Day */}
           {stats.bestDay && (
             <div className="rounded-2xl p-4" style={{ backgroundColor: 'linear-gradient(135deg, rgba(244, 176, 68,0.1), rgba(127, 187, 212,0.1))', border: '1px solid var(--gf-border)' }}>
-              <h3 className="font-heading font-black text-base mb-2" style={{ color: 'var(--gf-text-primary)' }}>🔥 Best Day of the Month</h3>
+              <h3 className="font-heading font-black text-base mb-2" style={{ color: 'var(--gf-text-primary)' }}>Best Day of the Month</h3>
               <div className="space-y-1">
                 <p className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>
                   {new Date(stats.bestDay.date).toLocaleDateString()} · {stats.bestDay.exercise}

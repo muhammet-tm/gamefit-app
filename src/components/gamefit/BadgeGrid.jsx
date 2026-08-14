@@ -29,9 +29,12 @@ export default function BadgeGrid({ workouts, user }) {
                 opacity: earned ? 1 : 0.45,
               }}
             >
-              <span className="text-2xl" style={{ filter: earned ? 'none' : 'grayscale(100%)' }}>
-                {badge.emoji}
-              </span>
+              <badge.Icon
+                size={24}
+                strokeWidth={1.8}
+                aria-hidden="true"
+                style={{ color: earned ? 'var(--gf-gold-text)' : 'var(--gf-text-secondary)' }}
+              />
               <p className="font-heading font-black text-[11px] leading-tight" style={{ color: earned ? 'var(--gf-text-primary)' : 'var(--gf-text-secondary)' }}>
                 {badge.label}
               </p>

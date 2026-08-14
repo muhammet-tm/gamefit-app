@@ -4,6 +4,7 @@ import { invokeFunction } from '@/api/supabase';
 import { useGameFit } from '@/lib/GameFitContext';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
+import { Activity } from 'lucide-react';
 
 export default function StravaCallback() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export default function StravaCallback() {
         // connected_apps — refresh local state to match
         await updateUser({ connected_apps: ['strava'] }).catch(() => {});
 
-        setStatus(`Connected as ${athlete.firstname} ${athlete.lastname}! 🎉`);
+        setStatus(`Connected as ${athlete.firstname} ${athlete.lastname}!`);
         setTimeout(() => navigate('/avatar'), 1500);
       } catch (err) {
         console.error('Strava exchange error:', err);
@@ -52,7 +53,7 @@ export default function StravaCallback() {
         />
         
         <div className="flex-1 flex flex-col items-center justify-center px-6 text-center py-16">
-          <div className="text-5xl mb-4">🏃</div>
+          <Activity size={44} strokeWidth={1.6} aria-hidden="true" className="mx-auto mb-4" style={{ color: 'var(--gf-gold-text)' }} />
           <p className="font-heading font-black text-2xl mb-2" style={{ color: 'var(--gf-text-primary)' }}>
             {status}
           </p>

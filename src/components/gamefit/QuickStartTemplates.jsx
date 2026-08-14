@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { DISCIPLINE_IDS, disciplineIcon } from '@/lib/disciplines';
+import Icon from '@/components/ui/Icon';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Zap } from 'lucide-react';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 
-const EXERCISE_EMOJI = { 'Running':'🏃','Cycling':'🚴','Weight Training':'🏋️','Swimming':'🏊','Yoga':'🧘','HIIT':'⚡','Boxing':'🥊','Basketball':'🏀','Football':'⚽','Walking':'🚶','Other':'💪' };
 const INTENSITY_COLORS = { Low: '#5FBF7C', Medium: '#E0680E', High: '#E5614A' };
 
 const DEFAULT_TEMPLATES = [
@@ -108,7 +109,7 @@ export default function QuickStartTemplates({ onLaunch }) {
               <Trash2 size={11} color="var(--gf-text-secondary)" />
             </button>
             <div>
-              <div className="text-2xl mb-1">{EXERCISE_EMOJI[t.exercise_type] || '💪'}</div>
+              <Icon name={disciplineIcon(t.exercise_type)} size={26} className="mb-1" style={{ color: 'var(--gf-gold-text)' }} />
               <p className="font-heading font-black text-sm leading-tight mb-1" style={{ color: 'var(--gf-text-primary)' }}>{t.name}</p>
               <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>{t.duration_min}m · <span style={{ color: INTENSITY_COLORS[t.intensity] }}>{t.intensity}</span></p>
             </div>
@@ -125,7 +126,7 @@ export default function QuickStartTemplates({ onLaunch }) {
         isOpen={showExerciseSheet}
         onClose={() => setShowExerciseSheet(false)}
         title="Exercise Type"
-        options={Object.keys(EXERCISE_EMOJI).map(t => ({
+        options={DISCIPLINE_IDS.map(t => ({
           label: t,
           selected: form.exercise_type === t,
           onSelect: () => setForm(f => ({ ...f, exercise_type: t }))

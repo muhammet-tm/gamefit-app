@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, User, ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, Eye, EyeOff, Lock, Mail, MailCheck, User } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { supabase, updateProfile } from '@/api/supabase';
 import { track } from '@/lib/analytics';
@@ -131,7 +131,7 @@ export default function Login() {
         {emailVerified && !confirmEmailSent && (
           <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body text-center"
             style={{ backgroundColor: 'rgba(244, 176, 68,0.08)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-green)' }}>
-            ✅ <span className="font-medium">Email verified!</span>{' '}
+            <Check size={15} strokeWidth={2.4} aria-hidden="true" className="inline-block align-[-2px] mr-1" /><span className="font-medium">Email verified!</span>{' '}
             <span style={{ color: 'var(--gf-text-secondary)' }}>Sign in below to start.</span>
           </div>
         )}
@@ -139,7 +139,7 @@ export default function Login() {
         {confirmEmailSent && (
           <div className="mb-3 px-4 py-4 rounded-xl text-sm font-body text-center"
             style={{ backgroundColor: 'rgba(244, 176, 68,0.08)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-green)' }}>
-            <p className="text-2xl mb-2">📬</p>
+            <MailCheck size={26} strokeWidth={1.7} aria-hidden="true" className="mx-auto mb-2" />
             <p className="font-medium mb-1">Check your email!</p>
             <p style={{ color: 'var(--gf-text-secondary)' }}>
               We sent a confirmation link to <strong>{form.email}</strong>.

@@ -69,7 +69,7 @@ export default function ProgressChart() {
       </div>
       {total14 === 0 ? (
         <p className="font-body text-sm py-8 text-center" style={{ color: 'var(--gf-text-secondary)' }}>
-          Log a workout to start your graph 📈
+          Log a workout to start your graph
         </p>
       ) : (
         <AreaChart
