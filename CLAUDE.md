@@ -325,6 +325,32 @@ alone carries 🎮 🎭 🛒 🔗 ⚔️.
   defeat it. Check the deployment-specific URL or the Vercel dashboard
   rather than concluding a deploy did not land.
 
+  **2026-08-14 update — this bites harder than it looks, and the deployment
+  URL is not the escape hatch.** Verifying the phase 6 push, the alias served
+  cached HTML pointing at a bundle that no longer existed, so the asset request
+  fell through the SPA rewrite and returned 2879 bytes of *HTML* with
+  `Content-Type: text/html`. Grepping that for palette values gives zero hits
+  for both the new and the old ones, which reads exactly like a failed deploy.
+  Always check `Content-Type` and byte count before believing a content grep.
+  Deployment-specific URLs (`gamefit-<hash>-game-fit.vercel.app`) are behind
+  **Vercel SSO** and 302 to `vercel.com/sso-api`, so they cannot be curled.
+
+  What works, in order: `gh api repos/muhammet-tm/<repo>/deployments` then
+  `/deployments/<id>/statuses` gives the real build state and SHA without any
+  Vercel auth. Then re-request the alias until `X-Vercel-Cache: MISS`, and only
+  then compare content.
+
+- **RESOLVED 2026-08-14: the marketing site's deploy was landing all along.**
+  The previous checkpoint recorded "the site's Vercel deploy is not landing" as
+  an unresolved blocker, on the evidence of `X-Vercel-Cache: HIT` with a
+  climbing `Age`. That was the cache trap above, not a broken deploy. Verified:
+  every recent site deployment reports `state: success` via the GitHub API, and
+  the live CSS bundle filename matches a fresh local build exactly
+  (`BaseLayout.EE7qYyXt.css` — Astro content-hashes, so an identical name is
+  identical content). The regenerated `public/screens/*.webp` also match live
+  byte-for-byte. **Do not spend time re-diagnosing this.** Compare content or
+  content-hashed filenames; cache headers say nothing about what was deployed.
+
 - `scripts/render-avatars.mjs` was modified outside this session (currently
   in good, working state per the file listing above) — if avatar art work
   resumes, read it fresh rather than assuming the version described in old
