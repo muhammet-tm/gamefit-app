@@ -23,7 +23,7 @@ const ANIM_CLASS = { pulse: 'av-pulse', flicker: 'av-flicker' };
 // Must match the av-react duration in index.css. Only used for the safety
 // timer below, so drift costs a slightly early or late reset, never a stuck
 // avatar.
-const REACT_MS = 380;
+const REACT_MS = 420;
 
 function renderPiece(piece, key, reveal) {
   const { d, fill, opacity, stroke, strokeWidth, fillRule, aura, animated } = piece;
