@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sun, Moon, Bell, Shield, LogOut, Trash2, ChevronRight } from 'lucide-react';
+import { Bell, Check, ChevronRight, LogOut, Moon, Shield, Sun, Trash2, Zap } from 'lucide-react';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
@@ -107,7 +107,7 @@ export default function Profile() {
     { label: 'Total Workouts', value: workouts.length },
     { label: 'Best Streak', value: `${user.best_streak} days` },
     { label: 'Current Streak', value: `${user.current_streak} days` },
-    { label: 'All-Time Coins', value: `🪙 ${user.coins}` },
+    { label: 'All-Time Coins', value: user.coins },
   ];
 
   return (
@@ -120,9 +120,9 @@ export default function Profile() {
         rightAction={
           <div className="flex items-center gap-2">
             {isPremium && (
-              <span className="px-2 py-1 rounded-lg font-body text-xs font-bold"
-                style={{ backgroundColor: 'rgba(127, 187, 212,0.2)', color: 'var(--gf-gold-text)' }}>
-                ⚡ PRO
+              <span className="flex items-center gap-1 px-2 py-1 rounded-lg font-body text-xs font-bold"
+                style={{ backgroundColor: 'rgba(244,176,68,0.16)', color: 'var(--gf-gold-text)' }}>
+                <Zap size={12} strokeWidth={2.6} aria-hidden="true" />PRO
               </span>
             )}
             <RankEmblem level={user.current_level} size={30} />
@@ -155,7 +155,7 @@ export default function Profile() {
             <button onClick={() => editing ? handleSave() : setEditing(true)}
               className="px-4 py-1.5 rounded-xl font-body text-sm font-medium transition-all"
               style={{ backgroundColor: editing ? 'var(--gf-green)' : 'var(--gf-bg-elevated)', color: editing ? '#0B1A24' : 'var(--gf-text-secondary)' }}>
-              {saved ? '✓ Saved!' : editing ? 'Save' : 'Edit'}
+              {saved ? 'Saved' : editing ? 'Save' : 'Edit'}
             </button>
           </div>
           <div className="p-4 space-y-3">
@@ -239,7 +239,7 @@ export default function Profile() {
               className="w-full px-4 py-3.5 flex items-center justify-between transition-all"
               style={{ borderBottom: '1px solid var(--gf-border)' }}>
               <div className="flex items-center gap-3">
-                <span className="text-lg">⚡</span>
+                <Zap size={18} strokeWidth={2.1} aria-hidden="true" />
                 <span className="font-body font-semibold text-sm" style={{ color: 'var(--gf-gold-text)' }}>Upgrade to Premium</span>
               </div>
               <ChevronRight size={16} color="var(--gf-purple)" />
@@ -248,7 +248,7 @@ export default function Profile() {
             <div className="px-4 py-3.5 flex items-center justify-between"
               style={{ borderBottom: '1px solid var(--gf-border)' }}>
               <div className="flex items-center gap-3">
-                <span className="text-lg">✓</span>
+                <Check size={18} strokeWidth={2.4} aria-hidden="true" />
                 <span className="font-body font-semibold text-sm" style={{ color: '#5FBF7C' }}>Premium Active</span>
               </div>
               <span className="text-sm font-body" style={{ color: 'var(--gf-gold-text)' }}>Manage →</span>

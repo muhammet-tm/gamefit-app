@@ -102,7 +102,7 @@ function AddMealModal({ onSave, onClose }) {
             style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-border)' }} />
         </div>
         <div className="grid grid-cols-3 gap-3">
-          {[['protein_g', 'Protein (g)', '#E5614A'], ['carbs_g', 'Carbs (g)', '#3B82F6'], ['fat_g', 'Fat (g)', '#F59E0B']].map(([k, label, color]) => (
+          {[['protein_g', 'Protein (g)', '#E5614A'], ['carbs_g', 'Carbs (g)', '#7FBBD4'], ['fat_g', 'Fat (g)', '#F59E0B']].map(([k, label, color]) => (
             <input key={k} placeholder={label} type="number" value={form[k]} onChange={e => set(k, e.target.value)}
               className="px-3 py-3 rounded-xl font-body text-xs outline-none"
               style={{ backgroundColor: 'var(--gf-bg-elevated)', color, border: `1px solid ${form[k] ? color + '60' : 'var(--gf-border)'}` }} />
@@ -168,7 +168,7 @@ function SnapResultSheet({ result, onSave, onRetry, onClose }) {
           <div className="grid grid-cols-3 gap-3">
             {[
               { label: 'Protein', value: result.protein_g, emoji: '🥩', color: '#E5614A' },
-              { label: 'Carbs', value: result.carbs_g, emoji: '🌾', color: '#3B82F6' },
+              { label: 'Carbs', value: result.carbs_g, emoji: '🌾', color: '#7FBBD4' },
               { label: 'Fats', value: result.fat_g, emoji: '🫒', color: '#F59E0B' },
             ].map(m => (
               <div key={m.label} className="rounded-2xl p-3 text-center"
@@ -346,7 +346,7 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
         {isPremium ? (
           <div className="flex gap-4 mt-4 pt-4" style={{ borderTop: '1px solid var(--gf-border)' }}>
             <MacroBar label="Protein" consumed={totals.protein_g} goal={goals.protein_g} color="#E5614A" />
-            <MacroBar label="Carbs" consumed={totals.carbs_g} goal={goals.carbs_g} color="#3B82F6" />
+            <MacroBar label="Carbs" consumed={totals.carbs_g} goal={goals.carbs_g} color="#7FBBD4" />
             <MacroBar label="Fat" consumed={totals.fat_g} goal={goals.fat_g} color="#F59E0B" />
           </div>
         ) : (
@@ -430,7 +430,7 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
                   {isPremium && (meal.protein_g > 0 || meal.carbs_g > 0 || meal.fat_g > 0) && (
                     <div className="flex gap-2 mt-0.5">
                       <span className="font-body text-[10px]" style={{ color: '#E5614A' }}>P {meal.protein_g}g</span>
-                      <span className="font-body text-[10px]" style={{ color: '#3B82F6' }}>C {meal.carbs_g}g</span>
+                      <span className="font-body text-[10px]" style={{ color: '#7FBBD4' }}>C {meal.carbs_g}g</span>
                       <span className="font-body text-[10px]" style={{ color: '#F59E0B' }}>F {meal.fat_g}g</span>
                     </div>
                   )}

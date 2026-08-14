@@ -36,7 +36,7 @@ export default function PremiumModal({ onClose }) {
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-6 pb-4">
           <h2 className="font-heading font-black text-2xl" style={{ color: 'var(--gf-text-primary)' }}>
-            Unlock Your Full Potential ⚡
+            Unlock your full potential
           </h2>
           <button onClick={onClose} className="w-10 h-10 rounded-xl flex items-center justify-center"
             style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
@@ -105,7 +105,7 @@ export default function PremiumModal({ onClose }) {
             <button onClick={handleUpgrade}
               className="w-full py-4 rounded-2xl font-heading font-black text-xl transition-all active:scale-95"
               style={{ background: 'linear-gradient(135deg, #7FBBD4, #A855F7)', color: '#FFFFFF' }}>
-              Start Premium ⚡
+              Start Premium
             </button>
           )}
 

@@ -93,7 +93,7 @@ export default function Admin() {
               {[
                 { label: 'Total Users', value: MOCK_ANALYTICS.totalUsers.toLocaleString(), color: 'var(--gf-gold-text)' },
                 { label: 'Premium Users', value: MOCK_ANALYTICS.premiumUsers, color: 'var(--gf-gold-text)' },
-                { label: 'Daily Active', value: MOCK_ANALYTICS.dau, color: '#3B82F6' },
+                { label: 'Daily Active', value: MOCK_ANALYTICS.dau, color: '#7FBBD4' },
                 { label: 'Total Workouts', value: MOCK_ANALYTICS.totalWorkouts.toLocaleString(), color: 'var(--gf-ember-text)' },
                 { label: 'Total XP Distributed', value: `${(MOCK_ANALYTICS.totalXP / 1000).toFixed(0)}K`, color: 'var(--gf-gold-text)' },
                 { label: 'Premium Rate', value: `${((MOCK_ANALYTICS.premiumUsers / MOCK_ANALYTICS.totalUsers) * 100).toFixed(1)}%`, color: 'var(--gf-gold-text)' },
@@ -191,7 +191,7 @@ export default function Admin() {
                   <div className="flex-1 min-w-0">
                     <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-text-primary)' }}>{r.reward_name}</p>
                     <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>
-                      🪙 {r.cost_coins} · {r.reward_type} {r.is_premium_only ? '· ⚡Premium' : ''}
+                      {r.cost_coins} coins · {r.reward_type} {r.is_premium_only ? '· Premium' : ''}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

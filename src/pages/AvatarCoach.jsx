@@ -11,7 +11,7 @@ import ReactMarkdown from 'react-markdown';
 
 const STAT_CONFIG = [
   { key: 'strength', label: 'STR', icon: Swords, color: '#E5614A', bg: 'rgba(239,68,68,0.15)', fontSize: 'text-xs' },
-  { key: 'endurance', label: 'END', icon: Wind, color: '#3B82F6', bg: 'rgba(59,130,246,0.15)', fontSize: 'text-xs' },
+  { key: 'endurance', label: 'END', icon: Wind, color: '#7FBBD4', bg: 'rgba(59,130,246,0.15)', fontSize: 'text-xs' },
   { key: 'agility', label: 'AGI', icon: Zap, color: 'var(--gf-gold-text)', bg: 'rgba(244, 176, 68,0.15)', fontSize: 'text-xs' },
   { key: 'recovery', label: 'REC', icon: Heart, color: '#5FBF7C', bg: 'rgba(34,197,94,0.15)', fontSize: 'text-xs' },
 ];

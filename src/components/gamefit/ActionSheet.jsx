@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, X } from 'lucide-react';
 
 export default function ActionSheet({ isOpen, onClose, title, children, options = [] }) {
   const handleSelect = (option) => {
@@ -75,7 +75,7 @@ export default function ActionSheet({ isOpen, onClose, title, children, options 
                     <div className="flex items-center justify-between">
                       <span>{option.label}</span>
                       {option.selected && (
-                        <span className="text-xs">✓</span>
+                        <Check size={13} strokeWidth={2.6} aria-hidden="true" />
                       )}
                     </div>
                   </button>
