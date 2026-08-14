@@ -1,28 +1,41 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Coins, Check, Lock } from 'lucide-react';
+import {
+  Coins, Check, Lock, Crown, Flame, Zap, Shield, Swords, Feather, Shirt, Star,
+  Gem, CircleDashed, HardHat, Sparkles, Medal, LayoutGrid, PartyPopper,
+} from 'lucide-react';
 
+// `tint` matches the colour the accessory actually renders in on the avatar
+// (see ITEM_PALETTES), so the shop card previews the product rather than just
+// naming it. The emoji these replaced rendered in whatever glyph the OS
+// happened to ship, which is not a thing to sell against.
 export const ACCESSORIES = [
-  { id: 'halo',       label: 'Golden Halo',     emoji: '😇', cost: 80,  effect: 'Crown of champions', category: 'head' },
-  { id: 'crown',      label: 'War Crown',        emoji: '👑', cost: 150, effect: 'For true legends',   category: 'head' },
-  { id: 'flames',     label: 'Fire Aura',        emoji: '🔥', cost: 120, effect: 'Burning intensity',  category: 'aura' },
-  { id: 'lightning',  label: 'Thunder Aura',     emoji: '⚡', cost: 200, effect: 'Storm power',        category: 'aura' },
-  { id: 'shield_glow',label: 'Glowing Shield',   emoji: '🛡️', cost: 100, effect: 'Radiant defense',   category: 'gear' },
-  { id: 'sword_glow', label: 'Neon Blade',        emoji: '⚔️', cost: 130, effect: 'Cuts through limits', category: 'gear' },
-  { id: 'wings',      label: 'Angel Wings',      emoji: '🪽', cost: 300, effect: 'Ascended form',      category: 'back' },
-  { id: 'cape',       label: 'Hero Cape',        emoji: '🦸', cost: 180, effect: 'Legendary swagger',  category: 'back' },
-  { id: 'star_badge', label: 'Star Badge',       emoji: '⭐', cost: 60,  effect: 'Proven champion',   category: 'badge' },
-  { id: 'diamond',    label: 'Diamond Badge',    emoji: '💎', cost: 250, effect: 'Elite status',       category: 'badge' },
+  { id: 'halo',       label: 'Golden Halo',    Icon: CircleDashed, tint: 'var(--gf-gold-text)',        cost: 80,  effect: 'Crown of champions',  category: 'head' },
+  { id: 'crown',      label: 'War Crown',      Icon: Crown,        tint: 'var(--gf-gold-text)',        cost: 150, effect: 'For true legends',    category: 'head' },
+  { id: 'flames',     label: 'Fire Aura',      Icon: Flame,        tint: 'var(--gf-ember-text)',       cost: 120, effect: 'Burning intensity',   category: 'aura' },
+  { id: 'lightning',  label: 'Thunder Aura',   Icon: Zap,          tint: 'var(--gf-gold-text)',        cost: 200, effect: 'Storm power',         category: 'aura' },
+  { id: 'shield_glow',label: 'Glowing Shield', Icon: Shield,       tint: 'var(--av-item-sapphire)',    cost: 100, effect: 'Radiant defense',     category: 'gear' },
+  { id: 'sword_glow', label: 'Neon Blade',     Icon: Swords,       tint: 'var(--gf-gold-text)',        cost: 130, effect: 'Cuts through limits', category: 'gear' },
+  { id: 'wings',      label: 'Angel Wings',    Icon: Feather,      tint: 'var(--gf-text-secondary)',   cost: 300, effect: 'Ascended form',       category: 'back' },
+  { id: 'cape',       label: 'Hero Cape',      Icon: Shirt,        tint: 'var(--av-item-ruby)',        cost: 180, effect: 'Legendary swagger',   category: 'back' },
+  { id: 'star_badge', label: 'Star Badge',     Icon: Star,         tint: 'var(--gf-gold-text)',        cost: 60,  effect: 'Proven champion',     category: 'badge' },
+  { id: 'diamond',    label: 'Diamond Badge',  Icon: Gem,          tint: 'var(--av-item-ice-dark)',    cost: 250, effect: 'Elite status',        category: 'badge' },
 ];
 
-const CATEGORY_LABELS = { head: '🪖 Head', aura: '✨ Aura', gear: '⚔️ Gear', back: '🪽 Back', badge: '🏅 Badge' };
+const CATEGORY_META = {
+  head:  { label: 'Head',  Icon: HardHat },
+  aura:  { label: 'Aura',  Icon: Sparkles },
+  gear:  { label: 'Gear',  Icon: Swords },
+  back:  { label: 'Back',  Icon: Feather },
+  badge: { label: 'Badge', Icon: Medal },
+};
 
 export default function AccessoryShop({ coins, ownedAccessories = [], equippedAccessory, onBuy, onEquip }) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [confirmItem, setConfirmItem] = useState(null);
   const [buyFeedback, setBuyFeedback] = useState(null);
 
-  const categories = ['all', ...Object.keys(CATEGORY_LABELS)];
+  const categories = ['all', ...Object.keys(CATEGORY_META)];
   const filtered = activeCategory === 'all' ? ACCESSORIES : ACCESSORIES.filter(a => a.category === activeCategory);
 
   const handleBuy = (item) => {
@@ -58,7 +71,13 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
               backgroundColor: activeCategory === cat ? 'var(--gf-green)' : 'var(--gf-bg-elevated)',
               color: activeCategory === cat ? '#0B1A24' : 'var(--gf-text-secondary)',
             }}>
-            {cat === 'all' ? '🎒 All' : CATEGORY_LABELS[cat]}
+            <span className="flex items-center gap-1.5">
+              {(() => {
+                const CatIcon = cat === 'all' ? LayoutGrid : CATEGORY_META[cat].Icon;
+                return <CatIcon size={13} strokeWidth={2.2} aria-hidden="true" />;
+              })()}
+              {cat === 'all' ? 'All' : CATEGORY_META[cat].label}
+            </span>
           </button>
         ))}
       </div>
@@ -86,7 +105,9 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
                 </span>
               )}
 
-              <div className="text-3xl text-center py-1">{item.emoji}</div>
+              <div className="flex justify-center py-1">
+                <item.Icon size={30} strokeWidth={1.9} style={{ color: item.tint }} aria-hidden="true" />
+              </div>
               <div>
                 <p className="font-body font-semibold text-sm leading-tight" style={{ color: 'var(--gf-text-primary)' }}>{item.label}</p>
                 <p className="font-body text-xs mt-0.5" style={{ color: 'var(--gf-text-secondary)' }}>{item.effect}</p>
@@ -101,7 +122,11 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
                     color: equipped ? 'var(--gf-green)' : 'var(--gf-text-secondary)',
                     border: `1px solid ${equipped ? 'var(--gf-green)' : 'var(--gf-border)'}`,
                   }}>
-                  {equipped ? '✓ Equipped' : 'Equip'}
+                  {equipped ? (
+                    <span className="flex items-center justify-center gap-1">
+                      <Check size={12} strokeWidth={3} aria-hidden="true" /> Equipped
+                    </span>
+                  ) : 'Equip'}
                 </button>
               ) : (
                 <button
@@ -122,7 +147,7 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
                 <motion.div className="absolute inset-0 rounded-2xl flex items-center justify-center"
                   style={{ backgroundColor: 'rgba(244, 176, 68,0.15)' }}
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <span className="text-2xl">🎉</span>
+                  <PartyPopper size={26} strokeWidth={2} style={{ color: 'var(--gf-gold-text)' }} aria-hidden="true" />
                 </motion.div>
               )}
             </motion.div>
@@ -142,7 +167,9 @@ export default function AccessoryShop({ coins, ownedAccessories = [], equippedAc
               initial={{ y: 80 }} animate={{ y: 0 }} exit={{ y: 80 }}
               onClick={e => e.stopPropagation()}>
               <div className="text-center mb-4">
-                <div className="text-5xl mb-2">{confirmItem.emoji}</div>
+                <div className="flex justify-center mb-2">
+                  <confirmItem.Icon size={48} strokeWidth={1.6} style={{ color: confirmItem.tint }} aria-hidden="true" />
+                </div>
                 <h3 className="font-heading font-black text-xl" style={{ color: 'var(--gf-text-primary)' }}>{confirmItem.label}</h3>
                 <p className="font-body text-sm mt-1" style={{ color: 'var(--gf-text-secondary)' }}>{confirmItem.effect}</p>
               </div>

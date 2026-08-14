@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Smartphone } from 'lucide-react';
+import {
+  Smartphone, Footprints, Heart, Zap, Watch, VenetianMask, ShoppingBag,
+  Link2, BarChart3,
+} from 'lucide-react';
 import { invokeFunction } from '@/api/supabase';
 import BodyAnalysis from '@/components/gamefit/BodyAnalysis';
 import { motion } from 'framer-motion';
@@ -19,11 +22,13 @@ import AccessoryShop, { ACCESSORIES } from '@/components/gamefit/AccessoryShop';
 
 const TABS = ['avatar', 'shop', 'connect'];
 
+// Brand colours stay as literal hex: they are third-party marks, not our
+// palette, and Strava orange is Strava orange in either theme.
 const HEALTH_APPS = [
-  { id: 'strava',       name: 'Strava',        emoji: '🏃', color: '#FC4C02', desc: 'Sync runs, rides & activities', comingSoon: false, realOAuth: true },
-  { id: 'apple_health', name: 'Apple Health',  emoji: '❤️', color: '#FF2D55', desc: 'Steps, heart rate & workouts', comingSoon: true },
-  { id: 'whoop',        name: 'WHOOP',         emoji: '⚡', color: '#CDF000', desc: 'Recovery & strain data', comingSoon: true },
-  { id: 'garmin',       name: 'Garmin',        emoji: '⌚', color: '#007CC3', desc: 'GPS & performance tracking', comingSoon: true },
+  { id: 'strava',       name: 'Strava',        Icon: Footprints, color: '#FC4C02', desc: 'Sync runs, rides & activities', comingSoon: false, realOAuth: true },
+  { id: 'apple_health', name: 'Apple Health',  Icon: Heart,      color: '#FF2D55', desc: 'Steps, heart rate & workouts', comingSoon: true },
+  { id: 'whoop',        name: 'WHOOP',         Icon: Zap,        color: '#CDF000', desc: 'Recovery & strain data', comingSoon: true },
+  { id: 'garmin',       name: 'Garmin',        Icon: Watch,      color: '#007CC3', desc: 'GPS & performance tracking', comingSoon: true },
 ];
 
 
@@ -108,14 +113,15 @@ export default function AvatarScreen() {
       <div className="px-5 pt-12 pb-4"
         style={{ backgroundColor: 'var(--gf-bg-surface)', borderBottom: '1px solid var(--gf-border)' }}>
         <div className="flex items-center mb-3">
-          <h1 className="font-heading font-black text-2xl" style={{ color: 'var(--gf-text-primary)' }}>🎮 My Avatar</h1>
+          <h1 className="font-heading font-black text-2xl" style={{ color: 'var(--gf-text-primary)' }}>My Avatar</h1>
         </div>
         {/* Tabs */}
         <div className="flex rounded-xl p-1" style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
-          {[['avatar','🎭 Avatar'],['shop','🛒 Shop'],['connect','🔗 Connect']].map(([t, label]) => (
+          {[['avatar', 'Avatar', VenetianMask], ['shop', 'Shop', ShoppingBag], ['connect', 'Connect', Link2]].map(([t, label, TabIcon]) => (
             <button key={t} onClick={() => setActiveTab(t)}
-              className="flex-1 py-2.5 rounded-lg font-body font-medium text-sm transition-all"
+              className="flex-1 py-2.5 rounded-lg font-body font-medium text-sm transition-all flex items-center justify-center gap-1.5"
               style={{ backgroundColor: activeTab === t ? 'var(--gf-green)' : 'transparent', color: activeTab === t ? '#0B1A24' : 'var(--gf-text-secondary)' }}>
+              <TabIcon size={15} strokeWidth={2.2} aria-hidden="true" />
               {label}
             </button>
           ))}
@@ -140,13 +146,14 @@ export default function AvatarScreen() {
           <div className="rounded-2xl p-4 space-y-2" style={{ backgroundColor: 'var(--gf-bg-elevated)', border: '1px solid var(--gf-border)' }}>
             <p className="font-heading font-black text-sm mb-2" style={{ color: 'var(--gf-text-primary)' }}>How it works</p>
             {[
-              { icon: '🔗', text: 'Connect your fitness app below' },
-              { icon: '📊', text: 'Your activities sync automatically' },
-              { icon: '⚡', text: 'Earn XP & coins for every activity' },
-              { icon: '🎭', text: 'Your avatar evolves with your progress' },
+              { Icon: Link2, text: 'Connect your fitness app below' },
+              { Icon: BarChart3, text: 'Your activities sync automatically' },
+              { Icon: Zap, text: 'Earn XP & coins for every activity' },
+              { Icon: VenetianMask, text: 'Your avatar evolves with your progress' },
             ].map((step, i) => (
               <div key={i} className="flex items-center gap-3">
-                <span className="text-lg">{step.icon}</span>
+                <step.Icon size={17} strokeWidth={2.1} className="flex-shrink-0"
+                  style={{ color: 'var(--gf-gold-text)' }} aria-hidden="true" />
                 <p className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>{step.text}</p>
               </div>
             ))}
@@ -165,9 +172,9 @@ export default function AvatarScreen() {
                   opacity: app.comingSoon ? 0.5 : 1,
                 }}>
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl"
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center"
                     style={{ backgroundColor: `${app.color}20` }}>
-                    {app.emoji}
+                    <app.Icon size={20} strokeWidth={2.1} style={{ color: app.color }} aria-hidden="true" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
@@ -188,7 +195,7 @@ export default function AvatarScreen() {
                   ) : isConnected ? (
                     <span className="text-xs font-body font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1"
                       style={{ backgroundColor: `${app.color}20`, color: app.color }}>
-                      ✓ Connected
+                      <Check size={12} strokeWidth={3} aria-hidden="true" /> Connected
                     </span>
                   ) : app.comingSoon ? (
                     <span className="text-xs font-body px-3 py-1.5 rounded-xl" style={{ backgroundColor: 'var(--gf-border)', color: 'var(--gf-text-secondary)' }}>
@@ -216,7 +223,8 @@ export default function AvatarScreen() {
                   Connected as {user.strava_athlete.firstname} {user.strava_athlete.lastname}
                 </p>
                 <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>
-                  Activities syncing automatically ✓
+                  <Check size={11} strokeWidth={3} className="inline-block align-[-1px] mr-0.5" aria-hidden="true" />
+                  Activities syncing automatically
                 </p>
               </div>
             </div>
@@ -266,10 +274,13 @@ export default function AvatarScreen() {
                     accessories={equippedAccessory ? [equippedAccessory] : []} size={170}
                     interactive />
                   {equippedItem && (
-                    <motion.div className="absolute -top-3 -right-3 text-3xl"
+                    <motion.div
+                      className="absolute -top-3 -right-3 w-9 h-9 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1.5px solid var(--gf-border)' }}
                       initial={{ scale: 0 }} animate={{ scale: 1 }} key={equippedItem.id}
                       transition={{ type: 'spring', stiffness: 300 }}>
-                      {equippedItem.emoji}
+                      <equippedItem.Icon size={19} strokeWidth={2} style={{ color: equippedItem.tint }}
+                        aria-label={`Equipped: ${equippedItem.label}`} />
                     </motion.div>
                   )}
                 </div>
@@ -284,11 +295,11 @@ export default function AvatarScreen() {
                   </div>
                   {equippedItem && <p className="font-body text-sm" style={{ color: 'var(--gf-ember-text)' }}>{equippedItem.label}</p>}
                   <p className="font-body text-xs mt-1" style={{ color: tierCfg.color }}>
-                    {currentTier === 1 && 'Keep training to unlock your first gear upgrade! ⚔️'}
-                    {currentTier === 2 && 'Silver gear unlocked — reach Level 5 for Gold gear 🥇'}
-                    {currentTier === 3 && 'Gold gear equipped — Level 7 unlocks Platinum 💠'}
-                    {currentTier === 4 && 'Platinum gear equipped — reach Level 10 for Apex 👑'}
-                    {currentTier === 5 && 'APEX — maximum evolution reached! 🔥'}
+                    {currentTier === 1 && 'Keep training to unlock your first gear upgrade!'}
+                    {currentTier === 2 && 'Silver gear unlocked — reach Level 5 for Gold gear'}
+                    {currentTier === 3 && 'Gold gear equipped — Level 7 unlocks Platinum'}
+                    {currentTier === 4 && 'Platinum gear equipped — reach Level 10 for Apex'}
+                    {currentTier === 5 && 'APEX — maximum evolution reached!'}
                   </p>
                 </div>
               </motion.div>
@@ -307,10 +318,11 @@ export default function AvatarScreen() {
                 transition={{ duration: 1, ease: 'easeOut' }} />
             </div>
             <p className="font-body text-xs text-center" style={{ color: 'var(--gf-text-secondary)' }}>
-              {xpToNext > 0 ? `${xpToNext.toLocaleString()} XP to next evolution` : 'Max level reached! 🔥'}
+              {xpToNext > 0 ? `${xpToNext.toLocaleString()} XP to next evolution` : 'Max level reached!'}
             </p>
             <p className="font-body text-[10px] text-center mt-1" style={{ color: 'rgba(244, 176, 68,0.5)' }}>
-              ⚡ XP synced from your real workout logs
+              <Zap size={10} strokeWidth={2.6} className="inline-block align-[-1px] mr-0.5" aria-hidden="true" />
+              XP synced from your real workout logs
             </p>
           </div>
 

@@ -1,7 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import {
+  ChevronLeft, ChevronRight, Check, Footprints, Heart, Zap, Watch, Salad,
+  Dumbbell, Weight, Flame, Star, Sprout, TrendingUp, Activity, Trophy,
+  Mars, Venus,
+} from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { invokeFunction } from '@/api/supabase';
 import Avatar from '@/components/avatar/Avatar';
@@ -62,7 +66,7 @@ function ProgressBar({ current, total }) {
 }
 
 // ── Option Row ────────────────────────────────────────────────────────────────
-function OptionRow({ label, sublabel, emoji, selected, onSelect }) {
+function OptionRow({ label, sublabel, Icon, selected, onSelect }) {
   return (
     <button onClick={onSelect}
       className="w-full flex items-center justify-between px-5 py-4 rounded-2xl mb-3 transition-all active:scale-98"
@@ -71,7 +75,7 @@ function OptionRow({ label, sublabel, emoji, selected, onSelect }) {
         border: `1.5px solid ${selected ? '#F4B044' : '#24455A'}`,
       }}>
       <div className="flex items-center gap-3">
-        {emoji && <span className="text-xl">{emoji}</span>}
+        {Icon && <Icon size={19} strokeWidth={2.1} style={{ color: selected ? '#F4B044' : '#88A5B7' }} aria-hidden="true" />}
         <span className="font-body font-semibold text-base text-white">{label}</span>
       </div>
       <div className="flex items-center gap-2">
@@ -148,10 +152,10 @@ function ScrollPicker({ value, onChange, min, max, unit, step = 1 }) {
 // A "Connected ✓" toggle that only stores a string would show up as a phantom
 // connection on the Avatar screen's Connect tab, which tracks real tokens.
 const HEALTH_APPS = [
-  { id: 'strava',       name: 'Strava',       emoji: '🏃', color: '#FC4C02', desc: 'Sync runs, rides & activities', comingSoon: false },
-  { id: 'apple_health', name: 'Apple Health', emoji: '❤️', color: '#FF2D55', desc: 'Steps, heart rate & workouts',  comingSoon: true },
-  { id: 'whoop',        name: 'WHOOP',        emoji: '⚡', color: '#CDF000', desc: 'Recovery & strain data',        comingSoon: true },
-  { id: 'garmin',       name: 'Garmin',       emoji: '⌚', color: '#007CC3', desc: 'GPS & performance tracking',    comingSoon: true },
+  { id: 'strava',       name: 'Strava',       Icon: Footprints, color: '#FC4C02', desc: 'Sync runs, rides & activities', comingSoon: false },
+  { id: 'apple_health', name: 'Apple Health', Icon: Heart, color: '#FF2D55', desc: 'Steps, heart rate & workouts',  comingSoon: true },
+  { id: 'whoop',        name: 'WHOOP',        Icon: Zap, color: '#CDF000', desc: 'Recovery & strain data',        comingSoon: true },
+  { id: 'garmin',       name: 'Garmin',       Icon: Watch, color: '#007CC3', desc: 'GPS & performance tracking',    comingSoon: true },
 ];
 
 function HealthIntegrations({ onConnectStrava, stravaBusy }) {
@@ -172,9 +176,9 @@ function HealthIntegrations({ onConnectStrava, stravaBusy }) {
             opacity: app.comingSoon ? 0.55 : 1,
           }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ backgroundColor: `${app.color}20` }}>
-              {app.emoji}
+              <app.Icon size={18} strokeWidth={2.1} style={{ color: app.color }} aria-hidden="true" />
             </div>
             <div className="text-left">
               <p className="font-body font-semibold text-sm text-white">{app.name}</p>
@@ -296,9 +300,12 @@ export default function Onboarding() {
           <h2 className="font-heading font-black text-3xl text-white mb-4">I am...</h2>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { val: 'male', label: 'MALE', symbol: '♂' },
-              { val: 'female', label: 'FEMALE', symbol: '♀' },
-            ].map(({ val, label, symbol }) => {
+              // Drawn marks rather than U+2642/U+2640: the display faces do not
+              // guarantee coverage of those codepoints, and a fallback-font glyph
+              // at 4xl is very visible when it lands.
+              { val: 'male', label: 'MALE', Icon: Mars },
+              { val: 'female', label: 'FEMALE', Icon: Venus },
+            ].map(({ val, label, Icon }) => {
               const selected = gender === val;
               return (
                 <button key={val} onClick={() => pickGender(val)}
@@ -307,7 +314,7 @@ export default function Onboarding() {
                     backgroundColor: selected ? 'rgba(244, 176, 68,0.10)' : '#112532',
                     border: `2px solid ${selected ? '#F4B044' : '#24455A'}`,
                   }}>
-                  <span className="text-4xl leading-none" style={{ color: selected ? '#F4B044' : '#88A5B7' }}>{symbol}</span>
+                  <Icon size={38} strokeWidth={2} style={{ color: selected ? '#F4B044' : '#88A5B7' }} aria-hidden="true" />
                   <span className="font-heading font-black text-lg" style={{ color: selected ? '#F4B044' : '#FFFFFF' }}>{label}</span>
                 </button>
               );
@@ -389,14 +396,14 @@ export default function Onboarding() {
       content: (
         <div className="w-full">
           {[
-            { val: 'Lose weight and get lean',   emoji: '🥗', sub: 'Fat loss' },
-            { val: 'Build muscle mass',           emoji: '💪', sub: 'Hypertrophy' },
-            { val: 'Become stronger',             emoji: '🏋️', sub: 'Strength' },
-            { val: 'Improve endurance',           emoji: '🏃', sub: 'Cardio' },
-            { val: 'Become more consistent',      emoji: '🔥', sub: 'Habits' },
-            { val: 'General fitness',             emoji: '⭐', sub: 'Stay active' },
-          ].map(({ val, emoji, sub }) => (
-            <OptionRow key={val} label={val} sublabel={sub} emoji={emoji}
+            { val: 'Lose weight and get lean',   Icon: Salad,      sub: 'Fat loss' },
+            { val: 'Build muscle mass',           Icon: Dumbbell,   sub: 'Hypertrophy' },
+            { val: 'Become stronger',             Icon: Weight,     sub: 'Strength' },
+            { val: 'Improve endurance',           Icon: Footprints, sub: 'Cardio' },
+            { val: 'Become more consistent',      Icon: Flame,      sub: 'Habits' },
+            { val: 'General fitness',             Icon: Star,       sub: 'Stay active' },
+          ].map(({ val, Icon, sub }) => (
+            <OptionRow key={val} label={val} sublabel={sub} Icon={Icon}
               selected={fitnessGoal === val} onSelect={() => setFitnessGoal(val)} />
           ))}
         </div>
@@ -408,12 +415,12 @@ export default function Onboarding() {
       content: (
         <div className="w-full">
           {[
-            { val: 'Beginner', label: "I've never worked out", sub: 'Starter', emoji: '📊' },
-            { val: 'Novice',   label: 'Beginner – Tried it before', sub: 'Learning', emoji: '📈' },
-            { val: 'Intermediate', label: 'Intermediate – Regular training', sub: 'Consistent', emoji: '📉' },
-            { val: 'Advanced', label: 'Advanced – Years of experience', sub: 'Elite', emoji: '🏆' },
-          ].map(({ val, label, sub, emoji }) => (
-            <OptionRow key={val} label={label} sublabel={sub} emoji={emoji}
+            { val: 'Beginner', label: "I've never worked out", sub: 'Starter', Icon: Sprout },
+            { val: 'Novice',   label: 'Beginner – Tried it before', sub: 'Learning', Icon: TrendingUp },
+            { val: 'Intermediate', label: 'Intermediate – Regular training', sub: 'Consistent', Icon: Activity },
+            { val: 'Advanced', label: 'Advanced – Years of experience', sub: 'Elite', Icon: Trophy },
+          ].map(({ val, label, sub, Icon }) => (
+            <OptionRow key={val} label={label} sublabel={sub} Icon={Icon}
               selected={fitnessLevel === val} onSelect={() => setFitnessLevel(val)} />
           ))}
         </div>
@@ -426,12 +433,12 @@ export default function Onboarding() {
         <div className="w-full">
           <h2 className="font-heading font-black text-3xl text-white mb-4">My weekly target</h2>
           {[
-            { val: 2, label: '2 days / week', sub: 'Easing in', emoji: '🌱' },
-            { val: 3, label: '3 days / week', sub: 'Solid habit', emoji: '💪' },
-            { val: 4, label: '4 days / week', sub: 'Committed', emoji: '🔥' },
-            { val: 5, label: '5+ days / week', sub: 'All in', emoji: '🏆' },
-          ].map(({ val, label, sub, emoji }) => (
-            <OptionRow key={val} label={label} sublabel={sub} emoji={emoji}
+            { val: 2, label: '2 days / week', sub: 'Easing in', Icon: Sprout },
+            { val: 3, label: '3 days / week', sub: 'Solid habit', Icon: Dumbbell },
+            { val: 4, label: '4 days / week', sub: 'Committed', Icon: Flame },
+            { val: 5, label: '5+ days / week', sub: 'All in', Icon: Trophy },
+          ].map(({ val, label, sub, Icon }) => (
+            <OptionRow key={val} label={label} sublabel={sub} Icon={Icon}
               selected={weeklyGoal === val} onSelect={() => setWeeklyGoal(val)} />
           ))}
         </div>
@@ -556,7 +563,7 @@ export default function Onboarding() {
             backgroundColor: canProceed() ? '#F4B044' : '#24455A',
             color: canProceed() ? '#0B1A24' : '#4A5065',
           }}>
-          {saving ? 'Setting up your profile...' : isLast ? "Let's Go! 🚀" : 'NEXT'}
+          {saving ? 'Setting up your profile...' : isLast ? "Let's Go!" : 'NEXT'}
           {!saving && !isLast && <ChevronRight size={22} />}
         </button>
         {isLast && (

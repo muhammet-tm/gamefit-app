@@ -1,15 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { X, CheckCheck } from 'lucide-react';
+import {
+  X, CheckCheck, Flame, ChevronsUp, Bot, Coins, BarChart3, Bell,
+} from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { formatDistanceToNow } from 'date-fns';
 
+// Icons carry a tint so a notification's type reads before its text does. The
+// emoji these replaced rendered in whatever the OS supplied, which meant the
+// list changed character between Android, iOS and desktop.
 const TYPE_META = {
-  streak_risk: { icon: '🔥', label: 'Streak Risk' },
-  level_up: { icon: '🎮', label: 'Level Up' },
-  ai_tip: { icon: '🤖', label: 'Coach G' },
-  reward_expiry: { icon: '🪙', label: 'Reward' },
-  weekly_summary: { icon: '📊', label: 'Summary' },
+  streak_risk: { Icon: Flame, label: 'Streak Risk', tint: 'var(--gf-ember-text)' },
+  level_up: { Icon: ChevronsUp, label: 'Level Up', tint: 'var(--gf-gold-text)' },
+  ai_tip: { Icon: Bot, label: 'Coach G', tint: 'var(--gf-text-secondary)' },
+  reward_expiry: { Icon: Coins, label: 'Reward', tint: 'var(--gf-gold-text)' },
+  weekly_summary: { Icon: BarChart3, label: 'Summary', tint: 'var(--gf-text-secondary)' },
 };
 
 export default function NotificationsPanel({ onClose }) {
@@ -48,7 +53,8 @@ export default function NotificationsPanel({ onClose }) {
       {/* List */}
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
         {notifications.map((n) => {
-          const meta = TYPE_META[n.type] || { icon: '🔔', label: 'Notification' };
+          const meta = TYPE_META[n.type]
+            || { Icon: Bell, label: 'Notification', tint: 'var(--gf-text-secondary)' };
           return (
             <motion.button key={n.id}
               onClick={() => markNotificationRead(n.id)}
@@ -58,7 +64,8 @@ export default function NotificationsPanel({ onClose }) {
                 border: `1px solid ${n.is_read ? 'var(--gf-border)' : 'rgba(244, 176, 68,0.2)'}`,
               }}
               whileTap={{ scale: 0.98 }}>
-              <span className="text-2xl mt-0.5">{meta.icon}</span>
+              <meta.Icon size={22} strokeWidth={2.2} className="mt-0.5 flex-shrink-0"
+                style={{ color: meta.tint }} aria-hidden="true" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-0.5">
                   <p className="font-body font-semibold text-sm truncate" style={{ color: 'var(--gf-text-primary)' }}>{n.title}</p>

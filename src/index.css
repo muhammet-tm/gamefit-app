@@ -304,16 +304,31 @@
      ~1.4s authored sequence for the rank-up threshold. A tap sits between:
      long enough to read as a character responding, short enough to repeat.
 
-   TODO(founder): write the keyframes. See the note in the chat — this is the
-   avatar's personality, and it should be your call rather than mine. */
+   The move is a braced flex: load down, drive up, settle. Squash-and-stretch
+   carries it — scaleY and scaleX are always inverted against each other, so
+   the figure conserves volume and a rig with no joints still reads as a body
+   applying force. A plain scale-up reads as a UI hover state instead, which is
+   the wrong idea for a character in a fitness game.
+
+   Timed with a slow start and fast release rather than a symmetric ease: the
+   load is the wind-up you feel, the drive is the payoff. 420ms sits between
+   the 120-260ms the design system budgets for routine feedback and the ~1.4s
+   reserved for the rank-up threshold, which is the right place for something
+   that is neither an acknowledgement nor a milestone. Keep REACT_MS in
+   Avatar.jsx in step if this changes. */
 @keyframes av-react {
-  /* Placeholder: a flex. Replace with whatever the character should do. */
-  0%   { transform: scale(1)     translateY(0); }
-  35%  { transform: scale(1.045) translateY(-3px); }
-  100% { transform: scale(1)     translateY(0); }
+  0%   { transform: translateY(0)      scaleX(1)     scaleY(1); }
+  16%  { transform: translateY(3px)    scaleX(1.035) scaleY(0.962); }
+  44%  { transform: translateY(-6px)   scaleX(0.978) scaleY(1.042); }
+  68%  { transform: translateY(1px)    scaleX(1.012) scaleY(0.99); }
+  86%  { transform: translateY(-1.5px) scaleX(0.996) scaleY(1.006); }
+  100% { transform: translateY(0)      scaleX(1)     scaleY(1); }
 }
 .av-react {
-  animation: av-react 380ms var(--gf-e-out);
+  animation: av-react 420ms var(--gf-e-io);
+  /* Feet, not centre: a body pushes off the ground. Origin at 50% 50% makes it
+     bob in mid-air like a floating sprite. transform-box is required because an
+     SVG <g> otherwise resolves percentages against the viewport, not itself. */
   transform-origin: 50% 100%;
   transform-box: fill-box;
 }
