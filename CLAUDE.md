@@ -256,17 +256,48 @@ the contour drew where the arm ends), and `LevelUpOverlay` announced "Avatar
 evolved to Tier N" on any level-up above tier 1 — levelling 7→8 stays inside
 tier 4, so it claimed an evolution that had not happened.
 
-Still open on this branch: **shop accessories have no light-theme variants.**
-Ten item-identity colours remain hardcoded in `layers/accessories.js`; wings at
-`#FFFFFF` measure 1.0 on a white card, and these are items users pay coins for.
-Each item's identity colour is its own design decision, so it was left separate.
+Shop accessories were finished in a follow-up: `ITEM_PALETTES` carries both
+themes, keyed by item rather than class, because a crown's gems are ruby and
+sapphire whoever wears them. Two values are exempt from the contrast floor on
+purpose — `highlight` and `rubyDark` are shading painted over another item
+colour, never over the card, so the parent shape is what must clear it.
 
-Not in any phase yet, flagged rather than forgotten: ~109 emoji remain in
-Onboarding, AvatarScreen, Coach, Marketplace, AccessoryShop, NutritionTab
-and NotificationsPanel. AccessoryShop and Marketplace are cosmetic item art
-and belong with the accessory pass above; the rest need their own. The
-regenerated store screenshots show these plainly — the Avatar screen header
-alone carries 🎮 🎭 🛒 🔗 ⚔️.
+## Verification commands (run these, don't reason about it)
+
+```bash
+npm run verify            # lint + emoji guard + avatar palette + build
+npm run check:avatar      # ground contrast, label contrast, class separation,
+                          # kit separation, skin/contour disjunction
+npm run check:emoji       # fails on any emoji in UI source (comments exempt)
+npm run check:onboarding  # walks the wizard in a real browser (needs dev server)
+```
+
+`check:onboarding` uses Playwright rather than the in-app browser pane for a
+specific reason: onboarding is built on AnimatePresence, and that pane freezes
+`requestAnimationFrame` on hidden tabs, so exit animations never complete and
+the wizard never advances past step one. Anything animation-gated has to be
+checked with Playwright.
+
+## Emoji: all gone (2026-08-14)
+
+The ~109 flagged emoji are removed — 101 in UI plus the gender picker's
+U+2642/U+2640 — replaced with lucide-react icons across Onboarding,
+AvatarScreen, AccessoryShop, NutritionTab, Coach, Marketplace,
+NotificationsPanel and mockData's notification titles.
+
+The reasoning, so it isn't relitigated: an emoji is drawn by the OS, not by us,
+so the same screen differed across Android, iOS, Windows and macOS; emoji
+cannot be themed, being fixed-colour bitmaps in an app where everything else
+answers to the palette; and coverage is not guaranteed, which at `text-3xl` and
+`text-5xl` means a very visible tofu box. Shop items and notification rows now
+carry a `tint` matching the colour the thing actually renders in, so a card
+previews its product. Decorative trailing glyphs in copy were deleted rather
+than replaced.
+
+`npm run check:emoji` fails the build if any come back.
+
+Emoji: none left. See the phase 6 section above; `npm run check:emoji` keeps
+it that way.
 
 ## Known limitations (disclosed, not hidden)
 
