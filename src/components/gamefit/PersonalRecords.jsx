@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import confetti from 'canvas-confetti';
-import { Plus, Trash2, Trophy, X } from 'lucide-react';
+import { Dumbbell, Plus, Trash2, Trophy, X } from 'lucide-react';
 import { supabase, callRpc } from '@/api/supabase';
 import { prSchema, validate } from '@/lib/validation';
 import { track } from '@/lib/analytics';
@@ -153,7 +153,7 @@ export default function PersonalRecords({ onBadges }) {
 
       {celebration && (
         <div className="mx-4 mt-3 px-4 py-3 rounded-xl" style={{ backgroundColor: 'rgba(244, 176, 68,0.10)', border: '1px solid var(--gf-green)' }}>
-          <p className="font-heading font-black text-sm" style={{ color: 'var(--gf-gold-text)' }}>🏆 NEW PERSONAL RECORD!</p>
+          <p className="font-heading font-black text-sm" style={{ color: 'var(--gf-gold-text)' }}>NEW PERSONAL RECORD!</p>
           <p className="font-body text-xs mt-0.5" style={{ color: 'var(--gf-text-primary)' }}>
             {celebration.exercise}: <strong>{Number(celebration.weight)} kg × {celebration.reps}</strong>
             {celebration.previous && (
@@ -171,7 +171,7 @@ export default function PersonalRecords({ onBadges }) {
         </div>
       ) : bests.length === 0 ? (
         <div className="px-4 py-8 text-center">
-          <p className="text-3xl mb-2">🏋️</p>
+          <Dumbbell size={30} strokeWidth={1.6} aria-hidden="true" className="mx-auto mb-2" style={{ color: 'var(--gf-text-secondary)' }} />
           <p className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>
             No records yet. Log your best lift and start beating it.
           </p>

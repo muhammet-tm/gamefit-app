@@ -30,6 +30,7 @@ export function getRank(level) {
     color: cfg.color,
     bg: cfg.bg,
     border: cfg.border,
-    badge: { 1: '🥉', 2: '🥈', 3: '🥇', 4: '💠', 5: '👑' }[tier],
+    // No `badge` glyph. It was a medal emoji with no consumer anywhere in the
+    // app; rank is shown by <RankEmblem/> plus the `display` string.
   };
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Flame, ChevronLeft, ChevronRight, Trophy } from 'lucide-react';
+import { Flame, ChevronLeft, ChevronRight, Trophy, Zap, Star, Gift } from 'lucide-react';
 import { supabase } from '@/api/supabase';
 import { useGameFit } from '@/lib/GameFitContext';
 
@@ -9,9 +9,9 @@ import { useGameFit } from '@/lib/GameFitContext';
 // coin boosts really exist server-side; 30 days awards the Unstoppable badge).
 
 const MILESTONES = [
-  { days: 3, icon: '🔥', label: '+25% coins' },
-  { days: 7, icon: '⚡', label: '+50% coins' },
-  { days: 30, icon: '🌟', label: 'Unstoppable badge' },
+  { days: 3, Icon: Flame, label: '+25% coins' },
+  { days: 7, Icon: Zap, label: '+50% coins' },
+  { days: 30, Icon: Star, label: 'Unstoppable badge' },
 ];
 
 const DAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
@@ -171,7 +171,11 @@ export default function StreakCalendar() {
                 border: `1px solid ${reached ? 'rgba(224, 104, 14,0.45)' : isNext ? 'var(--gf-amber)' : 'var(--gf-border)'}`,
                 opacity: reached || isNext ? 1 : 0.6,
               }}>
-              <div className="text-base leading-none mb-1">{reached ? m.icon : '🎁'}</div>
+              <div className="mb-1 flex justify-center">
+                {reached
+                  ? <m.Icon size={17} strokeWidth={1.9} aria-hidden="true" style={{ color: 'var(--gf-ember-text)' }} />
+                  : <Gift size={17} strokeWidth={1.9} aria-hidden="true" style={{ color: 'var(--gf-text-secondary)' }} />}
+              </div>
               <p className="font-heading font-black text-xs" style={{ color: reached ? 'var(--gf-amber)' : 'var(--gf-text-primary)' }}>
                 {m.days} days
               </p>

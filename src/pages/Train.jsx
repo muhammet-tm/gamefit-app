@@ -7,6 +7,8 @@ import { useGameFit } from '@/lib/GameFitContext';
 import { calcXP, calcCoins } from '@/lib/mockData';
 import { validate, workoutDurationSchema } from '@/lib/validation';
 import { BADGES } from '@/lib/badges';
+import { DISCIPLINE_IDS, disciplineIcon } from '@/lib/disciplines';
+import Icon from '@/components/ui/Icon';
 import UserAvatar from '@/components/avatar/UserAvatar';
 import BottomNav from '@/components/gamefit/BottomNav';
 import QuickStartTemplates from '@/components/gamefit/QuickStartTemplates';
@@ -31,14 +33,13 @@ function useCountUp(target, duration = 900, run = true) {
   return value;
 }
 
-const EXERCISE_TYPES = ['Running','Cycling','Weight Training','Swimming','Yoga','HIIT','Boxing','Basketball','Football','Walking','Other'];
+const EXERCISE_TYPES = DISCIPLINE_IDS;
 const DURATION_PRESETS = [15, 30, 45, 60, 90];
 const INTENSITIES = [
   { label: 'Low', color: '#5FBF7C', bg: 'rgba(34,197,94,0.15)', multiplier: '×1' },
   { label: 'Medium', color: '#E0680E', bg: 'rgba(224, 104, 14,0.15)', multiplier: '×1.5' },
   { label: 'High', color: '#E5614A', bg: 'rgba(239,68,68,0.15)', multiplier: '×2' },
 ];
-const EXERCISE_EMOJI = { 'Running':'🏃','Cycling':'🚴','Weight Training':'🏋️','Swimming':'🏊','Yoga':'🧘','HIIT':'⚡','Boxing':'🥊','Basketball':'🏀','Football':'⚽','Walking':'🚶','Other':'💪' };
 
 export default function Train() {
   const navigate = useNavigate();
@@ -109,7 +110,8 @@ export default function Train() {
       <div className="min-h-screen flex flex-col items-center justify-center px-6"
         style={{ backgroundColor: '#0B1A24' }}>
         <p className="font-heading font-black text-xl mb-2" style={{ color: '#88A5B7' }}>
-          {EXERCISE_EMOJI[exerciseType]} {exerciseType}
+          <Icon name={disciplineIcon(exerciseType)} size={18} className="inline-block align-[-3px] mr-1.5" />
+          {exerciseType}
         </p>
         <p className="font-body text-sm mb-8" style={{ color: '#88A5B7' }}>{intensity} intensity</p>
 
@@ -192,7 +194,8 @@ export default function Train() {
                   color: exerciseType === type ? '#0B1A24' : 'var(--gf-text-secondary)',
                   border: `1px solid ${exerciseType === type ? 'var(--gf-green)' : 'var(--gf-border)'}`,
                 }}>
-                {EXERCISE_EMOJI[type]} {type}
+                <Icon name={disciplineIcon(type)} size={18} className="inline-block align-[-3px] mr-1.5" />
+                {type}
               </button>
             ))}
           </div>
@@ -306,7 +309,6 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
     return () => clearTimeout(t);
   }, [saveError]);
 
-  const EXERCISE_EMOJI_LOCAL = { 'Running':'🏃','Cycling':'🚴','Weight Training':'🏋️','Swimming':'🏊','Yoga':'🧘','HIIT':'⚡','Boxing':'🥊','Basketball':'🏀','Football':'⚽','Walking':'🚶','Other':'💪' };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-10"
@@ -324,7 +326,8 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
           {saveError ? 'Not Saved' : 'Workout Complete!'}
         </h2>
         <p className="font-body mb-6" style={{ color: '#88A5B7' }}>
-          {EXERCISE_EMOJI_LOCAL[exerciseType]} {duration} min {exerciseType}
+          <Icon name={disciplineIcon(exerciseType)} size={18} className="inline-block align-[-3px] mr-1.5" />
+          {duration} min {exerciseType}
         </p>
 
         {saveError ? (
@@ -360,11 +363,11 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
             {newBadges.map((b, i) => (
               <motion.div key={b.id}
                 className="flex items-center gap-3 px-4 py-3 rounded-2xl mb-3 text-left"
-                style={{ backgroundColor: 'rgba(150,100,255,0.1)', border: '1px solid rgba(150,100,255,0.4)' }}
+                style={{ backgroundColor: 'rgba(244,176,68,0.10)', border: '1px solid rgba(244,176,68,0.40)' }}
                 initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 + i * 0.15 }}>
-                <span className="text-3xl">{b.emoji}</span>
+                <b.Icon size={28} strokeWidth={1.8} aria-hidden="true" style={{ color: '#F4B044' }} />
                 <div>
-                  <p className="font-heading font-black text-sm" style={{ color: '#9664FF' }}>BADGE UNLOCKED</p>
+                  <p className="font-heading font-black text-sm" style={{ color: '#F4B044' }}>BADGE UNLOCKED</p>
                   <p className="font-body text-sm text-white">{b.label} — {b.desc}</p>
                 </div>
               </motion.div>

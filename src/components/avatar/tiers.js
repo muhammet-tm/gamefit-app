@@ -28,7 +28,9 @@ export const TIER_CONFIG = {
   5: { label: 'Apex',     color: '#E0680E', bg: 'rgba(224,104,14,0.10)',  border: 'rgba(224,104,14,0.5)',   glow: '#E0680E' },
 };
 
-export const TIER_BADGES = { 1: '🥉', 2: '🥈', 3: '🥇', 4: '💠', 5: '👑' };
+// TIER_BADGES (medal emoji per tier) was removed: at both render sites the
+// tier label sat immediately beside it, and one already drew a <RankEmblem/>.
+// The glyph repeated what the label and the emblem already said.
 
 // relative import so the avatar package also works outside Vite (render scripts)
 export { AVATAR_TIER_LEVELS } from '../../lib/mockData';

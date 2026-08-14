@@ -9,6 +9,8 @@ import RankEmblem from '@/components/gamefit/RankEmblem';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import UserAvatar from '@/components/avatar/UserAvatar';
 import BottomNav from '@/components/gamefit/BottomNav';
+import { disciplineIcon } from '@/lib/disciplines';
+import Icon from '@/components/ui/Icon';
 import LevelUpOverlay from '@/components/gamefit/LevelUpOverlay';
 import NotificationsPanel from '@/components/gamefit/NotificationsPanel';
 import StreakCalendar from '@/components/gamefit/StreakCalendar';
@@ -46,11 +48,6 @@ export default function Dashboard() {
 
   const recentWorkouts = workouts.slice(0, 3);
 
-  const EXERCISE_EMOJI = {
-    'Running': '🏃', 'Cycling': '🚴', 'Weight Training': '🏋️', 'Swimming': '🏊',
-    'Yoga': '🧘', 'HIIT': '⚡', 'Boxing': '🥊', 'Basketball': '🏀',
-    'Football': '⚽', 'Walking': '🚶', 'Other': '💪',
-  };
 
   return (
     <PullToRefresh onRefresh={handlePullRefresh} disabled={refreshing}>
@@ -205,7 +202,7 @@ export default function Dashboard() {
                 style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}
                 initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * i + 0.5 }}>
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">{EXERCISE_EMOJI[w.exercise_type] || '💪'}</span>
+                  <Icon name={disciplineIcon(w.exercise_type)} size={26} style={{ color: 'var(--gf-gold-text)' }} />
                   <div>
                     <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-text-primary)' }}>{w.exercise_type}</p>
                     <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>

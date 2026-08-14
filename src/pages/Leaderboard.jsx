@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { RefreshCw, Lock } from 'lucide-react';
+import { Flag, Lock, Radio, RefreshCw, Users } from 'lucide-react';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import PullToRefresh from '@/components/gamefit/PullToRefresh';
@@ -99,7 +99,7 @@ export default function Leaderboard() {
       <div className="min-h-screen pb-20" style={{ backgroundColor: 'var(--gf-bg-primary)' }}>
       <ScreenTransition direction="forward">
       <ScreenHeader
-        title="🏆 Leaderboard"
+        title="Leaderboard"
         subtitle={tab === 'weekly' ? 'This week · resets Monday (UAE time)' : 'All-time rankings'}
         showBackButton={false}
         rightAction={<button onClick={handlePullRefresh}
@@ -112,7 +112,7 @@ export default function Leaderboard() {
       />
         {/* Tabs */}
         <div className="flex rounded-xl p-1 mt-3" style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
-          {[['alltime', '🌍 All-Time'], ['weekly', '📅 This Week']].map(([t, label]) => (
+          {[['alltime', 'All-Time'], ['weekly', 'This Week']].map(([t, label]) => (
             <button key={t} onClick={() => setTab(t)}
               className="flex-1 py-2 rounded-lg font-body font-medium text-sm transition-all"
               style={{ backgroundColor: tab === t ? 'var(--gf-bg-surface)' : 'transparent', color: tab === t ? 'var(--gf-text-primary)' : 'var(--gf-text-secondary)' }}>
@@ -124,14 +124,14 @@ export default function Leaderboard() {
             className="flex-1 py-2 rounded-lg font-body font-medium text-sm transition-all flex items-center justify-center gap-1.5"
             style={{ backgroundColor: tab === 'friends' ? 'var(--gf-bg-surface)' : 'transparent', color: tab === 'friends' ? 'var(--gf-text-primary)' : 'var(--gf-text-secondary)' }}>
             {!isPremium && <Lock size={12} style={{ color: 'var(--gf-ember-text)' }} />}
-            👥 Friends
+            Friends
           </button>
         </div>
       </ScreenTransition>
 
       {tab === 'friends' ? (
         <div className="flex-1 flex flex-col items-center justify-center py-20 px-5 text-center">
-          <span className="text-5xl mb-4">👥</span>
+          <Users size={46} strokeWidth={1.5} aria-hidden="true" className="mb-4" style={{ color: 'var(--gf-text-secondary)' }} />
           <h3 className="font-heading font-black text-2xl mb-2" style={{ color: 'var(--gf-text-primary)' }}>Friends Leaderboard</h3>
           <p className="font-body" style={{ color: 'var(--gf-text-secondary)' }}>Coming soon — invite friends to GameFit to compete head-to-head!</p>
         </div>
@@ -141,17 +141,17 @@ export default function Leaderboard() {
         </div>
       ) : error ? (
         <div className="flex flex-col items-center justify-center py-20 px-5 text-center">
-          <span className="text-5xl mb-4">📡</span>
+          <Radio size={46} strokeWidth={1.5} aria-hidden="true" className="mb-4" style={{ color: 'var(--gf-text-secondary)' }} />
           <p className="font-body" style={{ color: 'var(--gf-text-secondary)' }}>{error}</p>
         </div>
       ) : entries.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 px-5 text-center">
-          <span className="text-5xl mb-4">🏁</span>
+          <Flag size={46} strokeWidth={1.5} aria-hidden="true" className="mb-4" style={{ color: 'var(--gf-text-secondary)' }} />
           <h3 className="font-heading font-black text-2xl mb-2" style={{ color: 'var(--gf-text-primary)' }}>
             {tab === 'weekly' ? 'No workouts yet this week' : 'The board is empty'}
           </h3>
           <p className="font-body" style={{ color: 'var(--gf-text-secondary)' }}>
-            Log a workout and claim the #1 spot! 🏆
+            Log a workout and claim the #1 spot
           </p>
         </div>
       ) : (
