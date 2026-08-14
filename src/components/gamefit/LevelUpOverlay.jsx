@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Trophy, Coins } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { getRank } from '@/lib/ranks';
 import UserAvatar from '@/components/avatar/UserAvatar';
@@ -99,27 +100,27 @@ function LevelBanner({ newLevel, title, onClose }) {
       transition={{ type: 'spring', damping: 18 }}
     >
       <div className="rounded-2xl px-5 py-4 flex items-center gap-4 shadow-2xl"
-        style={{ background: 'linear-gradient(135deg, #7FBBD4, #4F1DB5)', border: '1px solid rgba(244, 176, 68,0.4)' }}>
+        style={{ background: 'linear-gradient(135deg, #F4B044, #E0680E)', border: '1px solid rgba(244, 176, 68,0.4)' }}>
         {/* Animated icon */}
         <motion.div
           className="text-3xl flex-shrink-0"
           animate={{ rotate: [0, -15, 15, -10, 10, 0], scale: [1, 1.2, 1] }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          🎮
+          <Trophy size={26} strokeWidth={2} aria-hidden="true" style={{ color: '#0B1A24' }} />
         </motion.div>
         <div className="flex-1 min-w-0">
-          <div className="font-heading font-black text-lg leading-none" style={{ color: 'var(--gf-gold-text)' }}>
+          <div className="font-heading font-black text-lg leading-none" style={{ color: '#0B1A24' }}>
             LEVEL {newLevel} REACHED!
           </div>
-          <div className="font-body text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.8)' }}>
-            New rank: <span className="font-semibold text-white">{title}</span>
+          <div className="font-body text-sm mt-0.5" style={{ color: 'rgba(11,26,36,0.72)' }}>
+            New rank: <span className="font-semibold" style={{ color: '#0B1A24' }}>{title}</span>
           </div>
         </div>
         {/* Progress pulse dot */}
         <motion.div
           className="w-3 h-3 rounded-full flex-shrink-0"
-          style={{ backgroundColor: '#F4B044' }}
+          style={{ backgroundColor: '#0B1A24' }}
           animate={{ scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
           transition={{ repeat: Infinity, duration: 1 }}
         />
@@ -220,11 +221,11 @@ export default function LevelUpOverlay() {
                     </p>
                     <motion.div
                       className="mt-2 px-5 py-2 rounded-xl inline-block font-heading text-xl font-black"
-                      style={{ background: 'linear-gradient(135deg, #7FBBD4, #9F5CF7)', color: '#FFFFFF' }}
+                      style={{ background: 'linear-gradient(135deg, #F4B044, #E0680E)', color: '#0B1A24' }}
                       animate={{ scale: [1, 1.04, 1] }}
                       transition={{ repeat: Infinity, duration: 2 }}
                     >
-                      🏆 {title}
+                      {title}
                     </motion.div>
                   </motion.div>
 
@@ -237,7 +238,7 @@ export default function LevelUpOverlay() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.45 }}
                     >
-                      ✨ Avatar evolved to Tier {levelUpData.newTier}!
+                      Avatar evolved to Tier {levelUpData.newTier}
                     </motion.div>
                   )}
 
@@ -253,7 +254,7 @@ export default function LevelUpOverlay() {
                       className="text-3xl"
                       animate={{ rotate: [0, 20, -20, 0] }}
                       transition={{ repeat: Infinity, duration: 1.5, delay: 0.6 }}
-                    >🪙</motion.span>
+                    ><Coins size={22} strokeWidth={2} aria-hidden="true" /></motion.span>
                     <span className="font-heading text-2xl font-black" style={{ color: '#E0680E' }}>
                       +{levelUpData.bonusCoins} Bonus Coins!
                     </span>
@@ -290,7 +291,7 @@ export default function LevelUpOverlay() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.65 }}
                   >
-                    {claimed ? '✓ Reward Claimed!' : '🎁 Claim Reward'}
+                    {claimed ? 'Reward claimed' : 'Claim reward'}
                   </motion.button>
                 </motion.div>
               </>

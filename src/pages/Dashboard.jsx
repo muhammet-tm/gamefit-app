@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Bell, Sun, Moon, Dumbbell, Bot, ShoppingBag, Trophy, Zap, Flame } from 'lucide-react';
+import { Bell, Sun, Moon, Dumbbell, Bot, ShoppingBag, Trophy, Flame, Droplet } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { getNextLevelXP, getCurrentLevelXP } from '@/lib/mockData';
 import { getRank } from '@/lib/ranks';
@@ -14,6 +14,8 @@ import Icon from '@/components/ui/Icon';
 import LevelUpOverlay from '@/components/gamefit/LevelUpOverlay';
 import NotificationsPanel from '@/components/gamefit/NotificationsPanel';
 import StreakCalendar from '@/components/gamefit/StreakCalendar';
+import XPMeter from '@/components/gamefit/XPMeter';
+import StatTile from '@/components/gamefit/StatTile';
 import ProgressChart from '@/components/gamefit/ProgressChart';
 import PullToRefresh from '@/components/gamefit/PullToRefresh';
 import { formatDistanceToNow } from 'date-fns';
@@ -33,17 +35,17 @@ export default function Dashboard() {
   const level = user.current_level;
   const currentLevelXP = getCurrentLevelXP(level);
   const nextLevelXP = getNextLevelXP(level);
-  const xpProgress = nextLevelXP > currentLevelXP
-    ? ((user.total_xp - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100
-    : 100;
   const rank = getRank(level);
   const title = rank.display;
 
-  const quickActions = [
-    { label: 'Log Workout', icon: Dumbbell, color: 'var(--gf-gold-text)', textColor: '#0B1A24', path: '/train' },
-    { label: 'Avatar Coach', icon: Bot, color: '#7FBBD4', textColor: '#FFFFFF', path: '/avatar-coach' },
-    { label: 'Marketplace', icon: ShoppingBag, color: '#E0680E', textColor: '#0B1A24', path: '/marketplace' },
-    { label: 'Leaderboard', icon: Trophy, color: '#3B82F6', textColor: '#FFFFFF', path: '/leaderboard' },
+  // One primary action, then three quiet ones. These used to be four equally
+  // weighted cards in four different accent colours, which is a colour with no
+  // meaning: nothing distinguished the categories the colours marked, and with
+  // everything emphasised nothing was.
+  const secondaryActions = [
+    { label: 'Coach', icon: Bot, path: '/avatar-coach' },
+    { label: 'Ranks', icon: Trophy, path: '/leaderboard' },
+    { label: 'Shop', icon: ShoppingBag, path: '/marketplace' },
   ];
 
   const recentWorkouts = workouts.slice(0, 3);
@@ -59,7 +61,7 @@ export default function Dashboard() {
         <div>
           <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>Welcome back</p>
           <h2 className="font-heading font-black text-lg" style={{ color: 'var(--gf-text-primary)' }}>
-            {user.first_name} 👋
+            {user.first_name}
           </h2>
         </div>
         <div className="flex items-center gap-3">
@@ -110,62 +112,53 @@ export default function Dashboard() {
                   {user.current_streak} day streak
                 </span>
               </div>
-              {/* XP Bar */}
-              <div className="space-y-1">
-                <div className="flex justify-between text-xs font-body" style={{ color: 'var(--gf-text-secondary)' }}>
-                  <span>{user.total_xp.toLocaleString()} XP</span>
-                  <span>{nextLevelXP.toLocaleString()} XP</span>
-                </div>
-                <div className="h-3 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--gf-border)' }}>
-                  <motion.div
-                    className="h-full rounded-full"
-                    style={{ backgroundColor: 'var(--gf-green)' }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(xpProgress, 100)}%` }}
-                    transition={{ duration: 1, ease: 'easeOut', delay: 0.3 }}
-                  />
-                </div>
-              </div>
+              <XPMeter
+                value={user.total_xp - currentLevelXP}
+                max={nextLevelXP - currentLevelXP}
+                label={`${user.total_xp.toLocaleString()} XP`}
+                caption={`${Math.max(nextLevelXP - user.total_xp, 0).toLocaleString()} to go`}
+              />
             </div>
           </div>
         </motion.div>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { label: 'Total XP', value: user.total_xp.toLocaleString(), icon: Zap, color: 'var(--gf-gold-text)' },
-            { label: 'This Week', value: `${user.weekly_workout_count} / ${user.weekly_goal || 3}`, sub: user.weekly_workout_count >= (user.weekly_goal || 3) ? 'Goal hit! 🎯' : 'workouts', icon: Dumbbell, color: '#3B82F6' },
-            { label: 'Coins', value: `🪙 ${user.coins}`, icon: null, color: 'var(--gf-ember-text)' },
-          ].map((stat, i) => (
-            <motion.div key={i}
-              className="rounded-2xl p-3 flex flex-col gap-1"
-              style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 * i + 0.2 }}>
-              <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>{stat.label}</p>
-              <p className="font-heading font-black text-base leading-tight" style={{ color: stat.color }}>{stat.value}</p>
-              {stat.sub && (
-                <p className="font-body text-[10px] leading-none" style={{ color: 'var(--gf-text-secondary)' }}>{stat.sub}</p>
-              )}
-            </motion.div>
-          ))}
+        {/* Stats. One hairline grid, so the figures align as a row of data
+            rather than three separate cards competing with the rank hero. */}
+        <div className="grid grid-cols-3 gap-px overflow-hidden rounded-2xl"
+          style={{ backgroundColor: 'var(--gf-border)', border: '1px solid var(--gf-border)' }}>
+          <StatTile value={user.total_xp.toLocaleString()} label="Total XP" />
+          <StatTile
+            value={user.weekly_workout_count}
+            unit={` / ${user.weekly_goal || 3}`}
+            label="This week"
+          />
+          <StatTile value={user.coins} label="Coins" tone="ember" />
         </div>
 
-        {/* Quick Actions */}
+        {/* Primary action */}
         <div>
-          <h3 className="font-heading font-black text-lg mb-3" style={{ color: 'var(--gf-text-primary)' }}>Quick Actions</h3>
-          <div className="grid grid-cols-2 gap-3">
-            {quickActions.map((action, i) => (
+          <motion.button
+            onClick={() => navigate('/train')}
+            className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl font-heading font-black uppercase tracking-[0.04em] transition-transform active:scale-[0.98]"
+            style={{ backgroundColor: 'var(--gf-gold)', color: '#0B1A24', fontSize: 15 }}
+            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+            whileTap={{ scale: 0.98 }}>
+            <Dumbbell size={20} strokeWidth={2.1} aria-hidden="true" />
+            Log a workout
+          </motion.button>
+
+          <div className="mt-2 grid grid-cols-3 gap-2">
+            {secondaryActions.map((action, i) => (
               <motion.button key={action.label}
                 onClick={() => navigate(action.path)}
-                className="rounded-2xl p-4 flex flex-col items-start gap-2 transition-all active:scale-95"
-                style={{ backgroundColor: `${action.color}15`, border: `1px solid ${action.color}40` }}
-                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.05 * i + 0.4 }}
+                className="flex flex-col items-center gap-[7px] rounded-2xl px-2 pb-2.5 pt-3 transition-transform active:scale-95"
+                style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}
+                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * i + 0.42 }}
                 whileTap={{ scale: 0.95 }}>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ backgroundColor: action.color }}>
-                  <action.icon size={20} color={action.textColor} />
-                </div>
-                <span className="font-heading font-black text-base" style={{ color: 'var(--gf-text-primary)' }}>
+                <action.icon size={21} strokeWidth={1.8} aria-hidden="true"
+                  style={{ color: 'var(--gf-text-secondary)' }} />
+                <span className="font-body text-[10.5px] font-semibold uppercase tracking-[0.04em]"
+                  style={{ color: 'var(--gf-text-secondary)' }}>
                   {action.label}
                 </span>
               </motion.button>
@@ -187,7 +180,7 @@ export default function Dashboard() {
               <button onClick={() => navigate('/train')}
                 className="w-full rounded-2xl p-5 text-center transition-all active:scale-98"
                 style={{ backgroundColor: 'rgba(244, 176, 68,0.06)', border: '1.5px dashed rgba(244, 176, 68,0.4)' }}>
-                <span className="text-3xl block mb-1.5">💧</span>
+                <Droplet size={30} strokeWidth={1.6} aria-hidden="true" className="mx-auto mb-1.5" style={{ color: 'var(--gf-text-secondary)' }} />
                 <p className="font-heading font-black text-base" style={{ color: 'var(--gf-gold-text)' }}>
                   Log your first workout
                 </p>
@@ -212,7 +205,7 @@ export default function Dashboard() {
                 </div>
                 <div className="text-right">
                   <p className="font-heading font-black text-sm" style={{ color: 'var(--gf-gold-text)' }}>+{w.xp_earned} XP</p>
-                  <p className="font-body text-xs" style={{ color: 'var(--gf-ember-text)' }}>🪙 {w.coins_earned}</p>
+                  <p className="font-mono text-xs font-semibold tabular-nums" style={{ color: 'var(--gf-ember-text)' }}>+{w.coins_earned}</p>
                 </div>
               </motion.div>
             ))}

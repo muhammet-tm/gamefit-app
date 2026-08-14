@@ -42,7 +42,7 @@ export default function QuickStartTemplates({ onLaunch }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="font-heading font-black text-xl" style={{ color: 'var(--gf-text-primary)' }}>⚡ Quick Start</h2>
+        <h2 className="font-heading font-black text-xl" style={{ color: 'var(--gf-text-primary)' }}>Quick Start</h2>
         <button onClick={() => setShowAdd(s => !s)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-body text-xs font-medium transition-all"
           style={{ backgroundColor: showAdd ? 'var(--gf-bg-elevated)' : 'rgba(244, 176, 68,0.15)', color: showAdd ? 'var(--gf-text-secondary)' : 'var(--gf-green)', border: `1px solid ${showAdd ? 'var(--gf-border)' : 'rgba(244, 176, 68,0.3)'}` }}>

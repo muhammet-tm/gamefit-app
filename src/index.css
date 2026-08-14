@@ -208,6 +208,24 @@
   .text-gf-amber { color: var(--gf-ember); }
   .text-gf-purple { color: var(--gf-gold); }
 }
+/* ============ XP meter ============
+   The signature motion: effort becomes a quantity, the quantity fills a
+   meter. Segments fill left to right, 55ms apart, easing out. The streak
+   dots and the XP history reuse the same cadence.
+   Content is visible by default — the animation only runs when motion is
+   allowed, so a blocked animation can never leave the meter looking empty. */
+.gf-xp-seg { transform-origin: left center; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .gf-xp-seg {
+    animation: gf-fill 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes gf-fill {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+}
+
 /* ============ Avatar system animations ============ */
 @keyframes av-breathe {
   0%, 100% { transform: translateY(0) scaleY(1); }

@@ -10,7 +10,7 @@ import {
 // real bold/headings/lists, scrollable tables, and native charts for
 // ```chart fenced blocks ({"type":"bar"|"pie","title":...,"data":[{label,value}]}).
 
-const CHART_COLORS = ['#F4B044', '#7FBBD4', '#F59E0B', '#E5614A', '#3B82F6', '#5FBF7C'];
+const CHART_COLORS = ['#F4B044', '#7FBBD4', '#F59E0B', '#E5614A', '#7FBBD4', '#5FBF7C'];
 
 const tooltipStyle = {
   backgroundColor: 'var(--gf-bg-surface)',

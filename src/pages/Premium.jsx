@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Check, Crown, Zap, Brain, Trophy, BarChart2, Shield } from 'lucide-react';
+import { ArrowLeft, BarChart2, Brain, Check, Crown, Shield, Trophy, Zap } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { invokeFunction } from '@/api/supabase';
 import { track } from '@/lib/analytics';
@@ -18,7 +18,7 @@ const FEATURES = [
   { icon: Zap,      color: 'var(--gf-gold-text)', title: 'Unlimited AI Coaching',     desc: 'Unlimited Coach G requests — workouts, advice & plans' },
   { icon: BarChart2,color: '#4FC3F7', title: 'Advanced Analytics',        desc: 'Deep stats on progress, body composition trends & insights' },
   { icon: Shield,   color: '#E5614A', title: 'Exclusive Avatar Items',    desc: 'Unlock premium skins, accessories & legendary tier gear' },
-  { icon: Crown,    color: '#E0680E', title: 'Premium Badge',             desc: 'Show off the ⚡ PRO badge on your profile and leaderboard' },
+  { icon: Crown,    color: '#E0680E', title: 'Premium Badge',             desc: 'Show off the PRO badge on your profile and leaderboard' },
 ];
 
 export default function Premium() {
@@ -58,7 +58,7 @@ export default function Premium() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center"
         style={{ backgroundColor: 'var(--gf-bg-primary)' }}>
-        <div className="text-6xl mb-4">⚡</div>
+        <Zap size={54} strokeWidth={1.8} aria-hidden="true" className="mx-auto mb-4" style={{ color: 'var(--gf-gold-text)' }} />
         <h2 className="font-heading font-black text-3xl mb-2" style={{ color: 'var(--gf-text-primary)' }}>You're Premium!</h2>
         <p className="font-body text-sm mb-6" style={{ color: 'var(--gf-text-secondary)' }}>All premium features are unlocked for you.</p>
         <button onClick={() => navigate(-1)}
@@ -88,7 +88,7 @@ export default function Premium() {
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="absolute inset-0 opacity-20" style={{ background: 'radial-gradient(circle at 50% 30%, #7FBBD4, transparent 70%)' }} />
         <div className="relative z-10">
-          <div className="text-5xl mb-3">👑</div>
+          <Crown size={46} strokeWidth={1.7} aria-hidden="true" className="mx-auto mb-3" style={{ color: 'var(--gf-gold-text)' }} />
           <h2 className="font-heading font-black text-3xl text-white mb-2">Unlock Your Full Potential</h2>
           <p className="font-body text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
             Everything you need to crush your fitness goals — AI coaching, leaderboards, nutrition & more.

@@ -8,7 +8,7 @@ export default function BadgeGrid({ workouts, user }) {
   return (
     <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--gf-border)', backgroundColor: 'var(--gf-bg-surface)' }}>
       <div className="px-4 py-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--gf-border)' }}>
-        <h3 className="font-heading font-black text-lg" style={{ color: 'var(--gf-text-primary)' }}>🏅 Badges</h3>
+        <h3 className="font-heading font-black text-lg" style={{ color: 'var(--gf-text-primary)' }}>Badges</h3>
         <span className="font-body text-xs px-2 py-1 rounded-full" style={{ backgroundColor: 'rgba(244, 176, 68,0.15)', color: 'var(--gf-gold-text)' }}>
           {earnedIds.size}/{BADGES.length} earned
         </span>
@@ -44,7 +44,7 @@ export default function BadgeGrid({ workouts, user }) {
               {earned && (
                 <span className="text-[9px] font-body font-semibold px-1.5 py-0.5 rounded-full"
                   style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
-                  ✓ Earned
+                  Earned
                 </span>
               )}
             </motion.div>
