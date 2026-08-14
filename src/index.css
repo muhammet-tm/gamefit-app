@@ -208,22 +208,57 @@
   .text-gf-amber { color: var(--gf-ember); }
   .text-gf-purple { color: var(--gf-gold); }
 }
-/* ============ XP meter ============
-   The signature motion: effort becomes a quantity, the quantity fills a
-   meter. Segments fill left to right, 55ms apart, easing out. The streak
-   dots and the XP history reuse the same cadence.
-   Content is visible by default — the animation only runs when motion is
-   allowed, so a blocked animation can never leave the meter looking empty. */
+/* ============ Motion ============
+   One thesis: GameFit is a fill-and-threshold system. Effort becomes a
+   quantity, the quantity fills a meter, the meter crossing a threshold
+   changes your rank. Every animation below is that idea at a different
+   scale — the XP meter, the streak dots, the history bars, and the
+   rank-up moment that fires when the meter finally tips over.
+
+   Budgets follow the surface. This is a tool opened mid-workout, so
+   routine feedback stays at 120-260ms; only the threshold moment is
+   allowed an authored ~1.4s sequence, because it happens rarely and is
+   the payoff of the whole loop.
+
+   Every rule lives inside `prefers-reduced-motion: no-preference`, so
+   content is visible by default and a blocked animation can never leave
+   an element looking empty. `--gf-i` carries the stagger index. */
+:root {
+  --gf-e-out: cubic-bezier(0.16, 1, 0.3, 1);  /* confident arrival */
+  --gf-e-io:  cubic-bezier(0.65, 0, 0.35, 1); /* state change      */
+}
+
 .gf-xp-seg { transform-origin: left center; }
+.gf-grow   { transform-origin: bottom center; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .gf-xp-seg {
-    animation: gf-fill 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* the meter itself */
+  .gf-xp-seg { animation: gf-fill 420ms var(--gf-e-out) both; }
+
+  /* streak days earn themselves in the same left-to-right cadence */
+  .gf-pop {
+    animation: gf-pop 260ms var(--gf-e-out) both;
+    animation-delay: calc(var(--gf-i, 0) * 55ms + 220ms);
   }
-  @keyframes gf-fill {
-    from { transform: scaleX(0); }
-    to   { transform: scaleX(1); }
+
+  /* history bars: the same fill, rotated onto the vertical axis */
+  .gf-grow {
+    animation: gf-grow 400ms var(--gf-e-out) both;
+    animation-delay: calc(var(--gf-i, 0) * 28ms + 160ms);
   }
+
+  @keyframes gf-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes gf-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes gf-pop  {
+    from { transform: scale(0.4); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+}
+
+/* Reduced motion keeps the meaning and drops the travel. A filled segment
+   still reads as filled; it simply does not animate into place. */
+@media (prefers-reduced-motion: reduce) {
+  .gf-xp-seg, .gf-grow, .gf-pop { animation: none; }
 }
 
 /* ============ Avatar system animations ============ */

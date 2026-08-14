@@ -1,4 +1,5 @@
 import React from 'react';
+import { MotionConfig } from 'framer-motion';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -34,6 +35,12 @@ import AdminRoute from '@/components/AdminRoute';
 
 function App() {
   return (
+    // reducedMotion="user" makes every framer animation in the app honour the
+    // OS setting. There are 111 <motion.*> elements across 27 files and none
+    // of them checked it individually; only the vendored chart components did.
+    // Transforms and layout movement are dropped, opacity and colour survive,
+    // so feedback that confirms an action stays legible.
+    <MotionConfig reducedMotion="user">
     <Router>
       <AuthProvider>
       <GameFitProvider>
@@ -81,6 +88,7 @@ function App() {
       </AuthProvider>
       <Toaster />
     </Router>
+    </MotionConfig>
   )
 }
 
