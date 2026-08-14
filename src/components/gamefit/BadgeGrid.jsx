@@ -9,7 +9,7 @@ export default function BadgeGrid({ workouts, user }) {
     <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--gf-border)', backgroundColor: 'var(--gf-bg-surface)' }}>
       <div className="px-4 py-3 flex items-center justify-between" style={{ borderBottom: '1px solid var(--gf-border)' }}>
         <h3 className="font-heading font-black text-lg" style={{ color: 'var(--gf-text-primary)' }}>🏅 Badges</h3>
-        <span className="font-body text-xs px-2 py-1 rounded-full" style={{ backgroundColor: 'rgba(200,255,0,0.15)', color: 'var(--gf-green)' }}>
+        <span className="font-body text-xs px-2 py-1 rounded-full" style={{ backgroundColor: 'rgba(244, 176, 68,0.15)', color: 'var(--gf-gold-text)' }}>
           {earnedIds.size}/{BADGES.length} earned
         </span>
       </div>
@@ -24,8 +24,8 @@ export default function BadgeGrid({ workouts, user }) {
               transition={{ delay: i * 0.03 }}
               className="flex flex-col items-center gap-1.5 p-3 rounded-2xl text-center"
               style={{
-                backgroundColor: earned ? 'rgba(200,255,0,0.08)' : 'var(--gf-bg-elevated)',
-                border: `1.5px solid ${earned ? 'rgba(200,255,0,0.35)' : 'var(--gf-border)'}`,
+                backgroundColor: earned ? 'rgba(244, 176, 68,0.08)' : 'var(--gf-bg-elevated)',
+                border: `1.5px solid ${earned ? 'rgba(244, 176, 68,0.35)' : 'var(--gf-border)'}`,
                 opacity: earned ? 1 : 0.45,
               }}
             >
@@ -40,7 +40,7 @@ export default function BadgeGrid({ workouts, user }) {
               </p>
               {earned && (
                 <span className="text-[9px] font-body font-semibold px-1.5 py-0.5 rounded-full"
-                  style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14' }}>
+                  style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
                   ✓ Earned
                 </span>
               )}

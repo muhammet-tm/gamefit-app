@@ -64,7 +64,7 @@ export default function Admin() {
         subtitle="GameFit Management Console"
         showBackButton={false}
         rightAction={<span className="px-3 py-1 rounded-full font-body text-xs font-bold"
-          style={{ backgroundColor: 'rgba(239,68,68,0.2)', color: '#EF4444' }}>
+          style={{ backgroundColor: 'rgba(239,68,68,0.2)', color: '#E5614A' }}>
           ADMIN
         </span>}
       />
@@ -77,7 +77,7 @@ export default function Admin() {
             className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl font-body text-xs font-medium transition-all"
             style={{
               backgroundColor: tab === t.id ? 'var(--gf-green)' : 'var(--gf-bg-elevated)',
-              color: tab === t.id ? '#0D0F14' : 'var(--gf-text-secondary)',
+              color: tab === t.id ? '#0B1A24' : 'var(--gf-text-secondary)',
             }}>
             <t.icon size={13} /> {t.label}
           </button>
@@ -91,12 +91,12 @@ export default function Admin() {
           <>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { label: 'Total Users', value: MOCK_ANALYTICS.totalUsers.toLocaleString(), color: 'var(--gf-green)' },
-                { label: 'Premium Users', value: MOCK_ANALYTICS.premiumUsers, color: 'var(--gf-purple)' },
+                { label: 'Total Users', value: MOCK_ANALYTICS.totalUsers.toLocaleString(), color: 'var(--gf-gold-text)' },
+                { label: 'Premium Users', value: MOCK_ANALYTICS.premiumUsers, color: 'var(--gf-gold-text)' },
                 { label: 'Daily Active', value: MOCK_ANALYTICS.dau, color: '#3B82F6' },
-                { label: 'Total Workouts', value: MOCK_ANALYTICS.totalWorkouts.toLocaleString(), color: 'var(--gf-amber)' },
-                { label: 'Total XP Distributed', value: `${(MOCK_ANALYTICS.totalXP / 1000).toFixed(0)}K`, color: 'var(--gf-green)' },
-                { label: 'Premium Rate', value: `${((MOCK_ANALYTICS.premiumUsers / MOCK_ANALYTICS.totalUsers) * 100).toFixed(1)}%`, color: 'var(--gf-purple)' },
+                { label: 'Total Workouts', value: MOCK_ANALYTICS.totalWorkouts.toLocaleString(), color: 'var(--gf-ember-text)' },
+                { label: 'Total XP Distributed', value: `${(MOCK_ANALYTICS.totalXP / 1000).toFixed(0)}K`, color: 'var(--gf-gold-text)' },
+                { label: 'Premium Rate', value: `${((MOCK_ANALYTICS.premiumUsers / MOCK_ANALYTICS.totalUsers) * 100).toFixed(1)}%`, color: 'var(--gf-gold-text)' },
               ].map((s, i) => (
                 <motion.div key={i} className="rounded-2xl p-4" style={surfaceStyle}
                   initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * i }}>
@@ -142,7 +142,7 @@ export default function Admin() {
           <>
             <button onClick={() => setShowAddReward(!showAddReward)}
               className="w-full py-3 rounded-xl font-heading font-black text-base flex items-center justify-center gap-2"
-              style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14' }}>
+              style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
               <Plus size={18} /> Add Reward
             </button>
 
@@ -180,7 +180,7 @@ export default function Admin() {
                   <button onClick={() => setShowAddReward(false)} className="flex-1 py-2.5 rounded-xl font-heading font-black text-sm"
                     style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-secondary)' }}>Cancel</button>
                   <button onClick={addReward} className="flex-1 py-2.5 rounded-xl font-heading font-black text-sm"
-                    style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14' }}>Add</button>
+                    style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>Add</button>
                 </div>
               </div>
             )}
@@ -198,12 +198,12 @@ export default function Admin() {
                     <button onClick={() => toggleRewardActive(r.id)}
                       className="w-8 h-8 rounded-lg flex items-center justify-center"
                       style={{ backgroundColor: r.is_active ? 'rgba(34,197,94,0.2)' : 'var(--gf-bg-elevated)' }}>
-                      {r.is_active ? <Check size={14} color="#22C55E" /> : <X size={14} color="var(--gf-text-secondary)" />}
+                      {r.is_active ? <Check size={14} color="#5FBF7C" /> : <X size={14} color="var(--gf-text-secondary)" />}
                     </button>
                     <button onClick={() => deleteReward(r.id)}
                       className="w-8 h-8 rounded-lg flex items-center justify-center"
                       style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}>
-                      <Trash2 size={14} color="#EF4444" />
+                      <Trash2 size={14} color="#E5614A" />
                     </button>
                   </div>
                 </div>
@@ -225,7 +225,7 @@ export default function Admin() {
                 <div className="w-32 h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
                   <div className="h-full rounded-full" style={{ width: `${(day.requests / 250) * 100}%`, backgroundColor: 'var(--gf-purple)' }} />
                 </div>
-                <span className="font-heading font-black text-sm w-10 text-right" style={{ color: 'var(--gf-purple)' }}>{day.requests}</span>
+                <span className="font-heading font-black text-sm w-10 text-right" style={{ color: 'var(--gf-gold-text)' }}>{day.requests}</span>
               </div>
             ))}
           </div>
@@ -247,7 +247,7 @@ export default function Admin() {
                   style={{ borderBottom: i < 4 ? '1px solid var(--gf-border)' : 'none' }}>
                   <span className="font-heading font-black text-sm w-6 text-center" style={{ color: 'var(--gf-text-secondary)' }}>#{u.rank}</span>
                   <span className="flex-1 font-body font-medium text-sm" style={{ color: 'var(--gf-text-primary)' }}>{u.display_name}</span>
-                  <span className="font-heading font-black text-sm" style={{ color: 'var(--gf-green)' }}>{u.total_xp.toLocaleString()} XP</span>
+                  <span className="font-heading font-black text-sm" style={{ color: 'var(--gf-gold-text)' }}>{u.total_xp.toLocaleString()} XP</span>
                 </div>
               ))}
             </div>

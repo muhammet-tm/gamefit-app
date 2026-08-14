@@ -100,7 +100,7 @@ export default function Login() {
         <div className="flex flex-col items-center mb-8">
           <img src="/icons/icon-192.png" alt="GameFit" className="h-24 w-24 rounded-3xl mb-3" />
           <h1 className="font-heading font-black text-4xl" style={{ color: 'var(--gf-text-primary)' }}>
-            GAME<span style={{ color: 'var(--gf-green)' }}>FIT</span>
+            GAME<span style={{ color: 'var(--gf-gold-text)' }}>FIT</span>
           </h1>
           <p className="font-body text-sm mt-1" style={{ color: 'var(--gf-text-secondary)' }}>
             Fitness, Gamified.
@@ -114,7 +114,7 @@ export default function Login() {
               className="flex-1 py-2.5 rounded-lg font-body font-medium text-sm transition-all"
               style={{
                 backgroundColor: mode === m ? 'var(--gf-green)' : 'transparent',
-                color: mode === m ? '#0D0F14' : 'var(--gf-text-secondary)'
+                color: mode === m ? '#0B1A24' : 'var(--gf-text-secondary)'
               }}>
               {m === 'login' ? 'Sign In' : 'Sign Up'}
             </button>
@@ -123,14 +123,14 @@ export default function Login() {
 
         {error && (
           <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
-            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#E5614A', border: '1px solid rgba(239,68,68,0.3)' }}>
             {error}
           </div>
         )}
 
         {emailVerified && !confirmEmailSent && (
           <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body text-center"
-            style={{ backgroundColor: 'rgba(200,255,0,0.08)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-green)' }}>
+            style={{ backgroundColor: 'rgba(244, 176, 68,0.08)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-green)' }}>
             ✅ <span className="font-medium">Email verified!</span>{' '}
             <span style={{ color: 'var(--gf-text-secondary)' }}>Sign in below to start.</span>
           </div>
@@ -138,7 +138,7 @@ export default function Login() {
 
         {confirmEmailSent && (
           <div className="mb-3 px-4 py-4 rounded-xl text-sm font-body text-center"
-            style={{ backgroundColor: 'rgba(200,255,0,0.08)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-green)' }}>
+            style={{ backgroundColor: 'rgba(244, 176, 68,0.08)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-green)' }}>
             <p className="text-2xl mb-2">📬</p>
             <p className="font-medium mb-1">Check your email!</p>
             <p style={{ color: 'var(--gf-text-secondary)' }}>
@@ -197,7 +197,7 @@ export default function Login() {
           {mode === 'login' && (
             <div className="text-right">
               <button type="button" onClick={() => navigate('/forgot-password')}
-                className="text-sm font-body" style={{ color: 'var(--gf-purple)' }}>
+                className="text-sm font-body" style={{ color: 'var(--gf-gold-text)' }}>
                 Forgot Password?
               </button>
             </div>
@@ -205,7 +205,7 @@ export default function Login() {
 
           <button type="submit" disabled={loading}
             className="w-full py-4 rounded-xl font-heading font-black text-lg mt-2 transition-all active:scale-95"
-            style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14', opacity: loading ? 0.7 : 1 }}>
+            style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24', opacity: loading ? 0.7 : 1 }}>
             {loading ? 'Please wait...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
           </button>
         </form>

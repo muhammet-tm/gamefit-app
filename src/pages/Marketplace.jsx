@@ -47,9 +47,9 @@ export default function Marketplace() {
         subtitle="Spend your coins wisely"
         showBackButton={false}
         rightAction={<div className="flex items-center gap-2 px-3 py-1.5 rounded-xl"
-          style={{ backgroundColor: 'rgba(255,184,0,0.1)', border: '1px solid rgba(255,184,0,0.3)' }}>
+          style={{ backgroundColor: 'rgba(224, 104, 14,0.1)', border: '1px solid rgba(224, 104, 14,0.3)' }}>
           <span className="text-base">🪙</span>
-          <span className="font-heading font-black text-lg" style={{ color: '#FFB800' }}>{user.coins}</span>
+          <span className="font-heading font-black text-lg" style={{ color: '#E0680E' }}>{user.coins}</span>
         </div>}
       />
         {/* Filter tabs */}
@@ -59,7 +59,7 @@ export default function Marketplace() {
               className="px-3 py-1.5 rounded-xl font-body text-sm font-medium transition-all"
               style={{
                 backgroundColor: filter === c ? 'var(--gf-amber)' : 'var(--gf-bg-elevated)',
-                color: filter === c ? '#0D0F14' : 'var(--gf-text-secondary)',
+                color: filter === c ? '#0B1A24' : 'var(--gf-text-secondary)',
               }}>
               {c}
             </button>
@@ -70,10 +70,10 @@ export default function Marketplace() {
       <div className="px-5 pt-5">
         {/* Honest state: partner rewards are previews until real deals exist */}
         <div className="mb-4 px-4 py-3 rounded-xl flex items-center gap-3"
-          style={{ backgroundColor: 'rgba(255,184,0,0.08)', border: '1px solid rgba(255,184,0,0.3)' }}>
+          style={{ backgroundColor: 'rgba(224, 104, 14,0.08)', border: '1px solid rgba(224, 104, 14,0.3)' }}>
           <span className="text-xl">🚧</span>
           <p className="font-body text-xs leading-relaxed" style={{ color: 'var(--gf-text-secondary)' }}>
-            <strong style={{ color: 'var(--gf-amber)' }}>Partner rewards are coming soon.</strong>{' '}
+            <strong style={{ color: 'var(--gf-ember-text)' }}>Partner rewards are coming soon.</strong>{' '}
             Preview what you'll be able to redeem — your coins are safe in the meantime.
             Spend them on avatar gear in the Shop!
           </p>
@@ -97,7 +97,7 @@ export default function Marketplace() {
                   <span className="text-5xl">{REWARD_ICONS[reward.reward_type] || '🎁'}</span>
                   {isPremiumLocked && (
                     <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-lg"
-                      style={{ backgroundColor: 'rgba(124,58,237,0.9)' }}>
+                      style={{ backgroundColor: 'rgba(127, 187, 212,0.9)' }}>
                       <Lock size={10} color="#FFF" />
                       <span className="text-[10px] font-bold text-white">Premium</span>
                     </div>
@@ -109,7 +109,7 @@ export default function Marketplace() {
                   <p className="font-body text-xs leading-relaxed flex-1" style={{ color: 'var(--gf-text-secondary)' }}>{reward.description}</p>
 
                   <div className="flex items-center justify-between">
-                    <span className="font-heading font-black text-sm" style={{ color: '#FFB800' }}>🪙 {reward.cost_coins}</span>
+                    <span className="font-heading font-black text-sm" style={{ color: '#E0680E' }}>🪙 {reward.cost_coins}</span>
                   </div>
 
                   <button
@@ -144,7 +144,7 @@ export default function Marketplace() {
                 <h3 className="font-heading font-black text-xl mt-3" style={{ color: 'var(--gf-text-primary)' }}>
                   Spend {confirmReward.cost_coins} 🪙 on
                 </h3>
-                <p className="font-heading font-black text-2xl mt-1" style={{ color: 'var(--gf-amber)' }}>
+                <p className="font-heading font-black text-2xl mt-1" style={{ color: 'var(--gf-ember-text)' }}>
                   {confirmReward.reward_name}?
                 </p>
                 <p className="font-body text-sm mt-2" style={{ color: 'var(--gf-text-secondary)' }}>
@@ -159,7 +159,7 @@ export default function Marketplace() {
                 </button>
                 <button onClick={confirmRedeem}
                   className="flex-1 py-3.5 rounded-xl font-heading font-black text-base"
-                  style={{ backgroundColor: 'var(--gf-amber)', color: '#0D0F14' }}>
+                  style={{ backgroundColor: 'var(--gf-amber)', color: '#0B1A24' }}>
                   Confirm
                 </button>
               </div>
@@ -179,19 +179,19 @@ export default function Marketplace() {
               initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}>
               <span className="text-5xl">🎉</span>
               <h3 className="font-heading font-black text-2xl mt-3 mb-1" style={{ color: 'var(--gf-text-primary)' }}>Redeemed!</h3>
-              <p className="font-heading font-black text-base mb-4" style={{ color: 'var(--gf-amber)' }}>{successCode.reward.reward_name}</p>
+              <p className="font-heading font-black text-base mb-4" style={{ color: 'var(--gf-ember-text)' }}>{successCode.reward.reward_name}</p>
 
               {successCode.code && (
                 <div>
                   <p className="font-body text-sm mb-3" style={{ color: 'var(--gf-text-secondary)' }}>Your discount code:</p>
                   <div className="flex items-center gap-2 px-4 py-3 rounded-2xl mb-5"
                     style={{ backgroundColor: 'var(--gf-bg-elevated)', border: '1px solid var(--gf-border)' }}>
-                    <code className="flex-1 font-mono font-bold text-base tracking-widest" style={{ color: 'var(--gf-green)' }}>
+                    <code className="flex-1 font-mono font-bold text-base tracking-widest" style={{ color: 'var(--gf-gold-text)' }}>
                       {successCode.code}
                     </code>
                     <button onClick={copyCode}
                       className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
-                      style={{ backgroundColor: copied ? '#22C55E' : 'var(--gf-bg-primary)' }}>
+                      style={{ backgroundColor: copied ? '#5FBF7C' : 'var(--gf-bg-primary)' }}>
                       {copied ? <Check size={16} color="#FFF" /> : <Copy size={16} color="var(--gf-text-secondary)" />}
                     </button>
                   </div>
@@ -200,7 +200,7 @@ export default function Marketplace() {
 
               <button onClick={() => setSuccessCode(null)}
                 className="w-full py-3.5 rounded-xl font-heading font-black text-base"
-                style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14' }}>
+                style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
                 Done
               </button>
             </motion.div>

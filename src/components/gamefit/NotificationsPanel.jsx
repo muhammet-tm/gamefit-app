@@ -55,7 +55,7 @@ export default function NotificationsPanel({ onClose }) {
               className="w-full text-left rounded-2xl p-4 flex gap-3 transition-all"
               style={{
                 backgroundColor: n.is_read ? 'var(--gf-bg-surface)' : 'var(--gf-bg-elevated)',
-                border: `1px solid ${n.is_read ? 'var(--gf-border)' : 'rgba(200,255,0,0.2)'}`,
+                border: `1px solid ${n.is_read ? 'var(--gf-border)' : 'rgba(244, 176, 68,0.2)'}`,
               }}
               whileTap={{ scale: 0.98 }}>
               <span className="text-2xl mt-0.5">{meta.icon}</span>

@@ -5,6 +5,19 @@ import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginUnusedImports from "eslint-plugin-unused-imports";
 
 export default [
+  // Global ignores. A config object with only `ignores` applies repo-wide.
+  // `.claude/` holds installed agent skills — third-party JS that is not part
+  // of the app and must not gate the build.
+  {
+    ignores: [
+      ".claude/**",
+      "dist/**",
+      "android/**",
+      "ios/**",
+      "store-assets/**",
+      "scratchpad/**",
+    ],
+  },
   {
     files: [
       "src/components/**/*.{js,mjs,cjs,jsx}",

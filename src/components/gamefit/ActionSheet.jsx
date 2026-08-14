@@ -67,7 +67,7 @@ export default function ActionSheet({ isOpen, onClose, title, children, options 
                     onClick={() => handleSelect(option)}
                     className="w-full px-4 py-3 rounded-xl font-body text-sm font-medium text-left transition-all active:scale-95"
                     style={{
-                      backgroundColor: option.selected ? 'rgba(200,255,0,0.15)' : 'var(--gf-bg-elevated)',
+                      backgroundColor: option.selected ? 'rgba(244, 176, 68,0.15)' : 'var(--gf-bg-elevated)',
                       color: option.selected ? 'var(--gf-green)' : 'var(--gf-text-primary)',
                       border: option.selected ? '1px solid var(--gf-green)' : '1px solid var(--gf-border)',
                     }}

@@ -4,7 +4,7 @@ import { Plus, Trash2, Zap } from 'lucide-react';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 
 const EXERCISE_EMOJI = { 'Running':'🏃','Cycling':'🚴','Weight Training':'🏋️','Swimming':'🏊','Yoga':'🧘','HIIT':'⚡','Boxing':'🥊','Basketball':'🏀','Football':'⚽','Walking':'🚶','Other':'💪' };
-const INTENSITY_COLORS = { Low: '#22C55E', Medium: '#FFB800', High: '#EF4444' };
+const INTENSITY_COLORS = { Low: '#5FBF7C', Medium: '#E0680E', High: '#E5614A' };
 
 const DEFAULT_TEMPLATES = [
   { id: 't1', name: 'Morning Run',      exercise_type: 'Running',        duration_min: 30, intensity: 'Medium' },
@@ -44,7 +44,7 @@ export default function QuickStartTemplates({ onLaunch }) {
         <h2 className="font-heading font-black text-xl" style={{ color: 'var(--gf-text-primary)' }}>⚡ Quick Start</h2>
         <button onClick={() => setShowAdd(s => !s)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-body text-xs font-medium transition-all"
-          style={{ backgroundColor: showAdd ? 'var(--gf-bg-elevated)' : 'rgba(200,255,0,0.15)', color: showAdd ? 'var(--gf-text-secondary)' : 'var(--gf-green)', border: `1px solid ${showAdd ? 'var(--gf-border)' : 'rgba(200,255,0,0.3)'}` }}>
+          style={{ backgroundColor: showAdd ? 'var(--gf-bg-elevated)' : 'rgba(244, 176, 68,0.15)', color: showAdd ? 'var(--gf-text-secondary)' : 'var(--gf-green)', border: `1px solid ${showAdd ? 'var(--gf-border)' : 'rgba(244, 176, 68,0.3)'}` }}>
           <Plus size={12} /> {showAdd ? 'Cancel' : 'Save Routine'}
         </button>
       </div>
@@ -89,7 +89,7 @@ export default function QuickStartTemplates({ onLaunch }) {
             </div>
             <button onClick={addTemplate}
               className="w-full py-2.5 rounded-xl font-heading font-black text-base transition-all active:scale-95"
-              style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14' }}>
+              style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
               Save Template
             </button>
           </motion.div>
@@ -114,7 +114,7 @@ export default function QuickStartTemplates({ onLaunch }) {
             </div>
             <button onClick={() => onLaunch(t)}
               className="mt-3 w-full py-2 rounded-xl font-heading font-black text-sm flex items-center justify-center gap-1 transition-all active:scale-95"
-              style={{ backgroundColor: 'rgba(200,255,0,0.15)', color: 'var(--gf-green)', border: '1px solid rgba(200,255,0,0.25)' }}>
+              style={{ backgroundColor: 'rgba(244, 176, 68,0.15)', color: 'var(--gf-gold-text)', border: '1px solid rgba(244, 176, 68,0.25)' }}>
               <Zap size={13} /> Go!
             </button>
           </motion.div>

@@ -121,7 +121,7 @@ export default function Profile() {
           <div className="flex items-center gap-2">
             {isPremium && (
               <span className="px-2 py-1 rounded-lg font-body text-xs font-bold"
-                style={{ backgroundColor: 'rgba(124,58,237,0.2)', color: 'var(--gf-purple)' }}>
+                style={{ backgroundColor: 'rgba(127, 187, 212,0.2)', color: 'var(--gf-gold-text)' }}>
                 ⚡ PRO
               </span>
             )}
@@ -154,14 +154,14 @@ export default function Profile() {
             <h3 className="font-heading font-black text-lg" style={{ color: 'var(--gf-text-primary)' }}>Profile</h3>
             <button onClick={() => editing ? handleSave() : setEditing(true)}
               className="px-4 py-1.5 rounded-xl font-body text-sm font-medium transition-all"
-              style={{ backgroundColor: editing ? 'var(--gf-green)' : 'var(--gf-bg-elevated)', color: editing ? '#0D0F14' : 'var(--gf-text-secondary)' }}>
+              style={{ backgroundColor: editing ? 'var(--gf-green)' : 'var(--gf-bg-elevated)', color: editing ? '#0B1A24' : 'var(--gf-text-secondary)' }}>
               {saved ? '✓ Saved!' : editing ? 'Save' : 'Edit'}
             </button>
           </div>
           <div className="p-4 space-y-3">
             {formError && editing && (
               <div className="px-4 py-3 rounded-xl text-sm font-body"
-                style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+                style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#E5614A', border: '1px solid rgba(239,68,68,0.3)' }}>
                 {formError}
               </div>
             )}
@@ -240,7 +240,7 @@ export default function Profile() {
               style={{ borderBottom: '1px solid var(--gf-border)' }}>
               <div className="flex items-center gap-3">
                 <span className="text-lg">⚡</span>
-                <span className="font-body font-semibold text-sm" style={{ color: 'var(--gf-purple)' }}>Upgrade to Premium</span>
+                <span className="font-body font-semibold text-sm" style={{ color: 'var(--gf-gold-text)' }}>Upgrade to Premium</span>
               </div>
               <ChevronRight size={16} color="var(--gf-purple)" />
             </button>
@@ -249,9 +249,9 @@ export default function Profile() {
               style={{ borderBottom: '1px solid var(--gf-border)' }}>
               <div className="flex items-center gap-3">
                 <span className="text-lg">✓</span>
-                <span className="font-body font-semibold text-sm" style={{ color: '#22C55E' }}>Premium Active</span>
+                <span className="font-body font-semibold text-sm" style={{ color: '#5FBF7C' }}>Premium Active</span>
               </div>
-              <span className="text-sm font-body" style={{ color: 'var(--gf-purple)' }}>Manage →</span>
+              <span className="text-sm font-body" style={{ color: 'var(--gf-gold-text)' }}>Manage →</span>
             </div>
           )}
 
@@ -287,13 +287,13 @@ export default function Profile() {
           <button onClick={() => setShowLogout(true)}
             className="w-full px-4 py-3.5 flex items-center gap-3"
             style={{ borderBottom: '1px solid var(--gf-border)' }}>
-            <LogOut size={16} color="#EF4444" />
-            <span className="font-body font-medium text-sm" style={{ color: '#EF4444' }}>Sign Out</span>
+            <LogOut size={16} color="#E5614A" />
+            <span className="font-body font-medium text-sm" style={{ color: '#E5614A' }}>Sign Out</span>
           </button>
 
           <button onClick={() => setShowDelete(true)} className="w-full px-4 py-3.5 flex items-center gap-3">
-            <Trash2 size={16} color="#EF4444" />
-            <span className="font-body text-sm" style={{ color: '#EF4444' }}>Delete Account</span>
+            <Trash2 size={16} color="#E5614A" />
+            <span className="font-body text-sm" style={{ color: '#E5614A' }}>Delete Account</span>
           </button>
         </div>
       </div>
@@ -309,7 +309,7 @@ export default function Profile() {
               <button onClick={() => setShowLogout(false)} className="flex-1 py-3.5 rounded-xl font-heading font-black text-base"
                 style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-secondary)' }}>Cancel</button>
               <button onClick={handleLogout} className="flex-1 py-3.5 rounded-xl font-heading font-black text-base"
-                style={{ backgroundColor: '#EF4444', color: '#FFF' }}>Sign Out</button>
+                style={{ backgroundColor: '#E5614A', color: '#FFF' }}>Sign Out</button>
             </div>
           </div>
         </div>
@@ -320,14 +320,14 @@ export default function Profile() {
         <div className="fixed inset-0 z-50 flex items-end" style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
           onClick={() => setShowDelete(false)}>
           <div className="w-full rounded-t-3xl p-6" style={{ backgroundColor: 'var(--gf-bg-surface)' }} onClick={e => e.stopPropagation()}>
-            <h3 className="font-heading font-black text-xl mb-2" style={{ color: '#EF4444' }}>Delete Account?</h3>
+            <h3 className="font-heading font-black text-xl mb-2" style={{ color: '#E5614A' }}>Delete Account?</h3>
             <p className="font-body text-sm mb-3" style={{ color: 'var(--gf-text-secondary)' }}>
               This permanently erases your account: profile, workouts, XP, coins, badges and
               purchased items. Any active Premium subscription is cancelled. This cannot be undone.
             </p>
             {deleteError && (
               <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
-                style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+                style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#E5614A', border: '1px solid rgba(239,68,68,0.3)' }}>
                 {deleteError}
               </div>
             )}
@@ -337,7 +337,7 @@ export default function Profile() {
                 style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-secondary)' }}>Cancel</button>
               <button onClick={handleDeleteAccount} disabled={deleting}
                 className="flex-1 py-3.5 rounded-xl font-heading font-black text-base"
-                style={{ backgroundColor: '#EF4444', color: '#FFF', opacity: deleting ? 0.6 : 1 }}>
+                style={{ backgroundColor: '#E5614A', color: '#FFF', opacity: deleting ? 0.6 : 1 }}>
                 {deleting ? 'Deleting…' : 'Delete Forever'}
               </button>
             </div>

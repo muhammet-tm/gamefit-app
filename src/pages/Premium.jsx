@@ -13,12 +13,12 @@ const PLANS = [
 ];
 
 const FEATURES = [
-  { icon: Trophy,   color: '#FFB800', title: 'Global Leaderboard',       desc: 'Compete with athletes worldwide and climb the ranks' },
-  { icon: Brain,    color: '#7C3AED', title: 'Personalized Nutrition',    desc: 'AI-generated meal plans tailored to your exact fitness profile' },
-  { icon: Zap,      color: '#C8FF00', title: 'Unlimited AI Coaching',     desc: 'Unlimited Coach G requests — workouts, advice & plans' },
+  { icon: Trophy,   color: '#E0680E', title: 'Global Leaderboard',       desc: 'Compete with athletes worldwide and climb the ranks' },
+  { icon: Brain,    color: '#7FBBD4', title: 'Personalized Nutrition',    desc: 'AI-generated meal plans tailored to your exact fitness profile' },
+  { icon: Zap,      color: 'var(--gf-gold-text)', title: 'Unlimited AI Coaching',     desc: 'Unlimited Coach G requests — workouts, advice & plans' },
   { icon: BarChart2,color: '#4FC3F7', title: 'Advanced Analytics',        desc: 'Deep stats on progress, body composition trends & insights' },
-  { icon: Shield,   color: '#EF4444', title: 'Exclusive Avatar Items',    desc: 'Unlock premium skins, accessories & legendary tier gear' },
-  { icon: Crown,    color: '#FFB800', title: 'Premium Badge',             desc: 'Show off the ⚡ PRO badge on your profile and leaderboard' },
+  { icon: Shield,   color: '#E5614A', title: 'Exclusive Avatar Items',    desc: 'Unlock premium skins, accessories & legendary tier gear' },
+  { icon: Crown,    color: '#E0680E', title: 'Premium Badge',             desc: 'Show off the ⚡ PRO badge on your profile and leaderboard' },
 ];
 
 export default function Premium() {
@@ -63,7 +63,7 @@ export default function Premium() {
         <p className="font-body text-sm mb-6" style={{ color: 'var(--gf-text-secondary)' }}>All premium features are unlocked for you.</p>
         <button onClick={() => navigate(-1)}
           className="px-8 py-3.5 rounded-2xl font-heading font-black text-lg"
-          style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14' }}>
+          style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
           Back
         </button>
       </div>
@@ -84,9 +84,9 @@ export default function Premium() {
 
       {/* Hero */}
       <motion.div className="mx-5 mt-5 rounded-3xl p-6 text-center relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #1a0a4a 0%, #2d1080 50%, #0d0f14 100%)', border: '1px solid rgba(124,58,237,0.4)' }}
+        style={{ background: 'linear-gradient(135deg, #1a0a4a 0%, #2d1080 50%, #0B1A24 100%)', border: '1px solid rgba(127, 187, 212,0.4)' }}
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="absolute inset-0 opacity-20" style={{ background: 'radial-gradient(circle at 50% 30%, #7C3AED, transparent 70%)' }} />
+        <div className="absolute inset-0 opacity-20" style={{ background: 'radial-gradient(circle at 50% 30%, #7FBBD4, transparent 70%)' }} />
         <div className="relative z-10">
           <div className="text-5xl mb-3">👑</div>
           <h2 className="font-heading font-black text-3xl text-white mb-2">Unlock Your Full Potential</h2>
@@ -115,7 +115,7 @@ export default function Premium() {
                 <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-text-primary)' }}>{f.title}</p>
                 <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>{f.desc}</p>
               </div>
-              <Check size={16} color="#22C55E" />
+              <Check size={16} color="#5FBF7C" />
             </motion.div>
           );
         })}
@@ -129,17 +129,17 @@ export default function Premium() {
             <button key={plan.id} onClick={() => setSelectedPlan(plan.id)}
               className="p-4 rounded-2xl text-left transition-all relative overflow-hidden"
               style={{
-                backgroundColor: selectedPlan === plan.id ? 'rgba(124,58,237,0.12)' : 'var(--gf-bg-surface)',
-                border: `2px solid ${selectedPlan === plan.id ? '#7C3AED' : 'var(--gf-border)'}`,
+                backgroundColor: selectedPlan === plan.id ? 'rgba(127, 187, 212,0.12)' : 'var(--gf-bg-surface)',
+                border: `2px solid ${selectedPlan === plan.id ? '#7FBBD4' : 'var(--gf-border)'}`,
               }}>
               {plan.badge && (
                 <div className="absolute -top-0.5 -right-0.5 px-2 py-0.5 rounded-bl-xl rounded-tr-xl font-body text-[9px] font-black"
-                  style={{ backgroundColor: '#7C3AED', color: 'white' }}>
+                  style={{ backgroundColor: '#7FBBD4', color: 'white' }}>
                   {plan.badge}
                 </div>
               )}
               <p className="font-heading font-black text-base mb-0.5" style={{ color: 'var(--gf-text-primary)' }}>{plan.label}</p>
-              <p className="font-heading font-black text-2xl" style={{ color: selectedPlan === plan.id ? '#7C3AED' : 'var(--gf-text-primary)' }}>
+              <p className="font-heading font-black text-2xl" style={{ color: selectedPlan === plan.id ? '#7FBBD4' : 'var(--gf-text-primary)' }}>
                 {plan.price}
               </p>
               <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>{plan.period}</p>
@@ -150,7 +150,7 @@ export default function Premium() {
         {/* CTA */}
         {checkoutError && (
           <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
-            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#E5614A', border: '1px solid rgba(239,68,68,0.3)' }}>
             {checkoutError}
           </div>
         )}
@@ -167,7 +167,7 @@ export default function Premium() {
               disabled={loading}
               whileTap={{ scale: 0.97 }}
               className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all"
-              style={{ background: loading ? 'var(--gf-border)' : 'linear-gradient(135deg, #7C3AED, #A855F7)', color: 'white' }}>
+              style={{ background: loading ? 'var(--gf-border)' : 'linear-gradient(135deg, #7FBBD4, #A855F7)', color: 'white' }}>
               {loading ? (
                 <span className="font-body">Processing...</span>
               ) : (

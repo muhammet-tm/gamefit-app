@@ -38,9 +38,9 @@ export default function Dashboard() {
   const title = rank.display;
 
   const quickActions = [
-    { label: 'Log Workout', icon: Dumbbell, color: '#C8FF00', textColor: '#0D0F14', path: '/train' },
-    { label: 'Avatar Coach', icon: Bot, color: '#7C3AED', textColor: '#FFFFFF', path: '/avatar-coach' },
-    { label: 'Marketplace', icon: ShoppingBag, color: '#FFB800', textColor: '#0D0F14', path: '/marketplace' },
+    { label: 'Log Workout', icon: Dumbbell, color: 'var(--gf-gold-text)', textColor: '#0B1A24', path: '/train' },
+    { label: 'Avatar Coach', icon: Bot, color: '#7FBBD4', textColor: '#FFFFFF', path: '/avatar-coach' },
+    { label: 'Marketplace', icon: ShoppingBag, color: '#E0680E', textColor: '#0B1A24', path: '/marketplace' },
     { label: 'Leaderboard', icon: Trophy, color: '#3B82F6', textColor: '#FFFFFF', path: '/leaderboard' },
   ];
 
@@ -75,7 +75,7 @@ export default function Dashboard() {
             <Bell size={18} color="var(--gf-text-secondary)" />
             {unreadCount > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
-                style={{ backgroundColor: '#EF4444' }}>{unreadCount}</span>
+                style={{ backgroundColor: '#E5614A' }}>{unreadCount}</span>
             )}
           </button>
         </div>
@@ -96,7 +96,7 @@ export default function Dashboard() {
             <div className="relative">
               <UserAvatar user={user} size={90} />
               <span className="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full font-heading font-black text-xs"
-                style={{ backgroundColor: 'var(--gf-green)', color: '#0D0F14' }}>
+                style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
                 LVL {level}
               </span>
             </div>
@@ -108,8 +108,8 @@ export default function Dashboard() {
                 </p>
               </div>
               <div className="flex items-center gap-1.5 mb-3">
-                <Flame size={14} color="#FFB800" />
-                <span className="font-body text-sm font-medium" style={{ color: '#FFB800' }}>
+                <Flame size={14} color="#E0680E" />
+                <span className="font-body text-sm font-medium" style={{ color: '#E0680E' }}>
                   {user.current_streak} day streak
                 </span>
               </div>
@@ -136,9 +136,9 @@ export default function Dashboard() {
         {/* Stats Row */}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: 'Total XP', value: user.total_xp.toLocaleString(), icon: Zap, color: 'var(--gf-green)' },
+            { label: 'Total XP', value: user.total_xp.toLocaleString(), icon: Zap, color: 'var(--gf-gold-text)' },
             { label: 'This Week', value: `${user.weekly_workout_count} / ${user.weekly_goal || 3}`, sub: user.weekly_workout_count >= (user.weekly_goal || 3) ? 'Goal hit! 🎯' : 'workouts', icon: Dumbbell, color: '#3B82F6' },
-            { label: 'Coins', value: `🪙 ${user.coins}`, icon: null, color: 'var(--gf-amber)' },
+            { label: 'Coins', value: `🪙 ${user.coins}`, icon: null, color: 'var(--gf-ember-text)' },
           ].map((stat, i) => (
             <motion.div key={i}
               className="rounded-2xl p-3 flex flex-col gap-1"
@@ -189,9 +189,9 @@ export default function Dashboard() {
             {recentWorkouts.length === 0 && (
               <button onClick={() => navigate('/train')}
                 className="w-full rounded-2xl p-5 text-center transition-all active:scale-98"
-                style={{ backgroundColor: 'rgba(200,255,0,0.06)', border: '1.5px dashed rgba(200,255,0,0.4)' }}>
+                style={{ backgroundColor: 'rgba(244, 176, 68,0.06)', border: '1.5px dashed rgba(244, 176, 68,0.4)' }}>
                 <span className="text-3xl block mb-1.5">💧</span>
-                <p className="font-heading font-black text-base" style={{ color: 'var(--gf-green)' }}>
+                <p className="font-heading font-black text-base" style={{ color: 'var(--gf-gold-text)' }}>
                   Log your first workout
                 </p>
                 <p className="font-body text-xs mt-0.5" style={{ color: 'var(--gf-text-secondary)' }}>
@@ -214,8 +214,8 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-heading font-black text-sm" style={{ color: 'var(--gf-green)' }}>+{w.xp_earned} XP</p>
-                  <p className="font-body text-xs" style={{ color: 'var(--gf-amber)' }}>🪙 {w.coins_earned}</p>
+                  <p className="font-heading font-black text-sm" style={{ color: 'var(--gf-gold-text)' }}>+{w.xp_earned} XP</p>
+                  <p className="font-body text-xs" style={{ color: 'var(--gf-ember-text)' }}>🪙 {w.coins_earned}</p>
                 </div>
               </motion.div>
             ))}

@@ -21,11 +21,11 @@ export default function AvatarGallery() {
   const hair = `${styles.includes(hairStyle) ? hairStyle : styles[0]}_${hairColor}`;
 
   return (
-    <div className="min-h-screen p-6" style={{ backgroundColor: '#0D0F14' }}>
-      <h1 className="font-heading font-black text-2xl mb-1" style={{ color: '#C8FF00' }}>
+    <div className="min-h-screen p-6" style={{ backgroundColor: '#0B1A24' }}>
+      <h1 className="font-heading font-black text-2xl mb-1" style={{ color: 'var(--gf-gold-text)' }}>
         Avatar Gallery (dev)
       </h1>
-      <p className="font-body text-sm mb-4" style={{ color: '#8A8F9E' }}>
+      <p className="font-body text-sm mb-4" style={{ color: '#88A5B7' }}>
         5 classes × 5 tiers · {body} · skin: {skin} · hair: {hair} {accessory && `· acc: ${accessory}`}
       </p>
 
@@ -34,14 +34,14 @@ export default function AvatarGallery() {
         {Object.keys(SKIN_TONES).map(s => (
           <button key={s} onClick={() => setSkin(s)}
             className="w-8 h-8 rounded-full border-2"
-            style={{ backgroundColor: SKIN_TONES[s].base, borderColor: skin === s ? '#C8FF00' : '#2A2F3A' }}
+            style={{ backgroundColor: SKIN_TONES[s].base, borderColor: skin === s ? '#F4B044' : '#24455A' }}
             title={s} />
         ))}
         <span className="w-3" />
         {BODY_TYPES.map(b => (
           <button key={b} onClick={() => setBody(b)}
             className="px-2 py-1 rounded text-xs font-body"
-            style={{ backgroundColor: body === b ? '#C8FF00' : '#1E2330', color: body === b ? '#0D0F14' : '#8A8F9E' }}>
+            style={{ backgroundColor: body === b ? '#F4B044' : '#1A3242', color: body === b ? '#0B1A24' : '#88A5B7' }}>
             {BODY_LABELS[b]}
           </button>
         ))}
@@ -49,26 +49,26 @@ export default function AvatarGallery() {
         {styles.map(h => (
           <button key={h} onClick={() => setHairStyle(h)}
             className="px-2 py-1 rounded text-xs font-body"
-            style={{ backgroundColor: hairStyle === h ? '#C8FF00' : '#1E2330', color: hairStyle === h ? '#0D0F14' : '#8A8F9E' }}>
+            style={{ backgroundColor: hairStyle === h ? '#F4B044' : '#1A3242', color: hairStyle === h ? '#0B1A24' : '#88A5B7' }}>
             {h}
           </button>
         ))}
         {Object.keys(HAIR_COLORS).map(c => (
           <button key={c} onClick={() => setHairColor(c)}
             className="w-8 h-8 rounded-full border-2"
-            style={{ backgroundColor: HAIR_COLORS[c].base, borderColor: hairColor === c ? '#C8FF00' : '#2A2F3A' }}
+            style={{ backgroundColor: HAIR_COLORS[c].base, borderColor: hairColor === c ? '#F4B044' : '#24455A' }}
             title={c} />
         ))}
         <span className="w-3" />
         <button onClick={() => setAccessory('')}
           className="px-2 py-1 rounded text-xs font-body"
-          style={{ backgroundColor: accessory === '' ? '#C8FF00' : '#1E2330', color: accessory === '' ? '#0D0F14' : '#8A8F9E' }}>
+          style={{ backgroundColor: accessory === '' ? '#F4B044' : '#1A3242', color: accessory === '' ? '#0B1A24' : '#88A5B7' }}>
           none
         </button>
         {ACCESSORY_IDS.map(a => (
           <button key={a} onClick={() => setAccessory(a)}
             className="px-2 py-1 rounded text-xs font-body"
-            style={{ backgroundColor: accessory === a ? '#C8FF00' : '#1E2330', color: accessory === a ? '#0D0F14' : '#8A8F9E' }}>
+            style={{ backgroundColor: accessory === a ? '#F4B044' : '#1A3242', color: accessory === a ? '#0B1A24' : '#88A5B7' }}>
             {a}
           </button>
         ))}
@@ -83,7 +83,7 @@ export default function AvatarGallery() {
           <div className="flex gap-4 flex-wrap">
             {[1, 2, 3, 4, 5].map(tier => (
               <div key={tier} className="flex flex-col items-center p-3 rounded-2xl"
-                style={{ backgroundColor: '#161A22', border: '1px solid #2A2F3A' }}>
+                style={{ backgroundColor: '#112532', border: '1px solid #24455A' }}>
                 <Avatar
                   avatarClass={cls}
                   tier={tier}
@@ -94,7 +94,7 @@ export default function AvatarGallery() {
                   size={130}
                   animate={false}
                 />
-                <span className="font-body text-xs mt-2" style={{ color: '#8A8F9E' }}>Tier {tier}</span>
+                <span className="font-body text-xs mt-2" style={{ color: '#88A5B7' }}>Tier {tier}</span>
               </div>
             ))}
           </div>

@@ -78,14 +78,14 @@ export default function StreakCalendar() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-            style={{ backgroundColor: 'rgba(255,184,0,0.12)', border: '1px solid rgba(255,184,0,0.35)' }}>
-            <Flame size={22} color="#FFB800" fill={streak > 0 ? '#FFB800' : 'none'} />
+            style={{ backgroundColor: 'rgba(224, 104, 14,0.12)', border: '1px solid rgba(224, 104, 14,0.35)' }}>
+            <Flame size={22} color="#E0680E" fill={streak > 0 ? '#E0680E' : 'none'} />
           </div>
           <div>
             <div className="flex items-baseline gap-1.5">
               <motion.span key={streak} className="font-heading font-black text-3xl leading-none"
                 style={{ color: 'var(--gf-text-primary)' }}
-                initial={{ scale: 1.3, color: '#FFB800' }} animate={{ scale: 1 }}>
+                initial={{ scale: 1.3, color: '#E0680E' }} animate={{ scale: 1 }}>
                 {streak}
               </motion.span>
               <span className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>
@@ -139,15 +139,15 @@ export default function StreakCalendar() {
             <motion.div key={day}
               className="aspect-square rounded-lg flex items-center justify-center"
               style={{
-                backgroundColor: active ? 'rgba(255,184,0,0.15)' : 'var(--gf-bg-elevated)',
-                border: isToday ? '1.5px solid #FFB800' : `1px solid ${active ? 'rgba(255,184,0,0.4)' : 'transparent'}`,
+                backgroundColor: active ? 'rgba(224, 104, 14,0.15)' : 'var(--gf-bg-elevated)',
+                border: isToday ? '1.5px solid #E0680E' : `1px solid ${active ? 'rgba(224, 104, 14,0.4)' : 'transparent'}`,
                 opacity: loading ? 0.4 : isFuture ? 0.35 : 1,
               }}
               initial={false}
               animate={active ? { scale: [1, 1.06, 1] } : {}}
               transition={{ duration: 0.3, delay: Math.min(day * 0.012, 0.4) }}>
               {active ? (
-                <Flame size={13} color="#FFB800" fill="#FFB800" />
+                <Flame size={13} color="#E0680E" fill="#E0680E" />
               ) : (
                 <span className="font-body text-[10px]"
                   style={{ color: isFuture ? 'var(--gf-border)' : 'var(--gf-text-secondary)' }}>
@@ -167,8 +167,8 @@ export default function StreakCalendar() {
           return (
             <div key={m.days} className="flex-1 rounded-xl px-2 py-2 text-center"
               style={{
-                backgroundColor: reached ? 'rgba(255,184,0,0.12)' : 'var(--gf-bg-elevated)',
-                border: `1px solid ${reached ? 'rgba(255,184,0,0.45)' : isNext ? 'var(--gf-amber)' : 'var(--gf-border)'}`,
+                backgroundColor: reached ? 'rgba(224, 104, 14,0.12)' : 'var(--gf-bg-elevated)',
+                border: `1px solid ${reached ? 'rgba(224, 104, 14,0.45)' : isNext ? 'var(--gf-amber)' : 'var(--gf-border)'}`,
                 opacity: reached || isNext ? 1 : 0.6,
               }}>
               <div className="text-base leading-none mb-1">{reached ? m.icon : '🎁'}</div>

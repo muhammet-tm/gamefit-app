@@ -16,7 +16,7 @@ export default function Splash() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center"
-      style={{ backgroundColor: '#0D0F14' }}>
+      style={{ backgroundColor: '#0B1A24' }}>
       <motion.div
         className="flex flex-col items-center"
         initial={{ opacity: 0, scale: 0.7 }}
@@ -35,7 +35,7 @@ export default function Splash() {
 
          <motion.p
            className="font-body text-base"
-           style={{ color: '#8A8F9E' }}
+           style={{ color: '#88A5B7' }}
            initial={{ opacity: 0 }}
            animate={{ opacity: 1 }}
            transition={{ delay: 0.6 }}
@@ -54,7 +54,7 @@ export default function Splash() {
               <motion.div
                 key={i}
                 className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: '#C8FF00' }}
+                style={{ backgroundColor: '#F4B044' }}
                 animate={{ opacity: [0.3, 1, 0.3] }}
                 transition={{ repeat: Infinity, duration: 1, delay: d }}
               />

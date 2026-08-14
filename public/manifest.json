@@ -7,8 +7,8 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0D0F14",
-  "theme_color": "#0D0F14",
+  "background_color": "#0B1A24",
+  "theme_color": "#0B1A24",
   "categories": ["fitness", "health", "lifestyle"],
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },

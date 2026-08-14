@@ -20,7 +20,7 @@ export default function LegalLayout({ title, updated, children }) {
 
       <div className="px-5 pt-4 max-w-2xl mx-auto">
         <div className="mb-4 px-4 py-3 rounded-xl font-body text-xs"
-          style={{ backgroundColor: 'rgba(255,184,0,0.08)', color: 'var(--gf-amber)', border: '1px solid rgba(255,184,0,0.3)' }}>
+          style={{ backgroundColor: 'rgba(224, 104, 14,0.08)', color: 'var(--gf-ember-text)', border: '1px solid rgba(224, 104, 14,0.3)' }}>
           DRAFT — pending legal review. Contact: support@gamefit.online
         </div>
         <div className="legal-content font-body text-sm leading-relaxed space-y-4"
