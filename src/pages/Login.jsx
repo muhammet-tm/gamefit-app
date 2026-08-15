@@ -107,10 +107,18 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Mode tabs */}
-        <div className="flex rounded-xl p-1 mb-6" style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
+        {/* Mode tabs.
+            These are real tabs, not plain buttons. Previously the "Sign In"
+            tab and the "Sign In" submit button were both buttons with the same
+            accessible name on the same screen, so a screen reader announced
+            two identical controls that do entirely different things. */}
+        <div role="tablist" aria-label="Sign in or create an account"
+          className="flex rounded-xl p-1 mb-6" style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
           {['login', 'signup'].map(m => (
             <button key={m} onClick={() => setMode(m)}
+              type="button"
+              role="tab"
+              aria-selected={mode === m}
               className="flex-1 py-2.5 rounded-lg font-body font-medium text-sm transition-all"
               style={{
                 backgroundColor: mode === m ? 'var(--gf-green)' : 'transparent',
@@ -122,7 +130,7 @@ export default function Login() {
         </div>
 
         {error && (
-          <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
+          <div role="alert" className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
             style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#E5614A', border: '1px solid rgba(239,68,68,0.3)' }}>
             {error}
           </div>
@@ -155,19 +163,23 @@ export default function Login() {
                 <div className="relative flex-1">
                   <User size={16} className="absolute left-3 top-3.5" style={{ color: 'var(--gf-text-secondary)' }} />
                   <input className={inputCls} style={{ ...inputStyle, paddingLeft: 36 }}
+                    aria-label="First name"
                     placeholder="First Name" value={form.firstName}
                     onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))} required />
                 </div>
                 <div className="relative flex-1">
                   <input className={inputCls} style={inputStyle}
+                    aria-label="Last name"
                     placeholder="Last Name" value={form.lastName}
                     onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))} required />
                 </div>
               </div>
               <input className={inputCls} style={inputStyle} type="number" placeholder="Age"
+                aria-label="Age"
                 value={form.age} onChange={e => setForm(f => ({ ...f, age: e.target.value }))} required />
               <div className="relative">
                 <select className={inputCls} style={{ ...inputStyle, appearance: 'none' }}
+                  aria-label="Fitness goal"
                   value={form.fitnessGoal} onChange={e => setForm(f => ({ ...f, fitnessGoal: e.target.value }))}>
                   {FITNESS_GOALS.map(g => <option key={g} value={g}>{g}</option>)}
                 </select>
@@ -179,6 +191,7 @@ export default function Login() {
           <div className="relative">
             <Mail size={16} className="absolute left-3 top-3.5" style={{ color: 'var(--gf-text-secondary)' }} />
             <input className={inputCls} style={{ ...inputStyle, paddingLeft: 36 }}
+              aria-label="Email address" autoComplete="email"
               type="email" placeholder="Email address" value={form.email}
               onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required />
           </div>
@@ -186,11 +199,14 @@ export default function Login() {
           <div className="relative">
             <Lock size={16} className="absolute left-3 top-3.5" style={{ color: 'var(--gf-text-secondary)' }} />
             <input className={inputCls} style={{ ...inputStyle, paddingLeft: 36, paddingRight: 40 }}
+              aria-label="Password"
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
               type={showPass ? 'text' : 'password'} placeholder="Password" value={form.password}
               onChange={e => setForm(f => ({ ...f, password: e.target.value }))} required />
             <button type="button" onClick={() => setShowPass(s => !s)}
+              aria-label={showPass ? 'Hide password' : 'Show password'}
               className="absolute right-3 top-3" style={{ color: 'var(--gf-text-secondary)' }}>
-              {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+              {showPass ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
             </button>
           </div>
 
