@@ -26,9 +26,13 @@ test.describe('document metadata', () => {
     for (const route of PUBLIC_ROUTES) {
       await page.goto(route);
       // The title is applied by RouteMeta after mount, not by the served HTML.
-      await expect
-        .poll(() => page.title(), { message: `no title on ${route}` })
-        .not.toBe('');
+      // Waiting for a non-empty title is not enough: index.html ships a static
+      // title that is byte-identical to the one RouteMeta gives '/', so a read
+      // that lands before React's first commit returns the '/' title on every
+      // route and this test reports a duplicate that does not exist. Waiting on
+      // the marker RouteMeta publishes is exact. (Caught on WebKit, where the
+      // gap is widest.)
+      await expect(page.locator('html')).toHaveAttribute('data-route-meta', route);
       const title = await page.title();
       expect(title, `${route} has an empty title`).toBeTruthy();
       if (seen.has(title)) {
@@ -45,6 +49,9 @@ test.describe('document metadata', () => {
     const descriptions = new Set();
     for (const route of PUBLIC_ROUTES) {
       await page.goto(route);
+      // Same race as the title above: read before RouteMeta commits and every
+      // route reports the description baked into index.html.
+      await expect(page.locator('html')).toHaveAttribute('data-route-meta', route);
       const locator = page.locator('meta[name="description"]');
       await expect(locator).toHaveCount(1);
       const content = await locator.getAttribute('content');
@@ -211,9 +218,14 @@ test.describe('error handling', () => {
   });
 
   test('public pages load with no console errors', async ({ page, consoleErrors }) => {
-    test.setTimeout(150_000); // eight networkidle navigations
+    test.setTimeout(150_000);
     for (const route of PUBLIC_ROUTES) {
-      await page.goto(route, { waitUntil: 'networkidle' });
+      // Deliberately not 'networkidle'. The Turnstile widget keeps talking to
+      // Cloudflare after the page is usable, so idle may never arrive and the
+      // test times out having proved nothing. Waiting for the route's heading
+      // is both faster and a real signal that the lazy chunk mounted.
+      await page.goto(route, { waitUntil: 'load' });
+      await page.locator('h1').first().waitFor({ state: 'visible', timeout: 15_000 });
     }
     expect(consoleErrors, `console errors:\n${consoleErrors.join('\n')}`).toHaveLength(0);
   });

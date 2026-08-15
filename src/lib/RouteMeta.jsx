@@ -73,6 +73,16 @@ export default function RouteMeta() {
       const origin = link.getAttribute('href')?.replace(/\/+$/, '').replace(/^(https?:\/\/[^/]+).*$/, '$1');
       if (origin) link.setAttribute('href', origin + (pathname === '/' ? '/' : pathname));
     }
+
+    // Marks which route the metadata above currently describes.
+    //
+    // index.html ships a static <title> identical to the one this sets for
+    // '/', so "the title is non-empty" and even "the title changed" are both
+    // useless as signals that this effect has run — a test reading during the
+    // gap between HTML parse and React's first commit sees the '/' title on
+    // every route and cannot tell. Publishing the pathname makes the check
+    // exact instead of a race. Same reasoning as Turnstile's data-token-ready.
+    document.documentElement.dataset.routeMeta = pathname;
   }, [pathname]);
 
   return null;
