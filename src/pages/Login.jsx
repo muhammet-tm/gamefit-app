@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, ChevronDown, Eye, EyeOff, Lock, Mail, MailCheck, User } from 'lucide-react';
@@ -7,6 +7,7 @@ import { supabase, updateProfile } from '@/api/supabase';
 import { track } from '@/lib/analytics';
 import { signInWithGoogle } from '@/lib/platform';
 import GoogleIcon from '@/components/GoogleIcon';
+import Turnstile from '@/components/Turnstile';
 
 const FITNESS_GOALS = ['Lose Weight', 'Build Muscle', 'Improve Endurance', 'Stay Active', 'General Fitness'];
 
@@ -26,6 +27,11 @@ export default function Login() {
   const [emailVerified] = useState(() =>
     new URLSearchParams(window.location.search).get('verified') === '1');
 
+  // Supabase enforces captcha on signInWithPassword and signUp. The token is
+  // single-use, so every attempt — success or failure — resets the widget.
+  const [captchaToken, setCaptchaToken] = useState(null);
+  const captchaRef = useRef(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -38,12 +44,18 @@ export default function Login() {
       }
     }
 
+    if (!captchaToken) {
+      setError('Please wait a moment for the security check to finish, then try again.');
+      return;
+    }
+
     setLoading(true);
     try {
       if (mode === 'login') {
         const { error: err } = await supabase.auth.signInWithPassword({
           email: form.email,
           password: form.password,
+          options: { captchaToken },
         });
         if (err) throw err;
         window.location.href = '/dashboard';
@@ -52,6 +64,7 @@ export default function Login() {
           email: form.email,
           password: form.password,
           options: {
+            captchaToken,
             data: { full_name: `${form.firstName} ${form.lastName}`.trim() },
             // Where the confirmation email's link lands. Must be in the
             // project's auth redirect allow-list (see LAUNCH_CHECKLIST).
@@ -81,6 +94,10 @@ export default function Login() {
       setError(msg);
     } finally {
       setLoading(false);
+      // Supabase redeems the token when it verifies it, so it cannot be sent
+      // twice. Without this reset, a mistyped password makes every subsequent
+      // attempt fail with an unrelated captcha error.
+      captchaRef.current?.reset();
     }
   };
 
@@ -209,6 +226,16 @@ export default function Login() {
               {showPass ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
             </button>
           </div>
+
+          {/* Rendered for both modes: Supabase enforces captcha on sign-in and
+              sign-up alike. In Managed mode this usually resolves silently. */}
+          <Turnstile
+            ref={captchaRef}
+            className="flex justify-center pt-1"
+            onToken={setCaptchaToken}
+            onError={() =>
+              setError('The security check could not load. Disable any ad blocker and refresh.')}
+          />
 
           {mode === 'login' && (
             <div className="text-right">

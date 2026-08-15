@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/api/supabase";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { toast } from "@/components/ui/use-toast";
+import Turnstile from "@/components/Turnstile";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -18,6 +19,10 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
+  // Supabase enforces captcha on signUp. The token is single-use, so it is
+  // reset after every attempt.
+  const [captchaToken, setCaptchaToken] = useState(null);
+  const captchaRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,14 +31,22 @@ export default function Register() {
       setError("Passwords do not match");
       return;
     }
+    if (!captchaToken) {
+      setError("Please wait a moment for the security check to finish, then try again.");
+      return;
+    }
+
     setLoading(true);
     try {
       const { error: err } = await supabase.auth.signUp({
         email,
         password,
-        // Landing page if the user clicks the email's link instead of
-        // typing the code below. Must be in the auth redirect allow-list.
-        options: { emailRedirectTo: `${window.location.origin}/login?verified=1` },
+        options: {
+          captchaToken,
+          // Landing page if the user clicks the email's link instead of
+          // typing the code below. Must be in the auth redirect allow-list.
+          emailRedirectTo: `${window.location.origin}/login?verified=1`,
+        },
       });
       if (err) throw err;
       setShowOtp(true);
@@ -41,6 +54,9 @@ export default function Register() {
       setError(err.message || "Registration failed");
     } finally {
       setLoading(false);
+      // Single-use token: without this, a second attempt fails on captcha
+      // rather than on whatever the user actually needs to fix.
+      captchaRef.current?.reset();
     }
   };
 
@@ -64,8 +80,19 @@ export default function Register() {
 
   const handleResend = async () => {
     setError("");
+    // Supabase gates /resend behind captcha exactly like /signup, so this
+    // needs its own token — hence the second widget on the OTP screen. Without
+    // it, the one path a user has when the email never arrives dead-ends.
+    if (!captchaToken) {
+      setError("Please wait a moment for the security check to finish, then try again.");
+      return;
+    }
     try {
-      const { error: err } = await supabase.auth.resend({ type: "signup", email });
+      const { error: err } = await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: { captchaToken },
+      });
       if (err) throw err;
       toast({
         title: "Code sent",
@@ -73,6 +100,8 @@ export default function Register() {
       });
     } catch (err) {
       setError(err.message || "Failed to resend code");
+    } finally {
+      captchaRef.current?.reset();
     }
   };
 
@@ -125,6 +154,18 @@ export default function Register() {
             "Verify"
           )}
         </Button>
+        {/* A second widget, because /resend is captcha-gated too. Safe to
+            reuse the same ref and token state: this screen and the sign-up
+            form are mutually exclusive, so the two are never mounted at once,
+            and handleSubmit's reset() clears the spent token before React
+            renders this branch. */}
+        <Turnstile
+          ref={captchaRef}
+          className="flex justify-center mt-6"
+          onToken={setCaptchaToken}
+          onError={() =>
+            setError("The security check could not load. Disable any ad blocker and refresh.")}
+        />
         <p className="text-center text-sm text-muted-foreground mt-4">
           Didn't receive the code?{" "}
           <button onClick={handleResend} className="text-primary font-medium hover:underline">
@@ -223,6 +264,13 @@ export default function Register() {
             />
           </div>
         </div>
+        <Turnstile
+          ref={captchaRef}
+          className="flex justify-center"
+          onToken={setCaptchaToken}
+          onError={() =>
+            setError("The security check could not load. Disable any ad blocker and refresh.")}
+        />
         <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
           {loading ? (
             <>
