@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures.js';
+import { test, expect, waitForCaptcha } from './fixtures.js';
 
 /**
  * Critical user journeys that do not require an account, each with its
@@ -33,6 +33,7 @@ test.describe('journey: signing in — failure states', () => {
     await page.goto('/login');
     await page.getByRole('textbox', { name: 'Email address' }).fill('nobody@example.com');
     await page.getByLabel('Password', { exact: true }).fill('definitely-not-the-password');
+    await waitForCaptcha(page);
     await page.getByRole('button', { name: 'Sign In', exact: true }).click();
 
     // Either a visible error, or still on /login. What must NOT happen is
@@ -68,12 +69,88 @@ test.describe('journey: signing in — failure states', () => {
     await page.route('**/auth/v1/**', (route) => route.abort('failed'));
     await page.getByRole('textbox', { name: 'Email address' }).fill('someone@example.com');
     await page.getByLabel('Password', { exact: true }).fill('somepassword12');
+    await waitForCaptcha(page);
     await page.getByRole('button', { name: 'Sign In', exact: true }).click();
     await page.waitForTimeout(3000);
     // The form must still be there — an unhandled rejection that unmounts the
     // tree is the failure this guards against.
     await expect(page.getByRole('textbox', { name: 'Email address' })).toBeVisible();
     expect(consoleErrors.filter((e) => /Uncaught/.test(e))).toHaveLength(0);
+  });
+});
+
+test.describe('captcha', () => {
+  // Supabase rejects sign-in, sign-up and password reset without a token, so
+  // a form that does not render the widget is a form nobody can submit.
+  for (const route of ['/login', '/register', '/forgot-password']) {
+    test(`${route} renders a captcha and resolves it`, async ({ page }) => {
+      await page.goto(route);
+      await expect(page.getByTestId('turnstile')).toBeVisible();
+      await waitForCaptcha(page);
+    });
+  }
+
+  test('a second attempt after a failure gets a fresh token', async ({ page }) => {
+    // The single-use trap: Supabase redeems the token when it verifies it, so
+    // reusing it fails with a captcha error that has nothing to do with what
+    // the user typed. Without the reset in the submit handler, the second
+    // sign-in attempt on this page would be unfixable by the user.
+    await page.goto('/login');
+    await page.getByRole('textbox', { name: 'Email address' }).fill('nobody@example.com');
+    await page.getByLabel('Password', { exact: true }).fill('wrong-password-one');
+    await waitForCaptcha(page);
+    await page.getByRole('button', { name: 'Sign In', exact: true }).click();
+
+    // After the attempt the widget must go back to a ready state on its own.
+    await waitForCaptcha(page);
+    expect(page.url()).toContain('/login');
+  });
+
+  test('the OTP screen carries its own captcha for Resend', async ({ page, browserName }) => {
+    // Supabase gates /resend behind captcha exactly like /signup. The widget
+    // lives in the sign-up branch of Register, which unmounts once the OTP
+    // screen appears — so without a second widget here, "Resend" is a dead end
+    // for the one user who needs it: the one whose email never arrived.
+    //
+    // Reaching that screen needs a successful signUp, which is stubbed rather
+    // than really made: the suite does not write to the live project.
+    //
+    // WebKit is skipped because it does not honour the stub. Verified rather
+    // than assumed — with an identical URL and pattern the handler fires in
+    // Chromium and never fires in WebKit, so the call escapes to the real
+    // Supabase project. A test that quietly signs up a user on every CI run is
+    // worse than one that does not run, so this asserts the stub took effect
+    // and skips where it cannot.
+    test.skip(
+      browserName === 'webkit',
+      'Playwright does not intercept this cross-origin auth POST in WebKit',
+    );
+
+    let stubbed = false;
+    await page.route('**/auth/v1/signup*', (route) => {
+      stubbed = true;
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ id: 'stub-user', email: 'nobody@example.com' }),
+      });
+    });
+
+    await page.goto('/register');
+    await page.getByLabel('Email').fill('nobody@example.com');
+    await page.getByLabel('Password', { exact: true }).fill('a-good-password-12');
+    await page.getByLabel('Confirm Password').fill('a-good-password-12');
+    await waitForCaptcha(page);
+    await page.getByRole('button', { name: 'Create account' }).click();
+
+    // On the OTP screen now: Resend is present, and so is a live captcha.
+    await expect(page.getByRole('button', { name: 'Resend' })).toBeVisible();
+    await expect(page.getByTestId('turnstile')).toBeVisible();
+    await waitForCaptcha(page);
+
+    // If interception ever silently stops working, fail here rather than let
+    // the suite create real accounts on the production project.
+    expect(stubbed, 'the signup call escaped to the real Supabase project').toBe(true);
   });
 });
 
