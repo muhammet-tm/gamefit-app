@@ -4,15 +4,40 @@
 // age-appropriate safety behavior. The Anthropic key never leaves the server.
 import Stripe from 'npm:stripe@14.21.0';
 import {
-  corsHeaders, json, getUser, getProfile, serviceClient,
+  withCors, json, getUser, getProfile, serviceClient,
   sanitizeForPrompt, verifyPremium,
 } from '../_shared/helpers.ts';
 
 const MODEL = 'claude-haiku-4-5-20251001';
 const FREE_MONTHLY_LIMIT = 10;
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+Deno.serve(withCors(async (req) => {
+  // Tracks whether a free-tier credit was reserved, so it can be handed back
+  // if the request never produced an answer. Charging for a 502 is a support
+  // ticket waiting to happen.
+  let reservedUserId: string | null = null;
+  let reservedMonthKey: string | null = null;
+  const refundCredit = async () => {
+    if (!reservedUserId || !reservedMonthKey) return;
+    const userId = reservedUserId;
+    const monthKey = reservedMonthKey;
+    reservedUserId = null; // never refund the same reservation twice
+    reservedMonthKey = null;
+    try {
+      const { data } = await serviceClient()
+        .from('ai_request_logs')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('month_key', monthKey)
+        .order('created_at', { ascending: false })
+        .limit(1);
+      const id = data?.[0]?.id;
+      if (id) await serviceClient().from('ai_request_logs').delete().eq('id', id);
+    } catch (e) {
+      // A failed refund must not turn a handled error into an unhandled one.
+      console.error('credit refund failed:', (e as Error).message);
+    }
+  };
 
   try {
     const user = await getUser(req);
@@ -41,18 +66,31 @@ Deno.serve(async (req) => {
           premium_required: true,
         }, 403);
       }
-      const { count } = await serviceClient()
-        .from('ai_request_logs')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('month_key', monthKey);
-      if ((count ?? 0) >= FREE_MONTHLY_LIMIT) {
+      // Reserve a credit atomically BEFORE calling Anthropic. This used to be
+      // a count here and an insert after the AI call, so concurrent requests
+      // all read the same count, all passed, and all billed. consume_ai_credit
+      // takes a per-user advisory lock, so the check and the write cannot be
+      // interleaved.
+      const { data: granted, error: creditError } = await serviceClient()
+        .rpc('consume_ai_credit', {
+          p_user_id: user.id,
+          p_request_type: type,
+          p_month_key: monthKey,
+          p_limit: FREE_MONTHLY_LIMIT,
+        });
+      if (creditError) {
+        console.error('consume_ai_credit failed:', creditError.message);
+        return json({ error: 'Something went wrong. Please try again.' }, 500);
+      }
+      if (granted === false) {
         return json({
           error: 'Free tier limit reached',
           message: "You've used your free coaching for this month — upgrade to Premium for unlimited access.",
           premium_required: true,
         }, 429);
       }
+      reservedUserId = user.id;
+      reservedMonthKey = monthKey;
     }
 
     const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
@@ -189,22 +227,18 @@ Estimate portions realistically. If it is not food, use {"meal_name": "Not food"
     });
 
     if (!response.ok) {
-      console.error('Anthropic API error:', await response.text());
+      // Log the status, not the body. The body is an upstream error document
+      // that can echo request content back into our logs.
+      console.error('Anthropic API error, status:', response.status);
+      await refundCredit();
       return json({ error: 'AI request failed' }, 502);
     }
 
     const data = await response.json();
     const text = data.content?.[0]?.text ?? 'Sorry, I could not generate a response.';
 
-    // ---- count this request for free-tier users (service role only)
-    if (!isPremium) {
-      await serviceClient().from('ai_request_logs').insert({
-        user_id: user.id,
-        request_type: type,
-        month_key: monthKey,
-        logged_date: now.toISOString().slice(0, 10),
-      });
-    }
+    // The usage row was already written by consume_ai_credit above, before the
+    // Anthropic call, so there is deliberately no insert here.
 
     if (type === 'meal_analysis') {
       try {
@@ -218,6 +252,8 @@ Estimate portions realistically. If it is not food, use {"meal_name": "Not food"
     return json({ reply: text, meta: { version: 1 } });
   } catch (error) {
     console.error('coach-g error:', (error as Error).message);
+    // The user got no answer, so they should not have been charged for one.
+    await refundCredit();
     return json({ error: 'Something went wrong. Please try again.' }, 500);
   }
-});
+}));
