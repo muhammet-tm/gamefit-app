@@ -6,10 +6,9 @@
 // coin_transactions, strava_connections) cascade from auth.users. An active
 // Stripe subscription is cancelled first so nobody keeps getting charged.
 import Stripe from 'npm:stripe@14.21.0';
-import { corsHeaders, json, getUser, getProfile, serviceClient } from '../_shared/helpers.ts';
+import { withCors, json, getUser, getProfile, serviceClient } from '../_shared/helpers.ts';
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+Deno.serve(withCors(async (req) => {
 
   try {
     const user = await getUser(req);
@@ -58,4 +57,4 @@ Deno.serve(async (req) => {
     console.error('delete-account error:', (error as Error).message);
     return json({ error: 'Something went wrong. Please try again.' }, 500);
   }
-});
+}));

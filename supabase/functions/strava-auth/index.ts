@@ -3,7 +3,7 @@
 // strava_connections table (invisible to all clients), automatic token
 // refresh when expired, and the client never sends or receives raw tokens.
 import {
-  corsHeaders, json, getUser, serviceClient, resolveAllowedOrigin,
+  withCors, json, getUser, serviceClient, resolveAllowedOrigin,
 } from '../_shared/helpers.ts';
 
 const CLIENT_ID = Deno.env.get('STRAVA_CLIENT_ID') ?? '';
@@ -39,8 +39,7 @@ async function refreshIfNeeded(userId: string, conn: {
   return t.access_token;
 }
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+Deno.serve(withCors(async (req) => {
 
   try {
     const body = await req.json();
@@ -147,4 +146,4 @@ Deno.serve(async (req) => {
     console.error('strava-auth error:', (error as Error).message);
     return json({ error: 'Something went wrong. Please try again.' }, 500);
   }
-});
+}));

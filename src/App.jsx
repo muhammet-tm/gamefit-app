@@ -1,37 +1,62 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { MotionConfig } from 'framer-motion';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { GameFitProvider } from '@/lib/GameFitContext';
 import { AuthProvider } from '@/lib/AuthContext';
 import { TabStackProvider } from '@/lib/TabStackNavigation';
-
-// Pages
-import Splash from '@/pages/Splash';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import ForgotPassword from '@/pages/ForgotPassword';
-import ResetPassword from '@/pages/ResetPassword';
-import Onboarding from '@/pages/Onboarding';
-import Dashboard from '@/pages/Dashboard';
-import Train from '@/pages/Train';
-import Coach from '@/pages/Coach';
-import Leaderboard from '@/pages/Leaderboard';
-import Marketplace from '@/pages/Marketplace';
-import AvatarScreen from '@/pages/AvatarScreen';
-import Profile from '@/pages/Profile';
-import MonthlySummary from '@/pages/MonthlySummary';
-import Admin from '@/pages/Admin';
-import Premium from '@/pages/Premium';
-import StravaCallback from '@/pages/StravaCallback';
-import AvatarCoach from '@/pages/AvatarCoach';
-import AvatarGallery from '@/pages/AvatarGallery';
-import Terms from '@/pages/legal/Terms';
-import Privacy from '@/pages/legal/Privacy';
-import DeleteAccount from '@/pages/legal/DeleteAccount';
+import RouteMeta from '@/lib/RouteMeta';
 import AdminRoute from '@/components/AdminRoute';
+
+// Splash is the first paint, so it stays in the main chunk — lazy-loading the
+// very first screen would only add a round trip before anything appears.
+import Splash from '@/pages/Splash';
+
+// Every other screen is fetched on demand. Before this, opening the login page
+// downloaded the chart library, the marketplace, the avatar editor and the
+// admin console as well — one 1.8 MB file for a screen with two inputs on it.
+const Login = lazy(() => import('@/pages/Login'));
+const Register = lazy(() => import('@/pages/Register'));
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
+const Onboarding = lazy(() => import('@/pages/Onboarding'));
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const Train = lazy(() => import('@/pages/Train'));
+const Coach = lazy(() => import('@/pages/Coach'));
+const Leaderboard = lazy(() => import('@/pages/Leaderboard'));
+const Marketplace = lazy(() => import('@/pages/Marketplace'));
+const AvatarScreen = lazy(() => import('@/pages/AvatarScreen'));
+const Profile = lazy(() => import('@/pages/Profile'));
+const MonthlySummary = lazy(() => import('@/pages/MonthlySummary'));
+const Admin = lazy(() => import('@/pages/Admin'));
+const Premium = lazy(() => import('@/pages/Premium'));
+const StravaCallback = lazy(() => import('@/pages/StravaCallback'));
+const AvatarCoach = lazy(() => import('@/pages/AvatarCoach'));
+const AvatarGallery = lazy(() => import('@/pages/AvatarGallery'));
+const Terms = lazy(() => import('@/pages/legal/Terms'));
+const Privacy = lazy(() => import('@/pages/legal/Privacy'));
+const DeleteAccount = lazy(() => import('@/pages/legal/DeleteAccount'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
+
+/** Shown while a route chunk is in flight. Matches the app ground, so a fast
+ *  connection reads as an instant transition rather than a white flash. */
+function RouteFallback() {
+  return (
+    <div
+      className="fixed inset-0 flex items-center justify-center"
+      style={{ backgroundColor: 'var(--gf-bg-primary)' }}
+      role="status"
+      aria-label="Loading"
+    >
+      <div
+        className="w-8 h-8 border-4 rounded-full animate-spin"
+        style={{ borderColor: 'var(--gf-border)', borderTopColor: 'var(--gf-gold)' }}
+      />
+    </div>
+  );
+}
 
 function App() {
   return (
@@ -46,6 +71,8 @@ function App() {
       <GameFitProvider>
         <QueryClientProvider client={queryClientInstance}>
           <TabStackProvider>
+            <RouteMeta />
+            <Suspense fallback={<RouteFallback />}>
             <Routes>
             <Route path="/" element={<Splash />} />
             <Route path="/login" element={<Login />} />
@@ -80,8 +107,12 @@ function App() {
             {import.meta.env.DEV && (
               <Route path="/avatar-gallery" element={<AvatarGallery />} />
             )}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {/* Was: <Navigate to="/" replace />. A mistyped URL silently became
+                the home page, so nobody learned they had a bad link and every
+                wrong address looked like a real page to a crawler. */}
+            <Route path="*" element={<NotFound />} />
             </Routes>
+            </Suspense>
           </TabStackProvider>
         </QueryClientProvider>
       </GameFitProvider>

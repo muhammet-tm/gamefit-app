@@ -3,7 +3,7 @@
 // so rotating prices in the dashboard never requires a code change.
 // The redirect origin is safelisted.
 import Stripe from 'npm:stripe@14.21.0';
-import { corsHeaders, json, getUser, resolveAllowedOrigin } from '../_shared/helpers.ts';
+import { withCors, json, getUser, resolveAllowedOrigin } from '../_shared/helpers.ts';
 
 const PLAN_INTERVAL: Record<string, 'month' | 'year'> = {
   monthly: 'month',
@@ -31,8 +31,7 @@ async function resolvePriceId(stripe: Stripe, interval: 'month' | 'year'): Promi
   return priceCache.byInterval[interval] ?? null;
 }
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+Deno.serve(withCors(async (req) => {
 
   try {
     const user = await getUser(req);
@@ -66,4 +65,4 @@ Deno.serve(async (req) => {
     console.error('create-checkout error:', (error as Error).message);
     return json({ error: 'Could not start checkout. Please try again.' }, 500);
   }
-});
+}));

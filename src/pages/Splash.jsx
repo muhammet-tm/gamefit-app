@@ -23,15 +23,24 @@ export default function Splash() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7, type: 'spring' }}
       >
-        {/* Logo */}
-         <motion.img 
-           src="https://media.base44.com/images/public/6a22946565d355d321574da0/c2c74fe07_GameFit_Logo.png"
-           alt="GameFit Logo"
-           className="h-40 object-contain mb-4"
-           initial={{ opacity: 0, scale: 0.7 }}
-           animate={{ opacity: 1, scale: 1 }}
-           transition={{ duration: 0.7, type: 'spring' }}
-         />
+        {/* The logo sits inside the <h1> so the landing route has a real top
+            level heading. It had none, which left screen readers with no page
+            title to announce and crawlers with no heading at all.
+            Served locally, not from media.base44.com — the first paint of the
+            app should not depend on the platform we are migrating off, and
+            should not hand every visitor's IP to a third party. */}
+         <h1 className="mb-4">
+           <motion.img
+             src="/icons/icon-512.png"
+             alt="GameFit"
+             width="512"
+             height="512"
+             className="h-40 object-contain"
+             initial={{ opacity: 0, scale: 0.7 }}
+             animate={{ opacity: 1, scale: 1 }}
+             transition={{ duration: 0.7, type: 'spring' }}
+           />
+         </h1>
 
          <motion.p
            className="font-body text-base"
@@ -48,8 +57,10 @@ export default function Splash() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
+          role="status"
+          aria-label="Loading GameFit"
         >
-          <div className="flex gap-1.5">
+          <div className="flex gap-1.5" aria-hidden="true">
             {[0, 0.2, 0.4].map((d, i) => (
               <motion.div
                 key={i}

@@ -42,3 +42,9 @@ android/app/build/
 android/.gradle/
 ios/App/Pods/
 ios/App/build/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
