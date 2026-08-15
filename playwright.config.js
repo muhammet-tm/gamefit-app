@@ -55,6 +55,21 @@ export default defineConfig({
   webServer: BASE_URL.includes('localhost')
     ? {
         command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,
+        // Set through Playwright's env rather than inline in the command,
+        // because `VAR=value cmd` is not valid syntax in the Windows shell
+        // that spawns this.
+        //
+        // 1x00000000000000000000AA is Cloudflare's documented always-passes
+        // test site key: it resolves instantly, shows no challenge, and skips
+        // the domain allowlist. So the suite exercises the real form path
+        // without depending on a live captcha service. Supabase still holds
+        // the production secret, so a token minted here would not verify —
+        // which is fine, because every unauthenticated test asserts a failure
+        // path anyway.
+        env: {
+          ...process.env,
+          VITE_TURNSTILE_SITE_KEY: '1x00000000000000000000AA',
+        },
         url: BASE_URL,
         // Never reuse: a stale `vite preview` left running from an earlier
         // build serves old output, and the suite passes against code that is

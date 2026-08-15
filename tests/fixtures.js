@@ -40,6 +40,20 @@ export const test = base.extend({
  * the QA account can still run the rest of the suite and CI on a fork is not
  * permanently red. Set them as repository secrets to turn these on.
  */
+/**
+ * Waits for the Turnstile widget to hand back a token.
+ *
+ * Submitting before this resolves hits the app's own "wait for the security
+ * check" guard rather than the behaviour under test. Waiting on the widget's
+ * own state rather than sleeping a fixed number of milliseconds keeps this
+ * from being flaky on a slow CI machine and slow everywhere else.
+ */
+export async function waitForCaptcha(page) {
+  await expect(page.getByTestId('turnstile')).toHaveAttribute('data-token-ready', 'true', {
+    timeout: 20_000,
+  });
+}
+
 export const authTest = test.extend({
   authedPage: async ({ page }, use) => {
     const email = process.env.E2E_EMAIL;
@@ -49,6 +63,7 @@ export const authTest = test.extend({
     await page.goto('/login');
     await page.getByRole('textbox', { name: 'Email address' }).fill(email);
     await page.getByLabel('Password', { exact: true }).fill(password);
+    await waitForCaptcha(page);
     await page.getByRole('button', { name: 'Sign In', exact: true }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 30_000 });
 
