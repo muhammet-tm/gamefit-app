@@ -342,6 +342,54 @@ Authenticated journeys **skip** unless `E2E_EMAIL`/`E2E_PASSWORD` are set
 (repo secrets), so CI is green on forks. They deliberately don't log workouts —
 real writes would pollute the live leaderboard.
 
+## Phase 8: Turnstile captcha (branch `feat/turnstile-captcha`, 2026-08-15)
+
+Closes the last item on the pre-launch security list. Cloudflare Turnstile,
+chosen because Supabase supports it natively and the free tier is unmetered.
+
+**Supabase gates six auth endpoints, not one.** The client must attach a token
+to every call that reaches `/signup`, `/token?grant_type=password`, `/recover`,
+`/resend`, `/otp` and `/magiclink`. It does **not** gate `/verify`. The
+authority is the shipped client types, not the docs:
+`ResendParams.options.captchaToken` exists, and `VerifyOtpParams`' equivalent is
+marked `@deprecated`. Check there before adding or removing a widget.
+
+- `src/components/Turnstile.jsx` renders the widget and exposes an imperative
+  `reset()`. **Tokens are single use** — Supabase redeems one when it verifies
+  it, so a second submit with the same token fails with "captcha protection:
+  request disallowed" rather than the real reason. Every submit handler calls
+  `reset()` in `finally`; remove that and one mistyped password soft-locks the
+  form. Tokens also expire (~5 min), handled by `expired-callback`.
+- The site key is public by design and defaulted in the component;
+  `VITE_TURNSTILE_SITE_KEY` overrides it. The secret lives only in Supabase.
+- Wired into `Login.jsx` (both modes), `Register.jsx`, `ForgotPassword.jsx`.
+  **`Register.jsx` renders two widgets** — the sign-up branch and the OTP
+  branch — because `/resend` is gated too and the first widget unmounts when
+  the OTP screen appears. They safely share one ref and one token: the branches
+  are mutually exclusive, and `handleSubmit`'s `reset()` clears the spent token
+  before React renders the second one.
+- `vercel.json` CSP gained `challenges.cloudflare.com` in `script-src`,
+  `connect-src` and `frame-src`. Still `Report-Only`.
+
+**Testing.** `playwright.config.js` injects Cloudflare's always-passes test key
+`1x00000000000000000000AA` via `webServer.env` (not `VAR=value cmd`, which the
+Windows shell that spawns it does not parse). The widget mirrors its state onto
+`data-token-ready`, and `waitForCaptcha()` waits on that rather than sleeping.
+
+Two things not to undo:
+- **The OTP test skips WebKit deliberately.** Playwright does not intercept
+  that cross-origin auth POST in WebKit — verified, not assumed: with an
+  identical URL and pattern the handler fires in Chromium and never fires in
+  WebKit, so the stub falls through and the call reaches the real project. The
+  test also asserts the stub took effect, so if interception ever breaks in
+  Chromium too it fails loudly instead of quietly creating accounts.
+- **`RouteMeta` publishes `data-route-meta` on `<html>`.** `index.html` ships a
+  static `<title>` byte-identical to the one RouteMeta gives `/`, so "non-empty
+  title" and "title changed" are both useless as signals that it has run — a
+  read landing before React's first commit sees the `/` title on every route.
+  The SEO tests wait on that attribute. This race predates the branch (verified
+  by stashing) and only surfaced on WebKit, where the gap is widest.
+
 ## Verification commands (run these, don't reason about it)
 
 ```bash
@@ -392,9 +440,18 @@ it that way.
 - **The CSP is report-only.** It is not enforcing until the header key in
   `vercel.json` is renamed to `Content-Security-Policy`. Watch the reports
   first, then flip it.
-- **Captcha / bot protection on signup is still off.** It is a Supabase
-  dashboard setting (Auth → Attack Protection); `config.toml` in this repo is
-  a local-dev template and pushing it would wipe hosted auth settings.
+- **Captcha: the client half is built, the dashboard toggle is the last step.**
+  Cloudflare Turnstile is wired into every form that hits a captcha-gated auth
+  endpoint (see the phase 8 section). Enabling it is a Supabase dashboard
+  setting (Auth → Attack Protection); `config.toml` in this repo is a local-dev
+  template and pushing it would wipe hosted auth settings. **Deploy the
+  frontend before saving that setting** — enforcement begins the instant it is
+  saved, with no grace period, so saving first breaks every login on the live
+  site. Verify which state production is in by attempting a login with junk
+  credentials: `invalid_credentials` means off, `captcha protection: request
+  disallowed` means on.
+- **"Prevent use of leaked passwords" is still disabled** (same dashboard page).
+  One toggle; checks new passwords against the HaveIBeenPwned corpus.
 - **No real-device QA yet** — only Playwright (real browser engine) and
   DOM-level automated checks have run. The in-app browser-pane testing tool
   used for most of this session **freezes `requestAnimationFrame` on hidden
