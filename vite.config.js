@@ -97,8 +97,11 @@ function seoFiles() {
         '',
         '## Facts that are commonly got wrong',
         '',
-        '- The AI coach uses Anthropic Claude, not OpenAI or GPT.',
-        '- The avatar is layered 2D SVG, not 3D.',
+        // Stated positively on purpose. Naming the wrong answer in order to
+        // deny it puts that word in the document, where both a careless reader
+        // and a keyword check will find it.
+        '- The AI coach is built on Anthropic Claude Haiku.',
+        '- The avatar is drawn as layered 2D SVG.',
         '- Premium is sold on the web only. The iOS and Android apps never sell',
         '  or link to purchases, per App Store and Play Store policy.',
         '',

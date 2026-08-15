@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# A second push to the same PR cancels the first run rather than queueing
+# behind it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, guards and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: No emoji in UI source
+        run: npm run check:emoji
+
+      - name: Avatar palette contrast
+        run: npm run check:avatar
+
+      - name: Build
+        run: npm run build
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # The repo is at zero advisories. This fails the build if a dependency
+      # change reintroduces one at moderate or above, which is the point where
+      # it stops being a warning nobody reads.
+      - name: npm audit
+        run: npm audit --audit-level=moderate
+
+  e2e:
+    name: End-to-end (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    strategy:
+      # Run both browsers even if one fails, so a report covers everything.
+      fail-fast: false
+      matrix:
+        project: [chromium, mobile-safari]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Run E2E tests
+        run: npx playwright test --project=${{ matrix.project }}
+        env:
+          CI: true
+          # Optional. When unset, the authenticated journeys skip rather than
+          # fail, so this workflow is green on forks and for contributors
+          # without access to the QA account.
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+
+      # Uploaded on failure only. The report carries traces and screenshots,
+      # which is what makes a CI failure debuggable without reproducing it.
+      - name: Upload Playwright report
+        if: ${{ !cancelled() && failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.project }}
+          path: playwright-report/
+          retention-days: 14

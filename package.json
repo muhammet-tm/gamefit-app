@@ -13,7 +13,11 @@
     "check:onboarding": "node scripts/check-onboarding-render.mjs",
     "typecheck": "tsc -p ./jsconfig.json",
     "preview": "vite preview",
-    "verify": "npm run lint && npm run check:emoji && npm run check:avatar && npm run build"
+    "verify": "npm run lint && npm run check:emoji && npm run check:avatar && npm run build && npm run test:e2e",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:ci": "playwright test --reporter=github,html",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.2",
@@ -94,6 +98,7 @@
   "devDependencies": {
     "@capacitor/cli": "8.4.2",
     "@eslint/js": "^9.19.0",
+    "@playwright/test": "^1.62.1",
     "@resvg/resvg-js": "^2.6.2",
     "@types/node": "^22.13.5",
     "@types/react": "^18.2.66",
