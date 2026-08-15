@@ -262,15 +262,101 @@ sapphire whoever wears them. Two values are exempt from the contrast floor on
 purpose — `highlight` and `rubyDark` are shading painted over another item
 colour, never over the card, so the parent shape is what must clear it.
 
+## Phase 7: security, SEO and testing pass (shipped 2026-08-15)
+
+Ran the app against a pre-launch security audit and the "vibecoded site"
+checklist. **The marketing site passed almost everything; the app was the one
+with gaps**, and they were all at the edge. The DB layer was already excellent
+— RLS, column grants, `search_path` on every `SECURITY DEFINER`, folder-scoped
+storage, a PII-trimmed leaderboard — because it was deliberately rebuilt. The
+HTTP layer had never been touched since the Base44 scaffold.
+
+**Explicitly clean, so it isn't re-audited**: SQL injection (all access via
+parameterized RPCs), XSS sinks (zero `dangerouslySetInnerHTML`/`eval`/
+`innerHTML`), privilege escalation (`role` is not in the `grant update` column
+list, so a user cannot make themselves admin), IDOR, secrets in git history
+(both repos), client key exposure (anon key only), password hashing.
+
+What was wrong and is now fixed:
+
+- **No security headers at all** beyond the HSTS `.vercel.app` gets free. Now a
+  full set in `vercel.json` plus a CSP. **The CSP is `Report-Only` on purpose**
+  — flip the header name to `Content-Security-Policy` to enforce, after
+  watching the reports. `script-src 'self'` works because the inline SW
+  registration moved to `public/sw-register.js`; keep it out of `index.html`.
+- **26 npm vulnerabilities (1 critical, 15 high) → 0.** 14 packages nothing
+  imported were removed, incl. `react-quill` (XSS with no published fix) and
+  `lodash`. `react-router-dom` 6 → 7 (only patched line). `@capacitor/assets`
+  removed — it pulled the whole remaining set and the docs already use
+  `npx capacitor-assets generate`. `@capacitor/cli` is pinned **exactly**;
+  a caret resolves to nightlies carrying advisories.
+- **Edge Function CORS was `*`.** Now an allowlist via `withCors()` in
+  `helpers.ts`. **It includes the Capacitor origins** (`capacitor://localhost`,
+  `https://localhost`) — drop those and the native apps break while the web
+  keeps working. `stripe-webhook` has no CORS by design.
+- **Meal-photo bucket had no size/MIME limit.** Now 5 MB + an image allowlist
+  on the bucket itself, not after download.
+- **The free AI cap was raceable** (count, call Anthropic, insert). Now
+  `consume_ai_credit()` with a per-user advisory lock, reserved *before* the
+  call and refunded if it fails.
+- **Every unknown path returned 200 and redirected home.** Now `NotFound.jsx`.
+  The old `src/lib/PageNotFound.jsx` was deleted: unwired, pre-redesign
+  palette, and it told users *"the AI hasn't implemented this page yet"*.
+- **One `<title>` shared by 20 routes, no `<h1>` on the landing screen.**
+  `src/lib/RouteMeta.jsx` sets title/description/canonical per route.
+- **Every absolute URL was hardcoded to `gamefit.online`, which is unpointed.**
+  All now derive from `VITE_SITE_URL` (default: the Vercel alias) — DNS cutover
+  is an env var + redeploy. `robots.txt`/`sitemap.xml`/`llms.txt` are generated
+  at build time in `vite.config.js`; the static ones were deleted.
+- **First load: 1.8 MB in one chunk → 222 KB across 5** (verified live).
+  Routes are `React.lazy`. **Charts are deliberately NOT named in
+  `manualChunks`**: Vite emits a `modulepreload` for every *named* chunk, so
+  naming it pulled 407 KB of recharts onto the splash screen. Check with
+  `grep modulepreload dist/index.html`.
+- **The splash logo loaded from `media.base44.com`** — the platform being
+  migrated off. Now local.
+- **Sign-in form had placeholders and no labels**, and the "Sign In" tab and
+  "Sign In" submit button were two buttons with the same accessible name.
+  Now `aria-label`s and a real tablist.
+
+Site got an FAQ (with `FAQPage` schema) and a generated `llms.txt`.
+**Case studies, reviews and local schema were deliberately not added** —
+GameFit has no customers yet and no premises, so all three would be fabricated.
+
+### Testing (new — there was none)
+
+`tests/` holds 88 Playwright tests over desktop Chrome and mobile Safari, plus
+`.github/workflows/ci.yml` running lint, guards, build, `npm audit
+--audit-level=moderate` and both browsers on every PR.
+
+Two things not to undo:
+- Tests run against the **production build**, not the dev server — the dev
+  server doesn't split, generate SEO files, or substitute the site URL.
+  `reuseExistingServer: false` for the same reason it's false on the site.
+- Several assertions check **content-type and shape, not status**. Both
+  `vite preview` and the Vercel SPA rewrite answer any unknown path with
+  index.html and a 200, so a 200 is not evidence a file exists. The source-map
+  check failed exactly that way while no `.map` file existed at all.
+
+Authenticated journeys **skip** unless `E2E_EMAIL`/`E2E_PASSWORD` are set
+(repo secrets), so CI is green on forks. They deliberately don't log workouts —
+real writes would pollute the live leaderboard.
+
 ## Verification commands (run these, don't reason about it)
 
 ```bash
-npm run verify            # lint + emoji guard + avatar palette + build
+npm run verify            # lint + emoji + avatar + build + e2e
+npm run test:e2e          # 88 Playwright tests (builds first, ~3 min)
+npm run test:e2e:ui       # same, in the Playwright UI
 npm run check:avatar      # ground contrast, label contrast, class separation,
                           # kit separation, skin/contour disjunction
 npm run check:emoji       # fails on any emoji in UI source (comments exempt)
 npm run check:onboarding  # walks the wizard in a real browser (needs dev server)
+npm audit                 # must stay at 0
 ```
+
+Run the suite against production with:
+`E2E_BASE_URL=https://gamefit-app.vercel.app npx playwright test`
 
 `check:onboarding` uses Playwright rather than the in-app browser pane for a
 specific reason: onboarding is built on AnimatePresence, and that pane freezes
@@ -303,6 +389,12 @@ it that way.
 
 - **iOS builds need a Mac** — user is on Windows. `docs/STORE_SUBMISSION.md`
   recommends Codemagic's free tier (cloud Mac builds from the GitHub repo).
+- **The CSP is report-only.** It is not enforcing until the header key in
+  `vercel.json` is renamed to `Content-Security-Policy`. Watch the reports
+  first, then flip it.
+- **Captcha / bot protection on signup is still off.** It is a Supabase
+  dashboard setting (Auth → Attack Protection); `config.toml` in this repo is
+  a local-dev template and pushing it would wipe hosted auth settings.
 - **No real-device QA yet** — only Playwright (real browser engine) and
   DOM-level automated checks have run. The in-app browser-pane testing tool
   used for most of this session **freezes `requestAnimationFrame` on hidden
