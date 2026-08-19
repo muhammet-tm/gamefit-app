@@ -459,9 +459,25 @@ marks (cover + close) carry the gold identity, and the founding-team slide
 gained a full-width "Top 10 selected research" card for the 13th
 International Undergraduate Research and Innovation Competition —
 owner-stated, recorded with provenance in the scratchpad's FACT_LEDGER.md.
-The rebuilt PDF (1.27 MB, 13 slides, all layout audits clean) replaced the
-copy in the owner's Downloads; the artifact redeploy was blocked by the
-session's permission mode and may still be pending — check with the owner.
+The rebuilt PDF (13 slides, all layout audits clean) replaced the copy in
+the owner's Downloads; the artifact redeploy was blocked by the session's
+permission mode and may still be pending — check with the owner.
+
+**2026-08-19 hiring plan** (owner's Hub71 advisor asked the deck to show
+the founder is not working alone): every document previously said "the
+first two hires are engineers", which doubled down on the one discipline
+already covered and read as cloning the founder. Replaced with three
+hires in three disciplines — senior full-stack engineer (Q1, full-time,
+removes bus factor), certified strength & conditioning coach (Q1,
+fractional, owns the exercise library and the limits on Coach G's output),
+bilingual growth & community lead (Q2, full-time, owns retention) — plus
+an explicit deferral of B2B sales until a paid pilot. Slide 9 gained the
+plan and moved the advisors to its previously-empty left column; slide 10
+gained an AED 150K/60K/40K cash allocation and a runway card. Form answers
+q8, q9 and q23 were rewritten to match. **All six answers sit at the form's
+200-word ceiling** — adding to one means cutting from it, so re-check with
+`wc -w` after any edit. The plan is recorded as a *plan* in the scratchpad
+FACT_LEDGER.md, with the headcount arithmetic a reviewer would check.
 
 ## Verification commands (run these, don't reason about it)
 
