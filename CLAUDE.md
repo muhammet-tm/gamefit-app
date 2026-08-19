@@ -454,7 +454,14 @@ regenerated with `npx @capacitor/assets@3 generate` **with navy pinned on
 all four background flags**, then its two side effects reverted (broken
 `public/manifest.json` rewrite, `AndroidManifest.xml` line-ending churn) and
 the stray root `icons/` folder deleted — the full recipe is in commit
-4c91c80's message. The deck (above) still shows the blue husky.
+4c91c80's message. The Hub71 deck was updated the same day: both inline
+marks (cover + close) carry the gold identity, and the founding-team slide
+gained a full-width "Top 10 selected research" card for the 13th
+International Undergraduate Research and Innovation Competition —
+owner-stated, recorded with provenance in the scratchpad's FACT_LEDGER.md.
+The rebuilt PDF (1.27 MB, 13 slides, all layout audits clean) replaced the
+copy in the owner's Downloads; the artifact redeploy was blocked by the
+session's permission mode and may still be pending — check with the owner.
 
 ## Verification commands (run these, don't reason about it)
 
