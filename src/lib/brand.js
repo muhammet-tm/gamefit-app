@@ -11,11 +11,11 @@
 // sinks in this codebase and that property is worth more than the brevity.
 
 export const BRAND = {
-  fur: '#29A3E0',      // husky blue
+  fur: '#F4B044',      // golden fur — deliberately the same value as --gf-gold
   line: '#152B47',     // outline, ear interiors, nose, pupils
   muzzle: '#FFFFFF',
   lens: '#A8D9F2',     // goggle glass
-  frame: '#8FDC1E',    // goggle frame
+  frame: '#1E3250',    // goggle frame, deep navy
   navy: '#0B1A24',     // --gf-bg-primary, the app icon ground
   surface: '#112532',  // --gf-bg-surface
   gold: '#F4B044',     // --gf-gold
@@ -33,10 +33,12 @@ export const MASCOT_DETAILED = {
     { t: 'path', d: 'M156,76 C161,50 154,20 141,8 C126,18 110,42 102,60 Z', fill: BRAND.fur },
     { t: 'path', d: 'M56,66 C52,48 57,28 63,22 C72,32 82,48 88,58 Z', fill: BRAND.line, stroke: 'none' },
     { t: 'path', d: 'M144,66 C148,48 143,28 137,22 C128,32 118,48 112,58 Z', fill: BRAND.line, stroke: 'none' },
-    // head, 144 wide x 140 tall
-    { t: 'path', d: 'M100,46 C60,46 28,78 28,116 C28,156 60,186 100,186 C140,186 172,156 172,116 C172,78 140,46 100,46 Z', fill: BRAND.fur },
-    // muzzle laid over the blue, unstroked: the edge is a colour change, not a line
-    { t: 'path', d: 'M34,130 C34,121 44,118 60,118 L140,118 C156,118 166,121 166,130 C166,160 138,186 100,186 C62,186 34,160 34,130 Z', fill: BRAND.muzzle, stroke: 'none' },
+    // head, 144 wide; the chin tapers to a soft point at y193 rather than a
+    // round arc. Any edit here must land on the muzzle's bottom curve too, or
+    // fur peeks out below the white.
+    { t: 'path', d: 'M100,46 C60,46 28,78 28,116 C28,156 58,185 100,193 C142,185 172,156 172,116 C172,78 140,46 100,46 Z', fill: BRAND.fur },
+    // muzzle laid over the fur, unstroked: the edge is a colour change, not a line
+    { t: 'path', d: 'M34,130 C34,121 44,118 60,118 L140,118 C156,118 166,121 166,130 C166,160 140,185 100,193 C60,185 34,160 34,130 Z', fill: BRAND.muzzle, stroke: 'none' },
     // goggle strap and bridge
     { t: 'path', d: 'M40,92 L52,92', fill: 'none', stroke: BRAND.frame, strokeWidth: 10.5 },
     { t: 'path', d: 'M148,92 L160,92', fill: 'none', stroke: BRAND.frame, strokeWidth: 10.5 },
@@ -65,8 +67,11 @@ export const MASCOT_SIMPLE = {
   shapes: [
     { t: 'path', d: 'M42,76 C37,48 45,16 59,4 C75,16 92,42 100,60 Z', fill: BRAND.fur },
     { t: 'path', d: 'M158,76 C163,48 155,16 141,4 C125,16 108,42 100,60 Z', fill: BRAND.fur },
-    { t: 'path', d: 'M100,44 C58,44 24,78 24,118 C24,158 58,190 100,190 C142,190 176,158 176,118 C176,78 142,44 100,44 Z', fill: BRAND.fur },
-    { t: 'path', d: 'M30,132 C30,122 42,118 60,118 L140,118 C158,118 170,122 170,132 C170,162 140,190 100,190 C60,190 30,162 30,132 Z', fill: BRAND.muzzle, stroke: 'none' },
+    // chin point sits at y194, not 196ish like a scaled copy of the detailed
+    // rig: the 10-unit stroke reaches y199 from there, and one unit lower the
+    // outline clips flat against the 200-unit viewBox.
+    { t: 'path', d: 'M100,44 C58,44 24,78 24,118 C24,158 56,187 100,194 C144,187 176,158 176,118 C176,78 142,44 100,44 Z', fill: BRAND.fur },
+    { t: 'path', d: 'M30,132 C30,122 42,118 60,118 L140,118 C158,118 170,122 170,132 C170,162 142,187 100,194 C58,187 30,162 30,132 Z', fill: BRAND.muzzle, stroke: 'none' },
     { t: 'rect', x: 48, y: 80, width: 48, height: 40, rx: 14, fill: BRAND.lens, stroke: BRAND.frame, strokeWidth: 11 },
     { t: 'rect', x: 104, y: 80, width: 48, height: 40, rx: 14, fill: BRAND.lens, stroke: BRAND.frame, strokeWidth: 11 },
     { t: 'circle', cx: 74, cy: 101, r: 11, fill: BRAND.line, stroke: 'none' },
