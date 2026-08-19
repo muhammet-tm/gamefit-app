@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useGameFit } from '@/lib/GameFitContext';
+import { Mascot, Wordmark } from '@/components/brand/Logo';
 
 export default function Splash() {
   const navigate = useNavigate();
@@ -26,21 +27,27 @@ export default function Splash() {
         {/* The logo sits inside the <h1> so the landing route has a real top
             level heading. It had none, which left screen readers with no page
             title to announce and crawlers with no heading at all.
-            Served locally, not from media.base44.com — the first paint of the
-            app should not depend on the platform we are migrating off, and
-            should not hand every visitor's IP to a third party. */}
-         <h1 className="mb-4">
-           <motion.img
-             src="/icons/icon-512.png"
-             alt="GameFit"
-             width="512"
-             height="512"
-             className="h-40 object-contain"
-             initial={{ opacity: 0, scale: 0.7 }}
-             animate={{ opacity: 1, scale: 1 }}
-             transition={{ duration: 0.7, type: 'spring' }}
-           />
-         </h1>
+
+            Inline SVG rather than the app icon PNG, for two reasons. The icon
+            bakes its own navy rounded square, and this screen is already navy,
+            so it drew a faintly visible box around the mascot. And it is a
+            second network round trip on the very first paint of the app.
+
+            The wordmark carries the accessible name; the mascot beside it is
+            decorative, or a screen reader announces "GameFit" twice. */}
+        <motion.h1
+          className="mb-5 flex flex-col items-center gap-5"
+          initial={{ opacity: 0, scale: 0.7 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, type: 'spring' }}
+        >
+          <Mascot size={148} />
+          {/* tone is pinned rather than left on `auto` because this screen
+              paints a literal #0B1A24 in both themes, to match the native
+              splash. `auto` follows the palette, which would hand the light
+              theme navy lettering on navy. */}
+          <Wordmark height={38} tone="dark" title="GameFit" />
+        </motion.h1>
 
          <motion.p
            className="font-body text-base"

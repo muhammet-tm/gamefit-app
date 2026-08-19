@@ -8,6 +8,7 @@ import { track } from '@/lib/analytics';
 import { signInWithGoogle } from '@/lib/platform';
 import GoogleIcon from '@/components/GoogleIcon';
 import Turnstile from '@/components/Turnstile';
+import { Mascot, Wordmark } from '@/components/brand/Logo';
 
 const FITNESS_GOALS = ['Lose Weight', 'Build Muscle', 'Improve Endurance', 'Stay Active', 'General Fitness'];
 
@@ -113,13 +114,24 @@ export default function Login() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Logo */}
+        {/* Logo.
+            The lettering is the drawn wordmark, not Archivo set in caps. They
+            are not the same shapes — the real mark has chamfered corners, a
+            pointed A and a deep M vertex — so setting it in the UI font here
+            meant the sign-in screen showed a near-miss of the brand while the
+            favicon in the same tab showed the real one.
+
+            The mascot is decorative: the wordmark below already names the
+            heading, and two accessible names would announce "GameFit" twice. */}
         <div className="flex flex-col items-center mb-8">
-          <img src="/icons/icon-192.png" alt="GameFit" className="h-24 w-24 rounded-3xl mb-3" />
-          <h1 className="font-heading font-black text-4xl" style={{ color: 'var(--gf-text-primary)' }}>
-            GAME<span style={{ color: 'var(--gf-gold-text)' }}>FIT</span>
+          <Mascot size={92} className="mb-4" />
+          <h1>
+            <Wordmark height={34} title="GameFit" />
           </h1>
-          <p className="font-body text-sm mt-1" style={{ color: 'var(--gf-text-secondary)' }}>
+          {/* mt-3, not mt-1: the drawn wordmark has no descender or line-box
+              below its baseline the way the old text heading did, so the
+              tagline sat almost flush against the lettering. */}
+          <p className="font-body text-sm mt-3" style={{ color: 'var(--gf-text-secondary)' }}>
             Fitness, Gamified.
           </p>
         </div>
