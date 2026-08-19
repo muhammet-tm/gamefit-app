@@ -390,6 +390,58 @@ Two things not to undo:
   The SEO tests wait on that attribute. This race predates the branch (verified
   by stashing) and only surfaced on WebKit, where the gap is widest.
 
+## Phase 9: the husky identity (merged to `main`, shipped 2026-08-19)
+
+The lightning-bolt-through-dumbbell mark is gone from both repos and from the
+Hub71 deck. The founder chose a husky mascot and supplied a 1024px reference;
+it was redrawn as vector rather than sourced, so it is owned outright — which
+matters for an App Store submission where a stock lookalike is someone else's
+artwork.
+
+**`src/lib/brand.js` is the only definition.** It holds the mark as shape
+descriptors, not as an SVG string, because two consumers need it and must not
+drift: `src/components/brand/Logo.jsx` maps them to real JSX elements, and
+`scripts/generate-brand-assets.mjs` serialises them for resvg. A string would
+have meant `dangerouslySetInnerHTML`, and phase 7 recorded zero such sinks.
+`brand/` is **generated**, not vendored — regenerate, never hand-edit.
+
+Five things that are easy to get wrong here:
+
+1. **Gold is two values.** `Wordmark` defaults to `tone="auto"`, painting GAME
+   from `currentColor` and FIT from `--gf-gold-text`. Pinning a tone puts
+   `#F2F5F7` lettering on the `#EDF2F5` light background at 1.02:1 — invisible.
+   `Splash.jsx` is the one legitimate exception and pins `dark`, because it
+   paints a literal navy in both themes to match the native splash.
+2. **Two mascot rigs, switching at 48px.** The detailed rig's eye catchlights
+   are r=5 on a 200-unit grid — 0.4px in a 16px favicon. `<Mascot>` switches on
+   `size`; `Logo.astro` on the site mirrors the same threshold. The site's
+   header (32px) and footer (36px) both get the simplified rig.
+3. **The app icon's navy square is only for the OS.** iOS and Android composite
+   against unknown wallpaper. Splash and Login used to show that PNG on screens
+   that are already navy, which drew a faint box around the mascot. Both now
+   use the bare `Mascot`.
+4. **The site is a separate repo with no shared package.** `Logo.astro`
+   transcribes the same paths. If the mark changes, regenerate
+   `brand/logo-horizontal-on-dark.svg` and carry the data across — do not
+   redraw by eye.
+5. **`npm run check` in the site catches what `astro build` does not.** The
+   build does not typecheck; a bare inferred array literal there failed
+   `check` while building fine.
+
+The h1 accessible-name test in `tests/seo.spec.js` gained a third accepted
+form — an inline SVG with `role="img"` and `aria-label` — because Splash and
+Login now name themselves that way and have no `<img>` or rendered text left.
+
+Fixed in passing: the site's `theme-color` was still `#0D0F14` from before the
+palette swap, so mobile browser chrome painted a different navy than the page;
+and the site had no `apple-touch-icon`, so "Add to Home Screen" got a
+screenshot.
+
+Deck: `deck.template.html` in the Hub71 scratchpad carried the old mark inline
+on the cover and closing slides plus the wordmark set in Archivo. All four are
+now the drawn identity. PDF is 1.27 MB against Hub71's 10 MB cap, and the
+artifact was redeployed to its existing URL.
+
 ## Verification commands (run these, don't reason about it)
 
 ```bash
