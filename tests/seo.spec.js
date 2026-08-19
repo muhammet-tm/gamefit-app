@@ -70,8 +70,19 @@ test.describe('document metadata', () => {
       await expect(page.locator('h1')).toHaveCount(1);
       const text = await page.locator('h1').innerText().catch(() => '');
       const alt = await page.locator('h1 img').getAttribute('alt').catch(() => null);
+      // Third accepted form: the heading's name comes from an inline SVG
+      // marked role="img" with an aria-label. Splash and Login both name
+      // themselves this way now that the wordmark is drawn rather than set in
+      // a font, and neither has an <img> or any rendered text to find.
+      const svgLabel = await page
+        .locator('h1 svg[role="img"][aria-label]')
+        .first()
+        .getAttribute('aria-label')
+        .catch(() => null);
       expect(
-        (text && text.trim().length > 0) || (alt && alt.trim().length > 0),
+        (text && text.trim().length > 0)
+        || (alt && alt.trim().length > 0)
+        || (svgLabel && svgLabel.trim().length > 0),
         `${route} h1 has no accessible text`,
       ).toBeTruthy();
     });
