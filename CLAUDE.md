@@ -442,6 +442,20 @@ on the cover and closing slides plus the wordmark set in Archivo. All four are
 now the drawn identity. PDF is 1.27 MB against Hub71's 10 MB cap, and the
 artifact was redeployed to its existing URL.
 
+**2026-08-19 recolor + sharper chin** (owner-requested): the husky is now
+gold with deep-navy goggles — `fur: #F4B044` (deliberately the same value as
+`--gf-gold`), `frame: #1E3250`; the lenses stay `#A8D9F2` so the pupils
+survive — and the chin tapers to a soft point instead of a round arc. The
+chin drop is 7 units in the detailed rig but only 4 in the simple one: its
+10-unit stroke reaches y199 from an apex of 194, and one unit lower clips
+flat against the 200-unit viewBox. Head and muzzle bottom curves must move
+together in both rigs or fur peeks out below the white. Native icons were
+regenerated with `npx @capacitor/assets@3 generate` **with navy pinned on
+all four background flags**, then its two side effects reverted (broken
+`public/manifest.json` rewrite, `AndroidManifest.xml` line-ending churn) and
+the stray root `icons/` folder deleted — the full recipe is in commit
+4c91c80's message. The deck (above) still shows the blue husky.
+
 ## Verification commands (run these, don't reason about it)
 
 ```bash
