@@ -33,13 +33,48 @@ Deno.serve(withCors(async (req) => {
       }
     }
 
-    // remove meal photos from storage (best effort)
+    // Remove meal photos from storage.
+    //
+    // Storage objects do NOT cascade from auth.users — only the Postgres rows
+    // do — so anything missed here survives the account forever as orphaned
+    // personal data, which is exactly what an erasure request forbids.
+    //
+    // This used to be a single list({ limit: 100 }). 100 is the API's default
+    // page size, not a total, so a user with more photos than that kept the
+    // remainder. A premium account can analyse up to 30 meals a day, so the
+    // threshold is reachable in under a week of normal use.
+    //
+    // Deletion is still best effort: if storage is unavailable we proceed, on
+    // the grounds that half-erasing is better than refusing to erase. Anything
+    // left behind is logged loudly rather than swallowed.
     try {
       const storage = serviceClient().storage.from('meal-photos');
-      const { data: files } = await storage.list(user.id, { limit: 100 });
-      if (files?.length) {
-        await storage.remove(files.map((f) => `${user.id}/${f.name}`));
+      const PAGE = 100;
+      let offset = 0;
+      let removed = 0;
+      for (;;) {
+        const { data: files, error: listError } = await storage.list(user.id, {
+          limit: PAGE,
+          offset,
+        });
+        if (listError) throw listError;
+        if (!files?.length) break;
+        const { error: removeError } = await storage.remove(
+          files.map((f) => `${user.id}/${f.name}`),
+        );
+        if (removeError) throw removeError;
+        removed += files.length;
+        // A full page means there may be more. Removing the page shifts the
+        // window, so the offset deliberately stays at 0 rather than advancing.
+        if (files.length < PAGE) break;
+        offset = 0;
+        // Guard against a pathological loop if a remove silently no-ops.
+        if (removed > 10_000) {
+          console.warn(`Photo cleanup stopped at ${removed} files for ${user.id}`);
+          break;
+        }
       }
+      console.log(`Removed ${removed} meal photo(s) for ${user.id}`);
     } catch (e) {
       console.warn('Photo cleanup failed:', (e as Error).message);
     }
