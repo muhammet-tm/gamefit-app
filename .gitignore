@@ -48,3 +48,10 @@ ios/App/build/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Obsidian vault artifacts from opening this folder in Obsidian. Not part of
+# the codebase and not created by any build step. Ignored so a `git add -A`
+# cannot sweep them into a commit — which is exactly what nearly happened
+# during the 2026-08-25 security pass.
+.obsidian/
+/gamefit-app/

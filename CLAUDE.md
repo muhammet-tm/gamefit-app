@@ -280,10 +280,11 @@ list, so a user cannot make themselves admin), IDOR, secrets in git history
 What was wrong and is now fixed:
 
 - **No security headers at all** beyond the HSTS `.vercel.app` gets free. Now a
-  full set in `vercel.json` plus a CSP. **The CSP is `Report-Only` on purpose**
-  — flip the header name to `Content-Security-Policy` to enforce, after
-  watching the reports. `script-src 'self'` works because the inline SW
-  registration moved to `public/sw-register.js`; keep it out of `index.html`.
+  full set in `vercel.json` plus a CSP. **The CSP is now enforcing** (flipped
+  2026-08-25 — it shipped `Report-Only` with no `report-uri`, so it was neither
+  blocking nor collecting anything). `script-src 'self'` works because the
+  inline SW registration moved to `public/sw-register.js`; keep it out of
+  `index.html`.
 - **26 npm vulnerabilities (1 critical, 15 high) → 0.** 14 packages nothing
   imported were removed, incl. `react-quill` (XSS with no published fix) and
   `lodash`. `react-router-dom` 6 → 7 (only patched line). `@capacitor/assets`
@@ -369,7 +370,8 @@ marked `@deprecated`. Check there before adding or removing a widget.
   are mutually exclusive, and `handleSubmit`'s `reset()` clears the spent token
   before React renders the second one.
 - `vercel.json` CSP gained `challenges.cloudflare.com` in `script-src`,
-  `connect-src` and `frame-src`. Still `Report-Only`.
+  `connect-src` and `frame-src`. (The policy is enforcing as of 2026-08-25 —
+  see phase 10.)
 
 **Testing.** `playwright.config.js` injects Cloudflare's always-passes test key
 `1x00000000000000000000AA` via `webServer.env` (not `VAR=value cmd`, which the
@@ -522,13 +524,63 @@ than replaced.
 Emoji: none left. See the phase 6 section above; `npm run check:emoji` keeps
 it that way.
 
+## Phase 10: security audit + remediation (shipped 2026-08-25)
+
+Full review of both surfaces against a pre-launch security checklist, then a
+remediation pass. Written up in `docs/SECURITY_AUDIT_2026-08-25.md`, which
+carries the per-finding status table — read that before re-auditing anything.
+
+**The DB layer was re-verified by attack, not by reading.** Against production
+with the QA account: `role`, `total_xp`, `account_type`, `current_streak` and
+`stripe_subscription_id` all rejected `42501`, a control write to `first_name`
+returned 204 (so the test discriminates), a select across the whole `profiles`
+table returned `Content-Range: 0-0/1`, and `strava_connections` returned 403.
+Column grants and RLS do what the migrations claim.
+
+Four code fixes, all merged, deployed and verified live:
+
+1. **Strava OAuth had no CSRF `state`.** The callback exchanged any `code` it
+   received and bound it to the logged-in user, so an attacker could run consent
+   with their own Strava account and send a victim the callback link to bind it
+   to the victim's profile. Now a server-minted `crypto.randomUUID()` state,
+   stashed in `sessionStorage` before redirect, refused on mismatch. Google
+   OAuth is unaffected — Supabase handles PKCE/state internally.
+2. **Premium AI was uncapped.** Free was capped and race-safe; premium had no
+   ceiling, so one scripted account could run unbounded Anthropic spend. Now
+   100 text + 30 meal-analysis per day. **The key insight to preserve:**
+   `consume_ai_credit` counts rows matching an *opaque text key* under an
+   advisory lock, so a whole new limit dimension is just a new key format
+   (`day:YYYY-MM-DD:text`) — no schema change, no migration. Free keeps its
+   `YYYY-MM` key, which matters because `GameFitContext.jsx:89` filters on that
+   format to draw the "4 / 10" counter; it renders only for `!isPremium`, so
+   premium's `day:` rows never reach it. **Change either key format and check
+   that counter.** Credit reservation also moved to *after* all validation — it
+   used to charge a credit and then return 400 on a malformed request.
+3. **Account deletion erased only the first 100 meal photos.** `list()` was
+   called once with `limit: 100`, which is the API's **page size, not a total**.
+   Storage objects do **not** cascade from `auth.users` (only Postgres rows do),
+   so the remainder outlived the account forever as orphaned personal data — a
+   GDPR Art. 17 / PDPL erasure failure. Now pages until empty. **The offset
+   deliberately stays at 0**: each pass deletes the page it just listed, so the
+   window shifts down rather than the cursor moving up — `offset += PAGE` would
+   skip every second page. Verified with 105 real objects: 105 removed across
+   2 pages, 0 left.
+4. **The marketing site had no `Cross-Origin-Opener-Policy`.** The app has set
+   it since phase 7. Added and asserted in the site's `tests/csp.spec.ts`.
+
+**Still open, and all owner dashboard actions** — see the audit doc:
+Turnstile is still **off** in production (re-confirmed by junk-credential probe
+returning `invalid_credentials`), leaked-password protection is still off,
+Web3Forms' domain restriction needs confirming, and the QA account needs
+deleting pre-launch. One product decision is flagged: **account deletion
+requires no re-authentication** — `confirm: 'DELETE'` is a client-supplied
+constant, not a control — which needs a branch for Google-OAuth users who have
+no password, so it was flagged rather than decided unilaterally.
+
 ## Known limitations (disclosed, not hidden)
 
 - **iOS builds need a Mac** — user is on Windows. `docs/STORE_SUBMISSION.md`
   recommends Codemagic's free tier (cloud Mac builds from the GitHub repo).
-- **The CSP is report-only.** It is not enforcing until the header key in
-  `vercel.json` is renamed to `Content-Security-Policy`. Watch the reports
-  first, then flip it.
 - **Captcha: the client half is built, the dashboard toggle is the last step.**
   Cloudflare Turnstile is wired into every form that hits a captcha-gated auth
   endpoint (see the phase 8 section). Enabling it is a Supabase dashboard
