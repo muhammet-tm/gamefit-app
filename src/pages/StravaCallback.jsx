@@ -15,10 +15,25 @@ export default function StravaCallback() {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     const error = params.get('error');
+    const returnedState = params.get('state');
+
+    // CSRF check: the state Strava echoes back must match the one this browser
+    // stored when it started the flow. A code arriving without a matching state
+    // was not requested by this session (an injected/forged callback), so it is
+    // never exchanged. Consume the stored value either way — states are single
+    // use.
+    const expectedState = sessionStorage.getItem('strava_oauth_state');
+    sessionStorage.removeItem('strava_oauth_state');
 
     if (error || !code) {
       setStatus('Connection cancelled.');
       setTimeout(() => navigate('/avatar'), 2000);
+      return;
+    }
+
+    if (!returnedState || returnedState !== expectedState) {
+      setStatus('Security check failed. Please start the Strava connection again.');
+      setTimeout(() => navigate('/avatar'), 2500);
       return;
     }
 
