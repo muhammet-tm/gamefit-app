@@ -121,9 +121,9 @@ export default function AvatarCoach() {
     } catch (e) {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: e.premium_required
-          ? e.message
-          : 'Sorry, I could not respond right now.',
+        // invokeFunction always sets a friendly message (server JSON body or
+        // a generic fallback) — same pattern Coach.jsx uses.
+        content: e.message || 'Sorry, I could not respond right now.',
       }]);
     } finally {
       setLoading(false);

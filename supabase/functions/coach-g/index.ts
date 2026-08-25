@@ -1,7 +1,9 @@
 // Coach G — the AI fitness coach.
-// Server-side enforcement of the free-tier cap (10 requests/month), premium
-// verification against Stripe, prompt-injection sanitization, and
-// age-appropriate safety behavior. The Anthropic key never leaves the server.
+// Server-side enforcement of the free-tier cap (10 requests/month), a
+// fair-use daily ceiling for premium (a cost-abuse guard, not a product
+// limit), premium verification against Stripe, prompt-injection
+// sanitization, and age-appropriate safety behavior. The Anthropic key
+// never leaves the server.
 import Stripe from 'npm:stripe@14.21.0';
 import {
   withCors, json, getUser, getProfile, serviceClient,
@@ -10,6 +12,12 @@ import {
 
 const MODEL = 'claude-haiku-4-5-20251001';
 const FREE_MONTHLY_LIMIT = 10;
+// Premium ceilings are per day, sized so no human hits them in normal use —
+// they exist so one scripted or compromised premium account cannot run
+// unbounded Anthropic spend. Meal analysis is capped separately because
+// image requests cost an order of magnitude more tokens than text.
+const PREMIUM_DAILY_TEXT_LIMIT = 100;
+const PREMIUM_DAILY_MEAL_LIMIT = 30;
 
 Deno.serve(withCors(async (req) => {
   // Tracks whether a free-tier credit was reserved, so it can be handed back
@@ -55,42 +63,13 @@ Deno.serve(withCors(async (req) => {
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '');
     const isPremium = await verifyPremium(profile, stripe);
 
-    // ---- free-tier cap, enforced server-side with a monthly reset
-    const now = new Date();
-    const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    if (!isPremium) {
-      if (type === 'meal_analysis') {
-        return json({
-          error: 'Premium required',
-          message: 'Meal photo analysis is a Premium feature. Upgrade to unlock it!',
-          premium_required: true,
-        }, 403);
-      }
-      // Reserve a credit atomically BEFORE calling Anthropic. This used to be
-      // a count here and an insert after the AI call, so concurrent requests
-      // all read the same count, all passed, and all billed. consume_ai_credit
-      // takes a per-user advisory lock, so the check and the write cannot be
-      // interleaved.
-      const { data: granted, error: creditError } = await serviceClient()
-        .rpc('consume_ai_credit', {
-          p_user_id: user.id,
-          p_request_type: type,
-          p_month_key: monthKey,
-          p_limit: FREE_MONTHLY_LIMIT,
-        });
-      if (creditError) {
-        console.error('consume_ai_credit failed:', creditError.message);
-        return json({ error: 'Something went wrong. Please try again.' }, 500);
-      }
-      if (granted === false) {
-        return json({
-          error: 'Free tier limit reached',
-          message: "You've used your free coaching for this month — upgrade to Premium for unlimited access.",
-          premium_required: true,
-        }, 429);
-      }
-      reservedUserId = user.id;
-      reservedMonthKey = monthKey;
+    // ---- entitlement gate (credits are reserved later, after validation)
+    if (!isPremium && type === 'meal_analysis') {
+      return json({
+        error: 'Premium required',
+        message: 'Meal photo analysis is a Premium feature. Upgrade to unlock it!',
+        premium_required: true,
+      }, 403);
     }
 
     const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
@@ -210,6 +189,54 @@ Estimate portions realistically. If it is not food, use {"meal_name": "Not food"
         .filter((m) => m.content.length > 0);
       if (messages.length === 0) return json({ error: 'Empty message' }, 400);
     }
+
+    // ---- reserve a credit atomically, only now that every validation has
+    // passed — a request rejected above must never cost anyone a credit.
+    // Reserving BEFORE the Anthropic call (rather than logging after) is what
+    // makes the cap race-safe: consume_ai_credit takes a per-user advisory
+    // lock, so concurrent requests cannot all read the same count and all
+    // pass. Free tier counts per calendar month; premium counts per Dubai day
+    // (UTC+4 year-round, matching logged_date inside the RPC) in two buckets,
+    // because the same table + RPC serve both — the bucket lives in the key.
+    const now = new Date();
+    const bucket = isPremium
+      ? (() => {
+          const dubaiDay = new Date(now.getTime() + 4 * 60 * 60 * 1000)
+            .toISOString().slice(0, 10);
+          return type === 'meal_analysis'
+            ? { key: `day:${dubaiDay}:meal`, limit: PREMIUM_DAILY_MEAL_LIMIT }
+            : { key: `day:${dubaiDay}:text`, limit: PREMIUM_DAILY_TEXT_LIMIT };
+        })()
+      : {
+          key: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`,
+          limit: FREE_MONTHLY_LIMIT,
+        };
+    const { data: granted, error: creditError } = await serviceClient()
+      .rpc('consume_ai_credit', {
+        p_user_id: user.id,
+        p_request_type: type,
+        p_month_key: bucket.key,
+        p_limit: bucket.limit,
+      });
+    if (creditError) {
+      console.error('consume_ai_credit failed:', creditError.message);
+      return json({ error: 'Something went wrong. Please try again.' }, 500);
+    }
+    if (granted === false) {
+      if (isPremium) {
+        return json({
+          error: 'Daily limit reached',
+          message: "You've reached today's fair-use limit for Coach G — it resets at midnight (GST). See you tomorrow!",
+        }, 429);
+      }
+      return json({
+        error: 'Free tier limit reached',
+        message: "You've used your free coaching for this month — upgrade to Premium for unlimited access.",
+        premium_required: true,
+      }, 429);
+    }
+    reservedUserId = user.id;
+    reservedMonthKey = bucket.key;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
