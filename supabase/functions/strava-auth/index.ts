@@ -49,14 +49,21 @@ Deno.serve(withCors(async (req) => {
     if (action === 'authorize') {
       const origin = resolveAllowedOrigin(req, '');
       if (!origin) return json({ error: 'Untrusted origin' }, 403);
+      // CSRF token for the OAuth round trip. Strava echoes it back on the
+      // callback; the client stores it before redirecting and refuses to
+      // exchange a code whose state does not match. Without it, an attacker
+      // could feed their own authorization code to a logged-in victim's
+      // callback and bind their Strava account to the victim's profile.
+      const state = crypto.randomUUID();
       const params = new URLSearchParams({
         client_id: CLIENT_ID,
         redirect_uri: `${origin}/strava/callback`,
         response_type: 'code',
         approval_prompt: 'auto',
         scope: 'read,activity:read_all',
+        state,
       });
-      return json({ url: `https://www.strava.com/oauth/authorize?${params}` });
+      return json({ url: `https://www.strava.com/oauth/authorize?${params}`, state });
     }
 
     // everything below requires a logged-in user

@@ -275,7 +275,13 @@ export default function Onboarding() {
     await saveProfile();
     try {
       const res = await invokeFunction('strava-auth', { action: 'authorize' });
-      if (res?.url) { window.location.href = res.url; return; }
+      if (res?.url) {
+        // Remember the CSRF state so the callback can verify this browser
+        // started the flow before it exchanges the returned code.
+        if (res.state) sessionStorage.setItem('strava_oauth_state', res.state);
+        window.location.href = res.url;
+        return;
+      }
     } catch (err) {
       console.error('Strava auth error:', err);
     }
