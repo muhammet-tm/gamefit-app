@@ -17,7 +17,11 @@ export default function BottomNav() {
   const { activeTab, switchTab, getTabLocation } = useTabStack();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gf"
+    // z-30 deliberately sits below every overlay in the app. The nav used to be
+    // z-50, tying with the bottom sheets in Profile/Marketplace, and CSS breaks
+    // a z-index tie by DOM order - so the nav (rendered last) painted over the
+    // Sign Out sheet's buttons. Nothing else uses z-30, so there is no new tie.
+    <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-gf"
       style={{ backgroundColor: 'var(--gf-bg-surface)', borderColor: 'var(--gf-border)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
         {navItems.map(({ path, icon: Icon, label, tab }) => {
