@@ -25,7 +25,7 @@ const TABS = ['avatar', 'shop', 'connect'];
 // Brand colours stay as literal hex: they are third-party marks, not our
 // palette, and Strava orange is Strava orange in either theme.
 const HEALTH_APPS = [
-  { id: 'strava',       name: 'Strava',        Icon: Footprints, color: '#FC4C02', desc: 'Sync runs, rides & activities', comingSoon: false, realOAuth: true },
+  { id: 'strava',       name: 'Strava',        Icon: Footprints, color: '#FC4C02', desc: 'Sync runs, rides & activities', comingSoon: true,  realOAuth: true },
   { id: 'apple_health', name: 'Apple Health',  Icon: Heart,      color: '#FF2D55', desc: 'Steps, heart rate & workouts', comingSoon: true },
   { id: 'whoop',        name: 'WHOOP',         Icon: Zap,        color: '#CDF000', desc: 'Recovery & strain data', comingSoon: true },
   { id: 'garmin',       name: 'Garmin',        Icon: Watch,      color: '#007CC3', desc: 'GPS & performance tracking', comingSoon: true },
@@ -41,10 +41,13 @@ export default function AvatarScreen() {
   const [shopError, setShopError] = useState('');
 
   const handleConnect = async (app) => {
-    if (app.comingSoon) return;
-
-    // Handle disconnect — the server forgets the Strava tokens
+    // Disconnect is checked BEFORE the comingSoon gate, and the order matters.
+    // Strava's OAuth shipped, so some accounts already hold a live token on our
+    // side. Putting Strava back behind "Soon" must not strand that token with no
+    // way to revoke it — the Connect tab is the only revoke path in the app.
+    // So: starting a new connection is gated, ending an existing one never is.
     if (connectedApps.includes(app.id)) {
+      // Handle disconnect — the server forgets the Strava tokens
       const updated = connectedApps.filter(a => a !== app.id);
       setConnectedApps(updated);
       if (app.id === 'strava') {
@@ -54,7 +57,10 @@ export default function AvatarScreen() {
       return;
     }
 
-    // Real Strava OAuth
+    if (app.comingSoon) return;
+
+    // Real Strava OAuth. Unreachable while Strava is flagged comingSoon; kept
+    // intact so re-enabling it is a one-word change to HEALTH_APPS above.
     if (app.realOAuth && app.id === 'strava') {
       setConnectingApp(app.id);
       try {
@@ -166,13 +172,18 @@ export default function AvatarScreen() {
           {HEALTH_APPS.map(app => {
             const isConnected = connectedApps.includes(app.id);
             const isConnecting = connectingApp === app.id;
+            // "Coming soon" and "connected" stopped being mutually exclusive when
+            // Strava — which had already shipped — was put back behind the flag.
+            // An account still holding a live token must not be shown a dimmed,
+            // disabled row badged SOON; it stays live so it can be disconnected.
+            const isGated = app.comingSoon && !isConnected;
             return (
-              <button key={app.id} onClick={() => handleConnect(app)} disabled={isConnecting || app.comingSoon}
+              <button key={app.id} onClick={() => handleConnect(app)} disabled={isConnecting || isGated}
                 className="w-full flex items-center justify-between px-4 py-4 rounded-2xl transition-all active:scale-98 text-left"
                 style={{
                   backgroundColor: isConnected ? `${app.color}12` : 'var(--gf-bg-elevated)',
                   border: `1.5px solid ${isConnected ? app.color : 'var(--gf-border)'}`,
-                  opacity: app.comingSoon ? 0.5 : 1,
+                  opacity: isGated ? 0.5 : 1,
                 }}>
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center"
@@ -182,7 +193,7 @@ export default function AvatarScreen() {
                   <div>
                     <div className="flex items-center gap-2">
                       <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-text-primary)' }}>{app.name}</p>
-                      {app.comingSoon && (
+                      {isGated && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded font-body font-semibold"
                           style={{ backgroundColor: 'rgba(224, 104, 14,0.15)', color: '#E0680E' }}>SOON</span>
                       )}
@@ -200,7 +211,7 @@ export default function AvatarScreen() {
                       style={{ backgroundColor: `${app.color}20`, color: app.color }}>
                       <Check size={12} strokeWidth={3} aria-hidden="true" /> Connected
                     </span>
-                  ) : app.comingSoon ? (
+                  ) : isGated ? (
                     <span className="text-xs font-body px-3 py-1.5 rounded-xl" style={{ backgroundColor: 'var(--gf-border)', color: 'var(--gf-text-secondary)' }}>
                       Soon
                     </span>

@@ -150,7 +150,10 @@ export default function Marketplace() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setConfirmReward(null)}>
             <motion.div className="w-full rounded-t-3xl p-6" onClick={e => e.stopPropagation()}
-              style={{ backgroundColor: 'var(--gf-bg-surface)' }}
+              style={{
+                backgroundColor: 'var(--gf-bg-surface)',
+                paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))'
+              }}
               initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 20 }}>
               <div className="text-center mb-5">
                 <span className="text-5xl">{REWARD_ICONS[confirmReward.reward_type]}</span>

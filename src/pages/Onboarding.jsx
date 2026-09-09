@@ -148,11 +148,16 @@ function ScrollPicker({ value, onChange, min, max, unit, step = 1 }) {
 }
 
 // ── Health Integrations Screen ────────────────────────────────────────────────
-// Strava is a real OAuth connection; the rest are on the roadmap and say so.
-// A "Connected ✓" toggle that only stores a string would show up as a phantom
-// connection on the Avatar screen's Connect tab, which tracks real tokens.
+// Every integration is on the roadmap and says so. Strava's OAuth is fully
+// built (connectStrava below, plus the strava-auth Edge Function and the
+// /strava-callback route) and is held behind this one flag - flip comingSoon
+// back to false to re-enable it, no other change needed.
+//
+// Nothing here writes a "Connected ✓" string on its own: a bare string with no
+// token behind it would show up as a phantom connection on the Avatar screen's
+// Connect tab, which tracks real tokens.
 const HEALTH_APPS = [
-  { id: 'strava',       name: 'Strava',       Icon: Footprints, color: '#FC4C02', desc: 'Sync runs, rides & activities', comingSoon: false },
+  { id: 'strava',       name: 'Strava',       Icon: Footprints, color: '#FC4C02', desc: 'Sync runs, rides & activities', comingSoon: true },
   { id: 'apple_health', name: 'Apple Health', Icon: Heart, color: '#FF2D55', desc: 'Steps, heart rate & workouts',  comingSoon: true },
   { id: 'whoop',        name: 'WHOOP',        Icon: Zap, color: '#CDF000', desc: 'Recovery & strain data',        comingSoon: true },
   { id: 'garmin',       name: 'Garmin',       Icon: Watch, color: '#007CC3', desc: 'GPS & performance tracking',    comingSoon: true },

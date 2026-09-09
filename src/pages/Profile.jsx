@@ -302,7 +302,11 @@ export default function Profile() {
       {showLogout && (
         <div className="fixed inset-0 z-50 flex items-end" style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
           onClick={() => setShowLogout(false)}>
-          <div className="w-full rounded-t-3xl p-6" style={{ backgroundColor: 'var(--gf-bg-surface)' }} onClick={e => e.stopPropagation()}>
+          <div className="w-full rounded-t-3xl p-6" onClick={e => e.stopPropagation()}
+            style={{
+              backgroundColor: 'var(--gf-bg-surface)',
+              paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))'
+            }}>
             <h3 className="font-heading font-black text-xl mb-2" style={{ color: 'var(--gf-text-primary)' }}>Sign Out?</h3>
             <p className="font-body text-sm mb-5" style={{ color: 'var(--gf-text-secondary)' }}>You'll need to sign in again to continue.</p>
             <div className="flex gap-3">
@@ -319,7 +323,11 @@ export default function Profile() {
       {showDelete && (
         <div className="fixed inset-0 z-50 flex items-end" style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
           onClick={() => setShowDelete(false)}>
-          <div className="w-full rounded-t-3xl p-6" style={{ backgroundColor: 'var(--gf-bg-surface)' }} onClick={e => e.stopPropagation()}>
+          <div className="w-full rounded-t-3xl p-6" onClick={e => e.stopPropagation()}
+            style={{
+              backgroundColor: 'var(--gf-bg-surface)',
+              paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))'
+            }}>
             <h3 className="font-heading font-black text-xl mb-2" style={{ color: '#E5614A' }}>Delete Account?</h3>
             <p className="font-body text-sm mb-3" style={{ color: 'var(--gf-text-secondary)' }}>
               This permanently erases your account: profile, workouts, XP, coins, badges and
