@@ -577,6 +577,49 @@ requires no re-authentication** — `confirm: 'DELETE'` is a client-supplied
 constant, not a control — which needs a branch for Google-OAuth users who have
 no password, so it was flagged rather than decided unilaterally.
 
+## Phase 11: overlay layering + Strava gated (shipped 2026-09-09)
+
+Two owner-reported issues, both merged to `main` and verified on the live
+bundle.
+
+**The Sign Out sheet's buttons were unreachable.** `BottomNav` was `z-50` and so
+were the Profile bottom sheets, and CSS breaks a z-index tie by DOM order — the
+nav renders *after* the sheets in `Profile.jsx`, so it painted over them. This
+was not cosmetic: a hit test at the centre of "Cancel" returned a BottomNav tab
+button, so tapping Cancel navigated the user to another tab instead of
+dismissing the sheet. `Marketplace.jsx` had the identical latent bug.
+
+**The rule to keep: `BottomNav` is `z-30` and everything modal is above it.**
+The fix was to lower the nav, not to raise each sheet — z-30 was an unused slot,
+so the nav now sits below every overlay app-wide with no new tie to break. Put a
+new overlay at `z-50` (or the existing `z-[100]`/`z-[200]` for level-up) and it
+works regardless of where it renders. Raise the nav back into the overlay range
+and every bottom sheet in the app silently breaks again.
+
+Bottom sheets also had no safe-area padding, so on a notched phone the action
+row sat under the home indicator. They now use
+`calc(1.5rem + env(safe-area-inset-bottom))`, the idiom already used by
+`ScreenHeader` and `ActionSheet`.
+
+**Verify layering by hit test, not by eye.** `document.elementFromPoint` at a
+control's centre says what would actually receive the tap; a screenshot only
+shows that something looks clipped. That is what caught the stolen tap.
+
+**Strava is now "Soon"** in both places it was offered (`Onboarding.jsx` and
+`AvatarScreen.jsx`). The OAuth path, the `strava-auth` Edge Function and the
+`/strava-callback` route are deliberately left intact — re-enabling is a
+one-word `comingSoon` flag change in the two `HEALTH_APPS` tables.
+
+One wrinkle worth not re-discovering: **`comingSoon` and `isConnected` stopped
+being mutually exclusive.** They were, while "coming soon" only ever described
+something that had never shipped. Strava *had* shipped, so an account can hold a
+real token and be gated at the same time. Left naive, that row renders dimmed,
+`disabled` and badged SOON while also saying "Connected" — with no way to
+disconnect, and the Connect tab is the app's only revoke path. So
+`handleConnect` checks disconnect *before* the gate, and the row renders as
+gated only when `!isConnected`. Owner-confirmed behaviour: starting a new
+connection is blocked, ending an existing one never is.
+
 ## Known limitations (disclosed, not hidden)
 
 - **iOS builds need a Mac** — user is on Windows. `docs/STORE_SUBMISSION.md`
