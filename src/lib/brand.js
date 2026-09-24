@@ -10,16 +10,21 @@
 // `dangerouslySetInnerHTML`. The phase 7 security pass recorded zero such
 // sinks in this codebase and that property is worth more than the brevity.
 
+// Ignition husky (owner choice "B", 2026-09-24): orange fur and charcoal
+// linework, so no navy survives in the mark. Fur is deliberately the same
+// value as the dark theme's --gf-ember; ground and surface are the charcoal
+// --gf-bg-primary / --gf-bg-surface. The lens stays sky blue so the pupils
+// read against it.
 export const BRAND = {
-  fur: '#F4B044',      // golden fur — deliberately the same value as --gf-gold
-  line: '#152B47',     // outline, ear interiors, nose, pupils
+  fur: '#FF6B00',      // Ignition orange, = --gf-ember (dark)
+  line: '#141416',     // outline, ear interiors, nose, pupils
   muzzle: '#FFFFFF',
   lens: '#A8D9F2',     // goggle glass
-  frame: '#1E3250',    // goggle frame, deep navy
-  navy: '#0B1A24',     // --gf-bg-primary, the app icon ground
-  surface: '#112532',  // --gf-bg-surface
-  gold: '#F4B044',     // --gf-gold
-  text: '#F2F5F7',     // --gf-text-primary
+  frame: '#1E1E21',    // goggle frame, charcoal
+  ground: '#141416',   // --gf-bg-primary, the app icon and splash ground
+  surface: '#1E1E21',  // --gf-bg-surface
+  gold: '#F4B044',     // --gf-gold, reward color (no longer used by the mark)
+  text: '#F5F5F4',     // --gf-text-primary
 };
 
 // Drawn on a 200x200 grid. Full detail: catchlights in the eyes, a two-stroke
@@ -112,17 +117,17 @@ export const WORDMARK_GLYPHS = [
     ],
   },
   {
-    x: 400, tone: 'gold', shapes: [
+    x: 400, tone: 'accent', shapes: [
       { t: 'path', d: 'M0,0 L65,0 L74,9 L74,25 L27,25 L27,40 L65,40 L65,65 L27,65 L27,100 L0,100 Z' },
     ],
   },
   {
-    x: 484, tone: 'gold', shapes: [
+    x: 484, tone: 'accent', shapes: [
       { t: 'path', d: 'M0,0 L27,0 L27,100 L0,100 Z' },
     ],
   },
   {
-    x: 521, tone: 'gold', shapes: [
+    x: 521, tone: 'accent', shapes: [
       { t: 'path', d: 'M9,0 L71,0 L80,9 L80,25 L53,25 L53,100 L27,100 L27,25 L0,25 L0,9 Z' },
     ],
   },
@@ -131,8 +136,10 @@ export const WORDMARK_GLYPHS = [
 // Gold as *text* fails on a light ground: #F4B044 measures 1.9:1 on white.
 // Same split the design system already applies to --gf-gold / --gf-gold-text.
 export const WORDMARK_TONES = {
-  dark: { text: BRAND.text, gold: BRAND.gold },
-  light: { text: BRAND.navy, gold: '#8A5A06' },
+  // FIT takes the accent: the fur's orange on dark, and the text-safe
+  // --gf-ember-text on light (the raw orange is ~2.9:1 on white).
+  dark: { text: BRAND.text, accent: BRAND.fur },
+  light: { text: BRAND.ground, accent: '#B13A09' },
 };
 
 // Serialise a shape set to SVG markup. Used by the asset generator and by the

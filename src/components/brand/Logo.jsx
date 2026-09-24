@@ -62,16 +62,16 @@ export function Mascot({ size = 64, detail, title, className = '', ...rest }) {
  * to a system stack mid-load, and it is identical on every platform.
  *
  * `tone` defaults to `auto`, which paints from the palette rather than from
- * literal hex: GAME takes `currentColor` and FIT takes `--gf-gold-text`. That
+ * literal hex: GAME takes `currentColor` and FIT takes `--gf-ember-text`. That
  * matters because the app toggles `.dark` on <html> and both tokens flip.
  * Pinning tone="dark" here would put #F2F5F7 lettering on the #EDF2F5 light
  * background at 1.02:1 — the mark would simply disappear. Pass an explicit
  * tone only when the mark sits on a ground that does *not* follow the theme,
- * such as inside a fixed-navy card.
+ * such as inside a fixed-charcoal card.
  */
 export function Wordmark({ height = 28, tone = 'auto', title, className = '', ...rest }) {
   const colours = tone === 'auto'
-    ? { text: 'currentColor', gold: 'var(--gf-gold-text)' }
+    ? { text: 'currentColor', accent: 'var(--gf-ember-text)' }
     : (WORDMARK_TONES[tone] ?? WORDMARK_TONES.dark);
   const width = Math.round((height * WORDMARK_WIDTH) / WORDMARK_HEIGHT);
 
