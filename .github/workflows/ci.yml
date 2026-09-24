@@ -85,6 +85,14 @@ jobs:
           # without access to the QA account.
           E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
           E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+          # Required. The suite builds the app, and src/api/supabase.js calls
+          # createClient() at import time: without these the bundle throws on
+          # load, no route renders, and every page test fails. That is why
+          # this job was red on main from 2026-08-25 until 2026-09-24. Both
+          # are the public client values already shipped in the JS bundle,
+          # held as secrets so they stay out of the repository.
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
       # Uploaded on failure only. The report carries traces and screenshots,
       # which is what makes a CI failure debuggable without reproducing it.

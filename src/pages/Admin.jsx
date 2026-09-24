@@ -77,7 +77,7 @@ export default function Admin() {
             className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl font-body text-xs font-medium transition-all"
             style={{
               backgroundColor: tab === t.id ? 'var(--gf-green)' : 'var(--gf-bg-elevated)',
-              color: tab === t.id ? '#0B1A24' : 'var(--gf-text-secondary)',
+              color: tab === t.id ? '#141416' : 'var(--gf-text-secondary)',
             }}>
             <t.icon size={13} /> {t.label}
           </button>
@@ -142,7 +142,7 @@ export default function Admin() {
           <>
             <button onClick={() => setShowAddReward(!showAddReward)}
               className="w-full py-3 rounded-xl font-heading font-black text-base flex items-center justify-center gap-2"
-              style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
+              style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>
               <Plus size={18} /> Add Reward
             </button>
 
@@ -180,7 +180,7 @@ export default function Admin() {
                   <button onClick={() => setShowAddReward(false)} className="flex-1 py-2.5 rounded-xl font-heading font-black text-sm"
                     style={{ backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-secondary)' }}>Cancel</button>
                   <button onClick={addReward} className="flex-1 py-2.5 rounded-xl font-heading font-black text-sm"
-                    style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>Add</button>
+                    style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>Add</button>
                 </div>
               </div>
             )}

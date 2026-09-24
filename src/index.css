@@ -1,155 +1,171 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=Hanken+Grotesk:wght@300..800&family=JetBrains+Mono:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400..700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Ignition (owner-approved 2026-09-24, docs/IGNITION_ROLLOUT.md): charcoal
+   grounds, a red-to-orange action gradient, orange heat, and the existing
+   brand gold for XP and rewards. Token NAMES are unchanged from the navy
+   system so every component that reads a token moved in one commit. */
 @layer base {
   :root {
-    --background: 203 29% 95%;
-    --foreground: 204 53% 9%;
+    --background: 240 5% 96%;
+    --foreground: 240 5% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 204 53% 9%;
+    --card-foreground: 240 5% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 204 53% 9%;
-    /* Fills use the true brand gold with navy text (9.38:1). Only gold *text*
-       on a light surface needs the darkened --gf-gold-text (5.25:1); the
-       brand colour itself does not change between themes. */
-    --primary: 37 89% 61%;
-    --primary-foreground: 204 53% 9%;
-    --secondary: 204 31% 90%;
-    --secondary-foreground: 204 53% 9%;
-    --muted: 204 31% 90%;
-    --muted-foreground: 204 23% 38%;
-    --accent: 37 89% 61%;
-    --accent-foreground: 204 53% 9%;
+    --popover-foreground: 240 5% 8%;
+    /* Orange fill with charcoal ink (5.2:1). White on this orange is 3.6:1,
+       so light-theme fills always take dark text. */
+    --primary: 21 90% 48%;
+    --primary-foreground: 240 5% 8%;
+    --secondary: 240 7% 92%;
+    --secondary-foreground: 240 5% 8%;
+    --muted: 240 7% 92%;
+    --muted-foreground: 240 5% 34%;
+    --accent: 21 90% 48%;
+    --accent-foreground: 240 5% 8%;
     --destructive: 8 73% 41%;
     --destructive-foreground: 0 0% 98%;
-    --border: 203 28% 82%;
-    --input: 203 28% 82%;
-    --ring: 38 92% 28%;   /* focus ring needs contrast against a light page */
+    --border: 240 5% 84%;
+    --input: 240 5% 84%;
+    --ring: 18 90% 36%;   /* focus ring needs contrast against a light page */
     --radius: 0.75rem;
-    --font-heading: 'Archivo', ui-sans-serif, system-ui, sans-serif;
-    --font-body: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    --font-heading: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-    /* GameFit light mode tokens.
-       The accent darkens in light mode: #F4B044 measures ~1.9:1 on white and
-       cannot carry text. #8A5A06 is the same hue at 5.25:1 on the page bg. */
-    --gf-bg-primary: #EDF2F5;
+    /* GameFit light mode tokens. Ratios against --gf-bg-primary (#F4F4F5):
+       text 16.8, muted 7.0, gold-text 5.3, ember-text 5.5. On
+       --gf-bg-elevated (#E9E9EC) muted is 6.4 and ember-text 4.97.
+       Gold keeps one value in both themes for fills; as TEXT on a light
+       surface it must use --gf-gold-text (#F4B044 is ~1.9:1 on white). */
+    --gf-bg-primary: #F4F4F5;
     --gf-bg-surface: #FFFFFF;
-    --gf-bg-elevated: #DFE8EE;
-    --gf-text-primary: #0B1A24;
-    --gf-text-secondary: #4A6577;
-    --gf-border: #C3D3DD;
-    --gf-gold: #F4B044;        /* fills, emblems, large marks */
-    --gf-gold-text: #8A5A06;   /* gold as TEXT on a light surface (5.25:1) */
-    --gf-ember: #B34D06;
-    --gf-ember-text: #B34D06;  /* 4.68:1 on --gf-bg-primary */
+    --gf-bg-elevated: #E9E9EC;
+    --gf-text-primary: #141416;
+    --gf-text-secondary: #52525B;
+    --gf-border: #D4D4D8;
+    --gf-gold: #F4B044;        /* XP, rewards, emblems: fills and large marks */
+    --gf-gold-text: #8A5A06;   /* gold as TEXT on a light surface (5.3:1) */
+    --gf-ember: #EA580C;       /* heat: streaks, coins. Fill with dark ink */
+    --gf-ember-text: #B13A09;  /* 5.5:1 on --gf-bg-primary */
     --gf-success: #1F7A45;
     --gf-error: #B3301C;
-    /* Back-compat aliases: 37 files still reference the old names. Kept so the
+    /* The action gradient. White text measures 4.85:1 on the red end and
+       4.81:1 on the orange end, so it passes AA across the whole button. It
+       is the same in both themes, and never used for a destructive action. */
+    --gf-cta-from: #D92B2B;
+    --gf-cta-to: #C8470E;
+    --gf-on-cta: #FFFFFF;
+    --gf-on-accent: #141416;   /* ink on gold or ember fills */
+    /* Back-compat aliases: files still reference the old names. Kept so the
        token swap is one commit, then removed as components are migrated. */
     --gf-green: var(--gf-gold);
     --gf-amber: var(--gf-ember);
     --gf-purple: var(--gf-gold);
-    /* Chart tokens (bklit charts) — mapped onto the GameFit palette above */
+    /* Chart tokens (bklit charts), mapped onto the palette above */
     --chart-1: #8A5A06;
     --chart-2: #256B8A;
-    --chart-3: #B34D06;
+    --chart-3: #B13A09;
     --chart-4: #1F7A45;
     --chart-5: #B3301C;
     --chart-background: #FFFFFF;
-    --chart-foreground: #0B1A24;
-    --chart-foreground-muted: #4A6577;
+    --chart-foreground: #141416;
+    --chart-foreground-muted: #52525B;
     --chart-line-primary: var(--chart-1);
     --chart-line-secondary: var(--chart-2);
-    --chart-crosshair: #C3D3DD;
-    --chart-grid: #C3D3DD;
+    --chart-crosshair: #D4D4D8;
+    --chart-grid: #D4D4D8;
     --chart-brush-border: var(--chart-grid);
-    /* Tooltip stays dark in both themes — it floats over the chart surface. */
-    --chart-tooltip-background: rgb(11 26 36 / 0.94);
-    --chart-tooltip-foreground: #F2F5F7;
-    --chart-tooltip-muted: #88A5B7;
+    /* Tooltip stays dark in both themes: it floats over the chart surface. */
+    --chart-tooltip-background: rgb(20 20 22 / 0.94);
+    --chart-tooltip-foreground: #F5F5F4;
+    --chart-tooltip-muted: #A1A1AA;
     --chart-marker-background: #FFFFFF;
-    --chart-marker-border: #C3D3DD;
-    --chart-marker-foreground: #0B1A24;
-    --chart-label: #4A6577;
+    --chart-marker-border: #D4D4D8;
+    --chart-marker-foreground: #141416;
+    --chart-label: #52525B;
     --chart-scale-01: #FBEBCF;
     --chart-scale-02: #F5D194;
     --chart-scale-03: #E8A63F;
     --chart-scale-04: #B8801A;
     --chart-scale-05: #8A5A06;
-    --chart-scale-pattern-color: #EDF2F5;
+    --chart-scale-pattern-color: #F4F4F5;
   }
 
   .dark {
-    --background: 204 53% 9%;
-    --foreground: 204 24% 96%;
-    --card: 204 49% 13%;
-    --card-foreground: 204 24% 96%;
-    --popover: 204 43% 18%;
-    --popover-foreground: 204 24% 96%;
-    --primary: 37 89% 61%;
-    --primary-foreground: 204 53% 9%;
-    --secondary: 204 43% 18%;
-    --secondary-foreground: 204 24% 96%;
-    --muted: 204 43% 18%;
-    --muted-foreground: 203 25% 63%;
-    --accent: 37 89% 61%;
-    --accent-foreground: 204 53% 9%;
+    --background: 240 5% 8%;
+    --foreground: 60 5% 96%;
+    --card: 240 5% 12%;
+    --card-foreground: 60 5% 96%;
+    --popover: 240 5% 16%;
+    --popover-foreground: 60 5% 96%;
+    --primary: 25 100% 50%;
+    --primary-foreground: 240 5% 8%;
+    --secondary: 240 5% 16%;
+    --secondary-foreground: 60 5% 96%;
+    --muted: 240 5% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 25 100% 50%;
+    --accent-foreground: 240 5% 8%;
     --destructive: 9 75% 59%;
-    --destructive-foreground: 204 53% 9%;
-    --border: 203 43% 25%;
-    --input: 203 43% 25%;
-    --ring: 37 89% 61%;
+    --destructive-foreground: 240 5% 8%;
+    --border: 240 5% 19%;
+    --input: 240 5% 19%;
+    --ring: 25 100% 50%;
 
-    /* GameFit dark mode tokens — the primary theme.
-       Ratios against --gf-bg-primary: text 16.15, muted 6.83, gold 9.38,
-       ember 5.18. All AA body. Ember drops to 3.90 on --gf-bg-elevated, so
-       on that surface it is for fills and text >=18px only. */
-    --gf-bg-primary: #0B1A24;
-    --gf-bg-surface: #112532;
-    --gf-bg-elevated: #1A3242;
-    --gf-text-primary: #F2F5F7;
-    --gf-text-secondary: #88A5B7;
-    --gf-border: #24455A;
+    /* GameFit dark mode tokens, the primary theme.
+       Ratios against --gf-bg-primary (#141416): text 16.9, muted 7.1,
+       gold 9.8, ember 6.5, error 5.4. On --gf-bg-elevated (#28282C) ember
+       is 5.2 and muted 5.7, so both stay AA for body text on every ground. */
+    --gf-bg-primary: #141416;
+    --gf-bg-surface: #1E1E21;
+    --gf-bg-elevated: #28282C;
+    --gf-text-primary: #F5F5F4;
+    --gf-text-secondary: #A1A1AA;
+    --gf-border: #2E2E33;
     --gf-gold: #F4B044;
-    --gf-gold-text: #F4B044;   /* on navy the brand gold already reads at 9.38:1 */
-    --gf-ember: #E0680E;
-    --gf-ember-text: #E0680E;  /* 5.18:1 on --gf-bg-primary */
+    --gf-gold-text: #F4B044;   /* on charcoal the brand gold reads at 9.8:1 */
+    --gf-ember: #FF6B00;
+    --gf-ember-text: #FF6B00;  /* 6.5:1 on --gf-bg-primary */
     --gf-success: #5FBF7C;
     --gf-error: #E5614A;
-    /* Back-compat aliases — see the light block. */
+    --gf-cta-from: #D92B2B;
+    --gf-cta-to: #C8470E;
+    --gf-on-cta: #FFFFFF;
+    --gf-on-accent: #141416;
+    /* Back-compat aliases, see the light block. */
     --gf-green: var(--gf-gold);
     --gf-amber: var(--gf-ember);
     --gf-purple: var(--gf-gold);
-    /* Chart tokens (bklit charts) — dark surfaces, same brand series colors */
+    /* Chart tokens (bklit charts): dark surfaces, same brand series colors */
     --chart-1: #F4B044;
     --chart-2: #7FBBD4;
-    --chart-3: #E0680E;
+    --chart-3: #FF6B00;
     --chart-4: #5FBF7C;
     --chart-5: #E5614A;
-    --chart-background: #112532;
-    --chart-foreground: #F2F5F7;
-    --chart-foreground-muted: #88A5B7;
-    --chart-crosshair: #24455A;
-    --chart-grid: #24455A;
+    --chart-background: #1E1E21;
+    --chart-foreground: #F5F5F4;
+    --chart-foreground-muted: #A1A1AA;
+    --chart-crosshair: #2E2E33;
+    --chart-grid: #2E2E33;
     --chart-brush-border: var(--chart-grid);
-    --chart-tooltip-background: rgb(26 50 66 / 0.94);
-    --chart-tooltip-foreground: #F2F5F7;
-    --chart-tooltip-muted: #88A5B7;
-    --chart-marker-background: #1A3242;
-    --chart-marker-border: #24455A;
-    --chart-marker-foreground: #F2F5F7;
-    --chart-label: #88A5B7;
+    --chart-tooltip-background: rgb(40 40 44 / 0.94);
+    --chart-tooltip-foreground: #F5F5F4;
+    --chart-tooltip-muted: #A1A1AA;
+    --chart-marker-background: #28282C;
+    --chart-marker-border: #2E2E33;
+    --chart-marker-foreground: #F5F5F4;
+    --chart-label: #A1A1AA;
     --chart-scale-01: #3A2A05;
     --chart-scale-02: #6B4A08;
     --chart-scale-03: #A8760F;
     --chart-scale-04: #D0932A;
     --chart-scale-05: #F4B044;
-    --chart-scale-pattern-color: #112532;
+    --chart-scale-pattern-color: #1E1E21;
   }
 }
 
@@ -176,6 +192,15 @@
 }
 
 @layer utilities {
+  /* The Ignition action gradient. background-color is the fallback and the
+     color a forced-colors or print context sees; both ends clear 4.8:1
+     against the white label. Inline backgroundColor on the same element
+     would win over the image, so converted buttons drop theirs. */
+  .gf-cta {
+    background-color: var(--gf-cta-to);
+    background-image: linear-gradient(110deg, var(--gf-cta-from), var(--gf-cta-to));
+    color: var(--gf-on-cta);
+  }
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   .gf-bg-primary { background-color: var(--gf-bg-primary); }
@@ -247,6 +272,12 @@
     animation-delay: calc(var(--gf-i, 0) * 28ms + 160ms);
   }
 
+  /* Ignition: the XP ring draws from where it started to where it is.
+     700ms, not the 1.4s threshold budget: Home opens many times a day and
+     is a glance, not a milestone. */
+  .gf-ring-draw { animation: gf-ring 700ms var(--gf-e-out) 150ms both; }
+  @keyframes gf-ring { from { stroke-dashoffset: var(--gf-ring-from); } }
+
   @keyframes gf-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   @keyframes gf-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
   @keyframes gf-pop  {
@@ -258,7 +289,7 @@
 /* Reduced motion keeps the meaning and drops the travel. A filled segment
    still reads as filled; it simply does not animate into place. */
 @media (prefers-reduced-motion: reduce) {
-  .gf-xp-seg, .gf-grow, .gf-pop { animation: none; }
+  .gf-xp-seg, .gf-grow, .gf-pop, .gf-ring-draw { animation: none; }
 }
 
 /* ============ Avatar system animations ============ */

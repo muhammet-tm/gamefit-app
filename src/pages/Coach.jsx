@@ -155,7 +155,7 @@ export default function Coach() {
             {[['plan', 'Plan', ClipboardList], ['nutrition', 'Nutrition', Salad], ['chat', 'Chat', MessageCircle]].map(([t, label, TabIcon]) => (
               <button key={t} onClick={() => setTab(t)}
                 className="flex-1 py-2.5 rounded-lg font-body font-medium text-sm transition-all"
-                style={{ backgroundColor: tab === t ? 'var(--gf-purple)' : 'transparent', color: tab === t ? '#FFFFFF' : 'var(--gf-text-secondary)' }}>
+                style={{ backgroundColor: tab === t ? 'var(--gf-text-primary)' : 'transparent', color: tab === t ? 'var(--gf-bg-primary)' : 'var(--gf-text-secondary)' }}>
                 <span className="flex items-center justify-center gap-1.5">
                   <TabIcon size={15} strokeWidth={2.2} aria-hidden="true" />
                   {label}
@@ -181,7 +181,7 @@ export default function Coach() {
               <div className="flex-1 flex gap-1">
                 {[1,2,3,4,5,6,7].map(d => (
                   <div key={d} className="flex-1 h-2 rounded-full transition-all"
-                    style={{ backgroundColor: d <= days ? 'var(--gf-purple)' : 'var(--gf-border)' }} />
+                    style={{ backgroundColor: d <= days ? 'var(--gf-ember)' : 'var(--gf-border)' }} />
                 ))}
               </div>
               <button onClick={() => setDays(d => Math.min(7, d + 1))}
@@ -208,9 +208,9 @@ export default function Coach() {
                 <button key={e} onClick={() => toggleEquipment(e)}
                   className="px-3 py-2 rounded-xl font-body text-sm font-medium transition-all"
                   style={{
-                    backgroundColor: equipment.includes(e) ? 'rgba(127, 187, 212,0.2)' : 'var(--gf-bg-elevated)',
-                    color: equipment.includes(e) ? 'var(--gf-purple)' : 'var(--gf-text-secondary)',
-                    border: `1px solid ${equipment.includes(e) ? 'var(--gf-purple)' : 'var(--gf-border)'}`,
+                    backgroundColor: equipment.includes(e) ? 'rgba(255, 107, 0, 0.12)' : 'var(--gf-bg-elevated)',
+                    color: equipment.includes(e) ? 'var(--gf-ember-text)' : 'var(--gf-text-secondary)',
+                    border: `1px solid ${equipment.includes(e) ? 'var(--gf-ember)' : 'var(--gf-border)'}`,
                   }}>
                   {e}
                 </button>
@@ -226,7 +226,7 @@ export default function Coach() {
               className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none transition-colors"
               style={{ 
                 ...inputStyle,
-                borderColor: injuries ? 'var(--gf-purple)' : 'var(--gf-border)'
+                borderColor: injuries ? 'var(--gf-ember)' : 'var(--gf-border)'
               }} />
           </div>
 
@@ -239,7 +239,7 @@ export default function Coach() {
                   style={{ backgroundColor: 'var(--gf-bg-elevated)', border: '1px solid var(--gf-border)' }}>
                   <span className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>{plan}</span>
                   <span className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium"
-                    style={{ backgroundColor: 'rgba(127, 187, 212,0.2)', color: 'var(--gf-gold-text)' }}>
+                    style={{ backgroundColor: 'rgba(244, 176, 68, 0.14)', color: 'var(--gf-gold-text)' }}>
                     <Lock size={12} /> Premium
                   </span>
                 </div>
@@ -249,8 +249,8 @@ export default function Coach() {
 
           {/* Generate button */}
           <button onClick={handleGeneratePlan} disabled={planLoading}
-            className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all active:scale-95"
-            style={{ backgroundColor: atLimit ? 'var(--gf-border)' : 'var(--gf-purple)', color: '#FFFFFF', opacity: planLoading ? 0.7 : 1 }}>
+            className={`w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all active:scale-95 ${atLimit ? '' : 'gf-cta'}`}
+            style={{ ...(atLimit ? { backgroundColor: 'var(--gf-border)', color: 'var(--gf-text-primary)' } : {}), opacity: planLoading ? 0.7 : 1 }}>
             {planLoading ? (
               <><motion.span className="inline-flex" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}><Loader2 size={18} strokeWidth={2.4} aria-hidden="true" /></motion.span> Generating...</>
             ) : atLimit ? (<><Lock size={20} /> Limit Reached</>) : (<><Zap size={20} /> Generate Plan</>)}
@@ -301,7 +301,7 @@ export default function Coach() {
             {QUICK_PROMPTS.map(p => (
               <button key={p} onClick={() => handleChat(p)}
                 className="flex-shrink-0 px-3 py-1.5 rounded-xl font-body text-xs font-medium whitespace-nowrap transition-all"
-                style={{ backgroundColor: 'rgba(127, 187, 212,0.15)', color: 'var(--gf-gold-text)', border: '1px solid rgba(127, 187, 212,0.3)' }}>
+                style={{ backgroundColor: 'var(--gf-bg-surface)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-border)' }}>
                 {p}
               </button>
             ))}
@@ -312,13 +312,15 @@ export default function Coach() {
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className="max-w-[85%]">
-                  <div className={`px-4 py-3 rounded-2xl font-body text-sm leading-relaxed`}
-                    style={{
-                      backgroundColor: msg.role === 'user' ? 'rgba(244, 176, 68,0.15)' : 'rgba(127, 187, 212,0.15)',
-                      color: 'var(--gf-text-primary)',
-                      border: `1px solid ${msg.role === 'user' ? 'rgba(244, 176, 68,0.3)' : 'rgba(127, 187, 212,0.3)'}`,
-                      borderRadius: msg.role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                    }}>
+                  <div className={`px-4 py-3 rounded-2xl font-body text-sm leading-relaxed ${msg.role === 'user' ? 'gf-cta' : ''}`}
+                    style={msg.role === 'user'
+                      ? { borderRadius: '18px 18px 4px 18px' }
+                      : {
+                        backgroundColor: 'var(--gf-bg-surface)',
+                        color: 'var(--gf-text-primary)',
+                        border: '1px solid var(--gf-border)',
+                        borderRadius: '18px 18px 18px 4px',
+                      }}>
                     {msg.role === 'user' ? msg.content : <CoachMarkdown text={msg.content} />}
                   </div>
                   {msg.showRating && !msg.rated && (
@@ -341,10 +343,10 @@ export default function Coach() {
             ))}
             {chatLoading && (
               <div className="flex justify-start">
-                <div className="px-4 py-3 rounded-2xl" style={{ backgroundColor: 'rgba(127, 187, 212,0.15)', border: '1px solid rgba(127, 187, 212,0.3)' }}>
+                <div className="px-4 py-3 rounded-2xl" style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}>
                   <div className="flex gap-1">
                     {[0, 0.2, 0.4].map((d, i) => (
-                      <motion.div key={i} className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--gf-purple)' }}
+                      <motion.div key={i} className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--gf-text-secondary)' }}
                         animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: d }} />
                     ))}
                   </div>
@@ -364,8 +366,9 @@ export default function Coach() {
               className="flex-1 px-4 py-3 rounded-xl font-body text-sm outline-none"
               style={{ ...inputStyle, opacity: atLimit ? 0.5 : 1 }} />
             <button onClick={() => handleChat()} disabled={!chatInput.trim() || atLimit}
-              className="w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-90"
-              style={{ backgroundColor: chatInput.trim() && !atLimit ? 'var(--gf-purple)' : 'var(--gf-bg-elevated)' }}>
+              aria-label="Send message"
+              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-90 ${chatInput.trim() && !atLimit ? 'gf-cta' : ''}`}
+              style={chatInput.trim() && !atLimit ? undefined : { backgroundColor: 'var(--gf-bg-elevated)' }}>
               <Send size={18} color={chatInput.trim() && !atLimit ? '#FFFFFF' : 'var(--gf-text-secondary)'} />
             </button>
           </div>

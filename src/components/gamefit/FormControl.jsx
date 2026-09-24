@@ -7,9 +7,12 @@ export const inputStyle = {
 };
 
 export const buttonStyle = {
+  // The Ignition action gradient, as a style object for callers that
+  // spread it inline. Same values as the .gf-cta utility in index.css.
   primary: {
-    backgroundColor: 'var(--gf-green)',
-    color: '#0B1A24',
+    backgroundColor: 'var(--gf-cta-to)',
+    backgroundImage: 'linear-gradient(110deg, var(--gf-cta-from), var(--gf-cta-to))',
+    color: 'var(--gf-on-cta)',
   },
   secondary: {
     backgroundColor: 'var(--gf-bg-elevated)',

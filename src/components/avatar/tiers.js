@@ -11,9 +11,10 @@ export const TIER_GLOW = {
 // Rank ladder — one system for tiers, emblems, and titles.
 // T1=L1-2 Bronze · T2=L3-4 Silver · T3=L5-6 Gold · T4=L7-9 Platinum · T5=L10 Apex
 //
-// Ratios on --gf-bg-primary (#0B1A24) / --gf-bg-surface (#112532):
-//   bronze 5.72/5.09 · silver 9.96/8.87 · gold 9.38/8.35 ·
-//   platinum 8.39/7.46 · apex 5.18/4.61 — all AA body on both grounds.
+// Ratios on --gf-bg-primary (#141416) / --gf-bg-surface (#1E1E21), the
+// Ignition grounds (2026-09-24):
+//   bronze 5.95/5.36 · silver 10.4/9.36 · gold 9.77/8.81 ·
+//   platinum 8.74/7.88 · apex 5.44/4.91, all AA body on both grounds.
 // Bronze was #B5754A until axe caught it at 4.20 on the surface; these labels
 // render on cards, so the surface ratio is the one that binds, not the page.
 // Apex moved off violet (#9664FF), which measured 3.36:1 and failed AA.

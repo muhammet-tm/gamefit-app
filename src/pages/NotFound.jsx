@@ -26,7 +26,7 @@ export default function NotFound() {
           className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-6"
           style={{ backgroundColor: 'var(--gf-bg-elevated)' }}
         >
-          <Compass size={28} color="var(--gf-gold)" aria-hidden="true" />
+          <Compass size={28} color="var(--gf-gold-text)" aria-hidden="true" />
         </div>
 
         <p
@@ -57,8 +57,7 @@ export default function NotFound() {
         <div className="flex flex-col gap-3">
           <Link
             to="/dashboard"
-            className="w-full h-12 rounded-xl flex items-center justify-center font-heading font-black text-sm"
-            style={{ backgroundColor: 'var(--gf-gold)', color: '#0B1A24' }}
+            className="gf-cta w-full h-12 rounded-xl flex items-center justify-center font-heading font-black text-sm"
           >
             Go to dashboard
           </Link>

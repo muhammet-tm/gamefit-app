@@ -18,8 +18,8 @@ const VERBOSE = process.argv.includes('--verbose');
 // The grounds an avatar actually renders on, per theme. Values mirror
 // src/index.css; if the palette moves, these move with it.
 const GROUNDS = {
-  dark:  { 'bg-elevated': '#1A3242', 'bg-surface': '#112532' },
-  light: { 'bg-elevated': '#DFE8EE', 'bg-surface': '#FFFFFF' },
+  dark:  { 'bg-elevated': '#28282C', 'bg-surface': '#1E1E21' },
+  light: { 'bg-elevated': '#E9E9EC', 'bg-surface': '#FFFFFF' },
 };
 
 // Filled shapes, not glyphs. 2.2 is the point below which a garment stops

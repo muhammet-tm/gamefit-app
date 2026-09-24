@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Flag, Lock, Radio, RefreshCw, Users } from 'lucide-react';
+import { Crown, Flag, Lock, Radio, RefreshCw, Users } from 'lucide-react';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import PullToRefresh from '@/components/gamefit/PullToRefresh';
@@ -13,7 +13,15 @@ import { normalizeAvatarConfig } from '@/components/avatar/migrate';
 import BottomNav from '@/components/gamefit/BottomNav';
 import PremiumModal from '@/components/gamefit/PremiumModal';
 
-const MEDAL_COLORS = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' };
+// Ignition podium. Each block carries a colored top edge rather than a
+// colored fill, so the rank number and XP inside it stay on the surface
+// color and keep their contrast in both themes. First place gets the heat
+// gradient; second and third reuse the Silver and Bronze tier hues.
+const PODIUM = {
+  1: { height: 'h-28', edge: '#FF6B00', fill: 'linear-gradient(180deg, rgba(229,62,62,0.22), var(--gf-bg-surface))', avatar: 92 },
+  2: { height: 'h-20', edge: '#B9C4CC', fill: 'var(--gf-bg-surface)', avatar: 72 },
+  3: { height: 'h-16', edge: '#C08657', fill: 'var(--gf-bg-surface)', avatar: 72 },
+};
 
 function EntryAvatar({ entry, size }) {
   const cfg = normalizeAvatarConfig(entry.avatar_config);
@@ -115,14 +123,14 @@ export default function Leaderboard() {
           {[['alltime', 'All-Time'], ['weekly', 'This Week']].map(([t, label]) => (
             <button key={t} onClick={() => setTab(t)}
               className="flex-1 py-2 rounded-lg font-body font-medium text-sm transition-all"
-              style={{ backgroundColor: tab === t ? 'var(--gf-bg-surface)' : 'transparent', color: tab === t ? 'var(--gf-text-primary)' : 'var(--gf-text-secondary)' }}>
+              style={{ backgroundColor: tab === t ? 'var(--gf-text-primary)' : 'transparent', color: tab === t ? 'var(--gf-bg-primary)' : 'var(--gf-text-secondary)' }}>
               {label}
             </button>
           ))}
           <button
             onClick={() => isPremium ? setTab('friends') : setShowPremium(true)}
             className="flex-1 py-2 rounded-lg font-body font-medium text-sm transition-all flex items-center justify-center gap-1.5"
-            style={{ backgroundColor: tab === 'friends' ? 'var(--gf-bg-surface)' : 'transparent', color: tab === 'friends' ? 'var(--gf-text-primary)' : 'var(--gf-text-secondary)' }}>
+            style={{ backgroundColor: tab === 'friends' ? 'var(--gf-text-primary)' : 'transparent', color: tab === 'friends' ? 'var(--gf-bg-primary)' : 'var(--gf-text-secondary)' }}>
             {!isPremium && <Lock size={12} style={{ color: 'var(--gf-ember-text)' }} />}
             Friends
           </button>
@@ -156,34 +164,35 @@ export default function Leaderboard() {
         </div>
       ) : (
         <div className="px-5 pt-5">
-          {/* Top 3 Podium */}
-          <div className="flex items-end justify-center gap-3 mb-6">
+          {/* Top 3 podium: the avatars stand on the blocks, and the block
+              height is the ranking. */}
+          <div className="flex items-end justify-center gap-2 mb-5">
             {[top3[1], top3[0], top3[2]].filter(Boolean).map((entry) => {
               const podiumRank = entry.rank;
-              const height = podiumRank === 1 ? 'h-32' : podiumRank === 2 ? 'h-24' : 'h-20';
-              const medalColor = MEDAL_COLORS[podiumRank] || MEDAL_COLORS[3];
+              const p = PODIUM[podiumRank] || PODIUM[3];
+              const r = getRank(entry.current_level);
               return (
                 <motion.div key={entry.user_id}
-                  className="flex flex-col items-center gap-2 flex-1"
+                  className="flex flex-1 max-w-[124px] flex-col items-center"
                   initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: podiumRank * 0.08 }}>
-                  <div className="relative">
-                    <div className="rounded-2xl p-2 border-2" style={{ backgroundColor: 'var(--gf-bg-elevated)', borderColor: medalColor }}>
-                      <EntryAvatar entry={entry} size={podiumRank === 1 ? 60 : 48} />
-                    </div>
-                    <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-black"
-                      style={{ backgroundColor: medalColor, color: '#0B1A24' }}>
-                      {podiumRank}
-                    </span>
-                  </div>
-                  <p className="font-body font-semibold text-xs text-center leading-tight" style={{ color: 'var(--gf-text-primary)' }}>
+                  transition={{ delay: podiumRank * 0.08, ease: [0.16, 1, 0.3, 1] }}>
+                  {podiumRank === 1 && (
+                    <Crown size={24} aria-hidden="true" style={{ color: 'var(--gf-gold-text)' }} fill="var(--gf-gold)" />
+                  )}
+                  <EntryAvatar entry={entry} size={p.avatar} />
+                  <p className="mt-1 max-w-full truncate px-1 font-body text-xs font-semibold" style={{ color: 'var(--gf-text-primary)' }}>
                     {entry.display_name}
                   </p>
-                  <p className="font-heading font-black text-sm" style={{ color: medalColor }}>
-                    {(entry.total_xp || 0).toLocaleString()} XP
-                  </p>
-                  <div className={`w-full rounded-t-xl ${height}`}
-                    style={{ backgroundColor: `${medalColor}20`, border: `1px solid ${medalColor}40` }} />
+                  <div className={`mt-1.5 flex w-full flex-col items-center justify-center rounded-t-2xl ${p.height}`}
+                    style={{ background: p.fill, borderTop: `3px solid ${p.edge}` }}>
+                    <span className="font-heading text-2xl font-extrabold leading-none" style={{ color: 'var(--gf-text-primary)' }}>
+                      {podiumRank}
+                    </span>
+                    <span className="mt-1 font-mono text-[11px] tabular-nums" style={{ color: 'var(--gf-text-secondary)' }}>
+                      {(entry.total_xp || 0).toLocaleString()}
+                    </span>
+                    <span className="sr-only">{r.display}</span>
+                  </div>
                 </motion.div>
               );
             })}
@@ -198,23 +207,23 @@ export default function Leaderboard() {
                 <motion.div key={entry.user_id}
                   className="flex items-center gap-3 rounded-2xl px-4 py-3"
                   style={{
-                    backgroundColor: isMe ? 'rgba(244, 176, 68,0.08)' : 'var(--gf-bg-surface)',
-                    border: `1px solid ${isMe ? 'rgba(244, 176, 68,0.3)' : 'var(--gf-border)'}`,
+                    backgroundColor: 'var(--gf-bg-surface)',
+                    border: isMe ? '1.5px solid var(--gf-ember)' : '1px solid var(--gf-border)',
                   }}
                   initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: Math.min(0.05 * i, 0.4) }}>
-                  <span className="font-heading font-black text-base w-6 text-center" style={{ color: 'var(--gf-text-secondary)' }}>
+                  <span className="font-mono font-bold text-sm w-6 text-center tabular-nums" style={{ color: isMe ? 'var(--gf-ember-text)' : 'var(--gf-text-secondary)' }}>
                     {entry.rank}
                   </span>
                   <EntryAvatar entry={entry} size={36} />
                   <div className="flex-1 min-w-0">
-                    <p className="font-body font-semibold text-sm truncate" style={{ color: isMe ? 'var(--gf-green)' : 'var(--gf-text-primary)' }}>
+                    <p className="font-body font-semibold text-sm truncate" style={{ color: 'var(--gf-text-primary)' }}>
                       {entry.display_name} {isMe && '(You)'}
                     </p>
                     <p className="font-body text-xs uppercase" style={{ color: r.color, letterSpacing: '0.05em' }}>
                       {r.display}
                     </p>
                   </div>
-                  <p className="font-heading font-black text-sm" style={{ color: 'var(--gf-text-secondary)' }}>
+                  <p className="font-mono font-bold text-sm tabular-nums" style={{ color: 'var(--gf-text-primary)' }}>
                     {(entry.total_xp || 0).toLocaleString()}
                   </p>
                 </motion.div>
@@ -226,17 +235,17 @@ export default function Leaderboard() {
           {myEntry && !inList && (
             <div className="sticky bottom-20">
               <div className="rounded-2xl px-4 py-3 flex items-center gap-3"
-                style={{ backgroundColor: 'rgba(244, 176, 68,0.1)', border: '1.5px solid rgba(244, 176, 68,0.5)', backdropFilter: 'blur(8px)' }}>
+                style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1.5px solid var(--gf-ember)' }}>
                 <RankEmblem level={myEntry.current_level} size={26} />
                 <div className="flex-1">
-                  <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-gold-text)' }}>
+                  <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-text-primary)' }}>
                     {myEntry.display_name} (You)
                   </p>
                   <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>
                     {(myEntry.total_xp || 0).toLocaleString()} XP
                   </p>
                 </div>
-                <p className="font-heading font-black text-sm" style={{ color: 'var(--gf-gold-text)' }}>
+                <p className="font-mono font-bold text-sm tabular-nums" style={{ color: 'var(--gf-ember-text)' }}>
                   #{myEntry.rank}{topPct ? ` · Top ${topPct}%` : ''}
                 </p>
               </div>

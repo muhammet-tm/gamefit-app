@@ -54,7 +54,7 @@ export default function PremiumModal({ onClose }) {
                 {b === 'annual' ? 'Annual' : 'Monthly'}
                 {b === 'annual' && (
                   <span className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-bold"
-                    style={{ backgroundColor: '#F4B044', color: '#0B1A24' }}>-40%</span>
+                    style={{ backgroundColor: '#F4B044', color: '#141416' }}>-40%</span>
                 )}
               </button>
             ))}
@@ -103,8 +103,7 @@ export default function PremiumModal({ onClose }) {
             </p>
           ) : (
             <button onClick={handleUpgrade}
-              className="w-full py-4 rounded-2xl font-heading font-black text-xl transition-all active:scale-95"
-              style={{ background: 'linear-gradient(135deg, #7FBBD4, #A855F7)', color: '#FFFFFF' }}>
+              className="gf-cta w-full py-4 rounded-2xl font-heading font-black text-xl transition-all active:scale-95">
               Start Premium
             </button>
           )}

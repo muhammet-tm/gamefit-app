@@ -55,7 +55,7 @@ function MessageBubble({ message }) {
       <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm font-body leading-relaxed ${isUser ? 'rounded-tr-sm' : 'rounded-tl-sm'}`}
         style={{
           backgroundColor: isUser ? 'var(--gf-green)' : 'var(--gf-bg-elevated)',
-          color: isUser ? '#0B1A24' : 'var(--gf-text-primary)',
+          color: isUser ? '#141416' : 'var(--gf-text-primary)',
           border: isUser ? 'none' : '1px solid var(--gf-border)',
         }}>
         {isUser ? message.content : (
@@ -223,9 +223,8 @@ export default function AvatarCoach() {
           <button
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || loading || !conversation}
-            className="w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-40"
-            style={{ backgroundColor: 'var(--gf-green)' }}>
-            <Send size={16} color="#0B1A24" />
+            className="gf-cta w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-40">
+            <Send size={16} color="#FFFFFF" />
           </button>
         </div>
       </div>

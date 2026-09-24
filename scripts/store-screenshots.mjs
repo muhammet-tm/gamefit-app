@@ -45,9 +45,16 @@ try {
     const page = await ctx.newPage();
 
     // login once per context
-    await page.goto(`${BASE}/login`, { waitUntil: 'networkidle' });
+    // Not networkidle: the Turnstile iframe keeps a request open, so the
+    // login page never goes idle. The token wait below is the real signal.
+    await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' });
     await page.fill('input[type="email"]', env.TEST_USER_EMAIL);
     await page.fill('input[type="password"]', env.TEST_USER_PASSWORD);
+    // Login is captcha-gated (Turnstile). Submitting before the widget has a
+    // token fails with "wait for the security check". Headless Chromium only
+    // gets a token from Cloudflare's always-pass test key, so run this against
+    // a build made with VITE_TURNSTILE_SITE_KEY=1x00000000000000000000AA.
+    await page.waitForSelector('[data-token-ready="true"]', { timeout: 25000 });
     await page.click('button[type="submit"]');
     await page.waitForURL('**/dashboard', { timeout: 20000 });
     await page.waitForTimeout(3000);

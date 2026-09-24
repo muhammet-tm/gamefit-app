@@ -151,7 +151,7 @@ export default function Login() {
               className="flex-1 py-2.5 rounded-lg font-body font-medium text-sm transition-all"
               style={{
                 backgroundColor: mode === m ? 'var(--gf-green)' : 'transparent',
-                color: mode === m ? '#0B1A24' : 'var(--gf-text-secondary)'
+                color: mode === m ? '#141416' : 'var(--gf-text-secondary)'
               }}>
               {m === 'login' ? 'Sign In' : 'Sign Up'}
             </button>
@@ -259,8 +259,8 @@ export default function Login() {
           )}
 
           <button type="submit" disabled={loading}
-            className="w-full py-4 rounded-xl font-heading font-black text-lg mt-2 transition-all active:scale-95"
-            style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24', opacity: loading ? 0.7 : 1 }}>
+            className="gf-cta w-full py-4 rounded-xl font-heading font-black text-lg mt-2 transition-all active:scale-95"
+            style={{ opacity: loading ? 0.7 : 1 }}>
             {loading ? 'Please wait...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
           </button>
         </form>

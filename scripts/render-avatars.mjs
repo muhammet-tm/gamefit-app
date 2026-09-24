@@ -1,11 +1,12 @@
 // Dev tool: rasterize the avatar system to PNGs for art review.
-// Usage: npx tsx scripts/render-avatars.mjs [outDir] [--bg=#1A3242]
+// Usage: npx tsx scripts/render-avatars.mjs [outDir] [--bg=#28282C]
 // Renders a 5x5 class-x-tier contact sheet plus per-class strips.
 //
 // --bg must match the ground the avatar actually renders on, or the review is
-// worthless. The rigs live on --gf-bg-elevated (#1A3242) on AvatarScreen, on
-// --gf-bg-surface (#112532) in the leaderboard and class picker, and on
-// #DFE8EE / #FFFFFF in light theme. Defaults to the AvatarScreen ground.
+// worthless. Since the Ignition redesign (2026-09-24) the rigs live on
+// --gf-bg-elevated (#28282C) on AvatarScreen, on --gf-bg-surface (#1E1E21) in
+// the leaderboard and class picker, and on #E9E9EC / #FFFFFF in light theme.
+// Defaults to the AvatarScreen ground.
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Resvg } from '@resvg/resvg-js';
@@ -19,7 +20,7 @@ import {
 
 const args = process.argv.slice(2);
 const outDir = args.find(a => !a.startsWith('--')) || 'scratch-avatars';
-const BG = (args.find(a => a.startsWith('--bg=')) || '--bg=#1A3242').slice(5);
+const BG = (args.find(a => a.startsWith('--bg=')) || '--bg=#28282C').slice(5);
 function isLight(hex) {
   const n = parseInt(hex.replace('#', ''), 16);
   const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(v => {

@@ -13,12 +13,12 @@ const PLANS = [
 ];
 
 const FEATURES = [
-  { icon: Trophy,   color: '#E0680E', title: 'Global Leaderboard',       desc: 'Compete with athletes worldwide and climb the ranks' },
+  { icon: Trophy,   color: 'var(--gf-ember-text)', title: 'Global Leaderboard',       desc: 'Compete with athletes worldwide and climb the ranks' },
   { icon: Brain,    color: '#7FBBD4', title: 'Personalized Nutrition',    desc: 'AI-generated meal plans tailored to your exact fitness profile' },
   { icon: Zap,      color: 'var(--gf-gold-text)', title: 'Unlimited AI Coaching',     desc: 'Unlimited Coach G requests — workouts, advice & plans' },
   { icon: BarChart2,color: '#4FC3F7', title: 'Advanced Analytics',        desc: 'Deep stats on progress, body composition trends & insights' },
   { icon: Shield,   color: '#E5614A', title: 'Exclusive Avatar Items',    desc: 'Unlock premium skins, accessories & legendary tier gear' },
-  { icon: Crown,    color: '#E0680E', title: 'Premium Badge',             desc: 'Show off the PRO badge on your profile and leaderboard' },
+  { icon: Crown,    color: 'var(--gf-ember-text)', title: 'Premium Badge',             desc: 'Show off the PRO badge on your profile and leaderboard' },
 ];
 
 export default function Premium() {
@@ -62,8 +62,7 @@ export default function Premium() {
         <h2 className="font-heading font-black text-3xl mb-2" style={{ color: 'var(--gf-text-primary)' }}>You're Premium!</h2>
         <p className="font-body text-sm mb-6" style={{ color: 'var(--gf-text-secondary)' }}>All premium features are unlocked for you.</p>
         <button onClick={() => navigate(-1)}
-          className="px-8 py-3.5 rounded-2xl font-heading font-black text-lg"
-          style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
+          className="gf-cta px-8 py-3.5 rounded-2xl font-heading font-black text-lg">
           Back
         </button>
       </div>
@@ -84,7 +83,7 @@ export default function Premium() {
 
       {/* Hero */}
       <motion.div className="mx-5 mt-5 rounded-3xl p-6 text-center relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #1a0a4a 0%, #2d1080 50%, #0B1A24 100%)', border: '1px solid rgba(127, 187, 212,0.4)' }}
+        style={{ background: 'linear-gradient(135deg, #1a0a4a 0%, #2d1080 50%, #141416 100%)', border: '1px solid rgba(127, 187, 212,0.4)' }}
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="absolute inset-0 opacity-20" style={{ background: 'radial-gradient(circle at 50% 30%, #7FBBD4, transparent 70%)' }} />
         <div className="relative z-10">
@@ -166,8 +165,8 @@ export default function Premium() {
               onClick={handleSubscribe}
               disabled={loading}
               whileTap={{ scale: 0.97 }}
-              className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all"
-              style={{ background: loading ? 'var(--gf-border)' : 'linear-gradient(135deg, #7FBBD4, #A855F7)', color: 'white' }}>
+              className={`w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all ${loading ? '' : 'gf-cta'}`}
+              style={loading ? { backgroundColor: 'var(--gf-border)', color: 'var(--gf-text-primary)' } : undefined}>
               {loading ? (
                 <span className="font-body">Processing...</span>
               ) : (
