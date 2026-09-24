@@ -89,7 +89,7 @@ export default function MonthlySummary() {
             <motion.div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <div className="flex items-center gap-2 mb-2">
-                <Zap size={18} color="var(--gf-green)" />
+                <Zap size={18} color="var(--gf-gold-text)" />
                 <p className="font-body text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--gf-text-secondary)' }}>XP Earned</p>
               </div>
               <p className="font-heading font-black text-3xl" style={{ color: 'var(--gf-text-primary)' }}>
@@ -100,7 +100,7 @@ export default function MonthlySummary() {
             <motion.div className="rounded-2xl p-4" style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
               <div className="flex items-center gap-2 mb-2">
-                <Flame size={18} color="var(--gf-amber)" />
+                <Flame size={18} color="var(--gf-ember-text)" />
                 <p className="font-body text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--gf-text-secondary)' }}>Calories Burned</p>
               </div>
               <p className="font-heading font-black text-3xl" style={{ color: 'var(--gf-text-primary)' }}>

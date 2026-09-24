@@ -36,19 +36,22 @@ export default function BottomNav() {
               }}
               className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all select-none"
             >
+              {/* Ignition marks the active tab in orange. It used the gold fill
+                  token, which as text on the light theme's white surface was
+                  about 1.9:1; --gf-ember-text clears AA on both themes. */}
               <Icon
                 size={22}
-                style={{ color: isActive ? 'var(--gf-green)' : 'var(--gf-text-secondary)' }}
+                style={{ color: isActive ? 'var(--gf-ember-text)' : 'var(--gf-text-secondary)' }}
                 strokeWidth={isActive ? 2.5 : 1.8}
               />
               <span
                 className="text-[10px] font-medium font-body"
-                style={{ color: isActive ? 'var(--gf-green)' : 'var(--gf-text-secondary)' }}
+                style={{ color: isActive ? 'var(--gf-ember-text)' : 'var(--gf-text-secondary)' }}
               >
                 {label}
               </span>
               {isActive && (
-                <span className="absolute bottom-0 w-8 h-0.5 rounded-full" style={{ backgroundColor: 'var(--gf-green)' }} />
+                <span className="absolute bottom-0 w-8 h-0.5 rounded-full" style={{ backgroundColor: 'var(--gf-ember)' }} />
               )}
             </button>
           );

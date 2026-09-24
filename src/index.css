@@ -272,6 +272,12 @@
     animation-delay: calc(var(--gf-i, 0) * 28ms + 160ms);
   }
 
+  /* Ignition: the XP ring draws from where it started to where it is.
+     700ms, not the 1.4s threshold budget: Home opens many times a day and
+     is a glance, not a milestone. */
+  .gf-ring-draw { animation: gf-ring 700ms var(--gf-e-out) 150ms both; }
+  @keyframes gf-ring { from { stroke-dashoffset: var(--gf-ring-from); } }
+
   @keyframes gf-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   @keyframes gf-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
   @keyframes gf-pop  {
@@ -283,7 +289,7 @@
 /* Reduced motion keeps the meaning and drops the travel. A filled segment
    still reads as filled; it simply does not animate into place. */
 @media (prefers-reduced-motion: reduce) {
-  .gf-xp-seg, .gf-grow, .gf-pop { animation: none; }
+  .gf-xp-seg, .gf-grow, .gf-pop, .gf-ring-draw { animation: none; }
 }
 
 /* ============ Avatar system animations ============ */

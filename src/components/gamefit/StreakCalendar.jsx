@@ -139,9 +139,11 @@ export default function StreakCalendar() {
             <motion.div key={day}
               className="aspect-square rounded-lg flex items-center justify-center"
               style={{
-                backgroundColor: active ? 'rgba(255, 107, 0, 0.15)' : 'var(--gf-bg-elevated)',
-                border: isToday ? '1.5px solid #FF6B00' : `1px solid ${active ? 'rgba(255, 107, 0, 0.4)' : 'transparent'}`,
-                opacity: loading ? 0.4 : isFuture ? 0.35 : 1,
+                // Future days read as "not yet" through an empty dashed cell,
+                // not through opacity: fading the number took it to ~1:1.
+                backgroundColor: active ? 'rgba(255, 107, 0, 0.15)' : isFuture ? 'transparent' : 'var(--gf-bg-elevated)',
+                border: isToday ? '1.5px solid #FF6B00' : isFuture ? '1px dashed var(--gf-border)' : `1px solid ${active ? 'rgba(255, 107, 0, 0.4)' : 'transparent'}`,
+                opacity: loading ? 0.4 : 1,
               }}
               initial={false}
               animate={active ? { scale: [1, 1.06, 1] } : {}}
@@ -150,7 +152,7 @@ export default function StreakCalendar() {
                 <Flame size={13} color="var(--gf-ember-text)" fill="#FF6B00" />
               ) : (
                 <span className="font-body text-[10px]"
-                  style={{ color: isFuture ? 'var(--gf-border)' : 'var(--gf-text-secondary)' }}>
+                  style={{ color: 'var(--gf-text-secondary)' }}>
                   {day}
                 </span>
               )}
@@ -168,18 +170,17 @@ export default function StreakCalendar() {
             <div key={m.days} className="flex-1 rounded-xl px-2 py-2 text-center"
               style={{
                 backgroundColor: reached ? 'rgba(255, 107, 0, 0.12)' : 'var(--gf-bg-elevated)',
-                border: `1px solid ${reached ? 'rgba(255, 107, 0, 0.45)' : isNext ? 'var(--gf-amber)' : 'var(--gf-border)'}`,
-                opacity: reached || isNext ? 1 : 0.6,
+                border: `1px solid ${reached ? 'rgba(255, 107, 0, 0.45)' : isNext ? 'var(--gf-ember)' : 'var(--gf-border)'}`,
               }}>
               <div className="mb-1 flex justify-center">
                 {reached
                   ? <m.Icon size={17} strokeWidth={1.9} aria-hidden="true" style={{ color: 'var(--gf-ember-text)' }} />
                   : <Gift size={17} strokeWidth={1.9} aria-hidden="true" style={{ color: 'var(--gf-text-secondary)' }} />}
               </div>
-              <p className="font-heading font-black text-xs" style={{ color: reached ? 'var(--gf-amber)' : 'var(--gf-text-primary)' }}>
+              <p className="font-heading font-black text-xs" style={{ color: reached ? 'var(--gf-ember-text)' : 'var(--gf-text-primary)' }}>
                 {m.days} days
               </p>
-              <p className="font-body text-[9px] leading-tight" style={{ color: 'var(--gf-text-secondary)' }}>
+              <p className="font-body text-[10px] leading-tight" style={{ color: 'var(--gf-text-secondary)' }}>
                 {m.label}
               </p>
             </div>

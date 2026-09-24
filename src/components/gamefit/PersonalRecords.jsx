@@ -144,8 +144,8 @@ export default function PersonalRecords({ onBadges }) {
           </div>
           {formError && <p className="font-body text-xs" style={{ color: '#E5614A' }}>{formError}</p>}
           <button onClick={submit} disabled={saving}
-            className="w-full py-3 rounded-xl font-heading font-black text-base transition-all active:scale-95"
-            style={{ backgroundColor: 'var(--gf-green)', color: '#141416', opacity: saving ? 0.6 : 1 }}>
+            className="gf-cta w-full py-3 rounded-xl font-heading font-black text-base transition-all active:scale-95"
+            style={{ opacity: saving ? 0.6 : 1 }}>
             {saving ? 'Saving…' : 'Save Record'}
           </button>
         </div>

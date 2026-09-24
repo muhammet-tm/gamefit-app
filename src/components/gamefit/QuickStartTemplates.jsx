@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Zap } from 'lucide-react';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 
-const INTENSITY_COLORS = { Low: '#5FBF7C', Medium: '#FF6B00', High: '#E5614A' };
+const INTENSITY_COLORS = { Low: 'var(--gf-success)', Medium: 'var(--gf-ember-text)', High: 'var(--gf-error)' };
 
 const DEFAULT_TEMPLATES = [
   { id: 't1', name: 'Morning Run',      exercise_type: 'Running',        duration_min: 30, intensity: 'Medium' },
@@ -45,7 +45,7 @@ export default function QuickStartTemplates({ onLaunch }) {
         <h2 className="font-heading font-black text-xl" style={{ color: 'var(--gf-text-primary)' }}>Quick Start</h2>
         <button onClick={() => setShowAdd(s => !s)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-body text-xs font-medium transition-all"
-          style={{ backgroundColor: showAdd ? 'var(--gf-bg-elevated)' : 'rgba(244, 176, 68,0.15)', color: showAdd ? 'var(--gf-text-secondary)' : 'var(--gf-green)', border: `1px solid ${showAdd ? 'var(--gf-border)' : 'rgba(244, 176, 68,0.3)'}` }}>
+          style={{ backgroundColor: showAdd ? 'var(--gf-bg-elevated)' : 'rgba(244, 176, 68,0.15)', color: showAdd ? 'var(--gf-text-secondary)' : 'var(--gf-gold-text)', border: `1px solid ${showAdd ? 'var(--gf-border)' : 'rgba(244, 176, 68,0.3)'}` }}>
           <Plus size={12} /> {showAdd ? 'Cancel' : 'Save Routine'}
         </button>
       </div>
@@ -89,8 +89,7 @@ export default function QuickStartTemplates({ onLaunch }) {
               </div>
             </div>
             <button onClick={addTemplate}
-              className="w-full py-2.5 rounded-xl font-heading font-black text-base transition-all active:scale-95"
-              style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>
+              className="gf-cta w-full py-2.5 rounded-xl font-heading font-black text-base transition-all active:scale-95">
               Save Template
             </button>
           </motion.div>

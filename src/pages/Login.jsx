@@ -259,8 +259,8 @@ export default function Login() {
           )}
 
           <button type="submit" disabled={loading}
-            className="w-full py-4 rounded-xl font-heading font-black text-lg mt-2 transition-all active:scale-95"
-            style={{ backgroundColor: 'var(--gf-green)', color: '#141416', opacity: loading ? 0.7 : 1 }}>
+            className="gf-cta w-full py-4 rounded-xl font-heading font-black text-lg mt-2 transition-all active:scale-95"
+            style={{ opacity: loading ? 0.7 : 1 }}>
             {loading ? 'Please wait...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
           </button>
         </form>

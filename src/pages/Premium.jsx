@@ -62,8 +62,7 @@ export default function Premium() {
         <h2 className="font-heading font-black text-3xl mb-2" style={{ color: 'var(--gf-text-primary)' }}>You're Premium!</h2>
         <p className="font-body text-sm mb-6" style={{ color: 'var(--gf-text-secondary)' }}>All premium features are unlocked for you.</p>
         <button onClick={() => navigate(-1)}
-          className="px-8 py-3.5 rounded-2xl font-heading font-black text-lg"
-          style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>
+          className="gf-cta px-8 py-3.5 rounded-2xl font-heading font-black text-lg">
           Back
         </button>
       </div>

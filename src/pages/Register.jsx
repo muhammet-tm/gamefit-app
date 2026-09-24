@@ -141,7 +141,7 @@ export default function Register() {
           </InputOTP>
         </div>
         <Button
-          className="w-full h-12 font-medium"
+          className="gf-cta !text-white w-full h-12 font-medium"
           onClick={handleVerify}
           disabled={loading || otpCode.length < 6}
         >
@@ -271,7 +271,7 @@ export default function Register() {
           onError={() =>
             setError("The security check could not load. Disable any ad blocker and refresh.")}
         />
-        <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
+        <Button type="submit" className="gf-cta !text-white w-full h-12 font-medium" disabled={loading}>
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

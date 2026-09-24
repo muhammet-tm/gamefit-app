@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Bell, Sun, Moon, Dumbbell, Bot, ShoppingBag, Trophy, Flame, Droplet } from 'lucide-react';
+import { Bell, Sun, Moon, Dumbbell, Bot, ShoppingBag, Trophy, Droplet } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { getNextLevelXP, getCurrentLevelXP } from '@/lib/mockData';
 import { getRank } from '@/lib/ranks';
@@ -14,7 +14,7 @@ import Icon from '@/components/ui/Icon';
 import LevelUpOverlay from '@/components/gamefit/LevelUpOverlay';
 import NotificationsPanel from '@/components/gamefit/NotificationsPanel';
 import StreakCalendar from '@/components/gamefit/StreakCalendar';
-import XPMeter from '@/components/gamefit/XPMeter';
+import XPRing from '@/components/gamefit/XPRing';
 import StatTile from '@/components/gamefit/StatTile';
 import ProgressChart from '@/components/gamefit/ProgressChart';
 import PullToRefresh from '@/components/gamefit/PullToRefresh';
@@ -37,6 +37,8 @@ export default function Dashboard() {
   const nextLevelXP = getNextLevelXP(level);
   const rank = getRank(level);
   const title = rank.display;
+  const nextTitle = level >= 10 ? rank.display : getRank(level + 1).display;
+  const xpToGo = Math.max(nextLevelXP - user.total_xp, 0);
 
   // One primary action, then three quiet ones. These used to be four equally
   // weighted cards in four different accent colours, which is a colour with no
@@ -67,7 +69,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3">
           <button onClick={toggleTheme} className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90"
             style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
-            {theme === 'dark' ? <Sun size={18} color="var(--gf-amber)" /> : <Moon size={18} color="var(--gf-purple)" />}
+            {theme === 'dark' ? <Sun size={18} color="var(--gf-ember-text)" /> : <Moon size={18} color="var(--gf-gold-text)" />}
           </button>
           <button onClick={() => setShowNotifs(true)} className="relative w-10 h-10 rounded-xl flex items-center justify-center"
             style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
@@ -81,68 +83,69 @@ export default function Dashboard() {
       </div>
 
       <div className="px-5 pt-5 space-y-5">
-        {/* Hero Avatar Card */}
-        <motion.div
-          className="rounded-2xl p-5 relative overflow-hidden"
-          style={{ backgroundColor: 'var(--gf-bg-elevated)', border: '1px solid var(--gf-border)' }}
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+        {/* Ignition hero: the avatar stands inside its own XP ring, and the
+            one number that matters (XP left to the next rank) is the only
+            large figure on the screen. Total XP moved into the ring's
+            accessible label and the caption under the number. */}
+        <motion.section
+          className="flex flex-col items-center"
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42 }}
         >
-          {/* BG glow */}
-          <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full opacity-10 blur-3xl"
-            style={{ backgroundColor: 'var(--gf-green)' }} />
+          <XPRing
+            value={user.total_xp - currentLevelXP}
+            max={nextLevelXP - currentLevelXP}
+            label={`${user.total_xp.toLocaleString()} XP. ${xpToGo.toLocaleString()} XP to ${nextTitle}`}
+          >
+            {/* The ring is a readout, not a link, so the avatar keeps its
+                own tap reaction without a competing target. */}
+            <UserAvatar user={user} size={132} interactive />
+          </XPRing>
 
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              {/* The hero card is a plain container, not a link, so there is
-                  no competing tap target here. */}
-              <UserAvatar user={user} size={90} interactive />
-              <span className="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full font-heading font-black text-xs"
-                style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>
-                LVL {level}
-              </span>
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-0.5">
-                <RankEmblem level={level} size={22} />
-                <p className="font-heading font-black text-lg uppercase" style={{ color: rank.color, letterSpacing: '0.04em' }}>
-                  {title}
-                </p>
-              </div>
-              <div className="flex items-center gap-1.5 mb-3">
-                <Flame size={14} color="var(--gf-ember-text)" />
-                <span className="font-body text-sm font-medium" style={{ color: 'var(--gf-ember-text)' }}>
-                  {user.current_streak} day streak
-                </span>
-              </div>
-              <XPMeter
-                value={user.total_xp - currentLevelXP}
-                max={nextLevelXP - currentLevelXP}
-                label={`${user.total_xp.toLocaleString()} XP`}
-                caption={`${Math.max(nextLevelXP - user.total_xp, 0).toLocaleString()} to go`}
-              />
-            </div>
+          <div className="mt-3 flex items-center gap-2">
+            <span className="rounded-full px-2.5 py-0.5 font-heading text-xs font-bold"
+              style={{ backgroundColor: 'var(--gf-text-primary)', color: 'var(--gf-bg-primary)' }}>
+              LVL {level}
+            </span>
+            <RankEmblem level={level} size={20} />
+            {/* Rank name in text color: the tier hues are tuned for dark
+                grounds, and the emblem beside it already carries the tier. */}
+            <span className="font-heading text-base font-semibold" style={{ color: 'var(--gf-text-primary)' }}>
+              {title}
+            </span>
           </div>
-        </motion.div>
 
-        {/* Stats. One hairline grid, so the figures align as a row of data
-            rather than three separate cards competing with the rank hero. */}
+          <p className="mt-1 flex items-baseline gap-2">
+            <span className="font-heading text-5xl font-extrabold leading-none tabular-nums tracking-[-0.03em]"
+              style={{ color: 'var(--gf-text-primary)' }}>
+              {xpToGo.toLocaleString()}
+            </span>
+            <span className="font-body text-sm" style={{ color: 'var(--gf-text-secondary)' }}>
+              {level >= 10 ? 'XP past the top rank' : `XP to ${nextTitle}`}
+            </span>
+          </p>
+          <p className="mt-1 font-mono text-xs tabular-nums" style={{ color: 'var(--gf-text-secondary)' }}>
+            {user.total_xp.toLocaleString()} XP total
+          </p>
+        </motion.section>
+
+        {/* Stats. One hairline grid, so the figures align as a row of data. */}
         <div className="grid grid-cols-3 gap-px overflow-hidden rounded-2xl"
           style={{ backgroundColor: 'var(--gf-border)', border: '1px solid var(--gf-border)' }}>
-          <StatTile value={user.total_xp.toLocaleString()} label="Total XP" />
+          <StatTile value={user.current_streak} label="Day streak" tone="ember" />
           <StatTile
             value={user.weekly_workout_count}
             unit={` / ${user.weekly_goal || 3}`}
             label="This week"
           />
-          <StatTile value={user.coins} label="Coins" tone="ember" />
+          <StatTile value={user.coins} label="Coins" tone="gold" />
         </div>
 
         {/* Primary action */}
         <div>
           <motion.button
             onClick={() => navigate('/train')}
-            className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl font-heading font-black uppercase tracking-[0.04em] transition-transform active:scale-[0.98]"
-            style={{ backgroundColor: 'var(--gf-gold)', color: '#141416', fontSize: 15 }}
+            className="gf-cta flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl font-heading font-bold transition-transform active:scale-[0.98]"
+            style={{ fontSize: 15 }}
             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
             whileTap={{ scale: 0.98 }}>
             <Dumbbell size={20} strokeWidth={2.1} aria-hidden="true" />

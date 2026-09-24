@@ -112,8 +112,7 @@ function AddMealModal({ onSave, onClose }) {
           ))}
         </div>
         <button onClick={() => valid && onSave(form)} disabled={!valid}
-          className="w-full py-4 rounded-2xl font-heading font-black text-lg flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-40"
-          style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>
+          className="gf-cta w-full py-4 rounded-2xl font-heading font-black text-lg flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-40">
           <Plus size={20} /> Save Meal
         </button>
       </motion.div>

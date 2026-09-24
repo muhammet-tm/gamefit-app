@@ -215,8 +215,7 @@ export default function Marketplace() {
               )}
 
               <button onClick={() => setSuccessCode(null)}
-                className="w-full py-3.5 rounded-xl font-heading font-black text-base"
-                style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>
+                className="gf-cta w-full py-3.5 rounded-xl font-heading font-black text-base">
                 Done
               </button>
             </motion.div>

@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { Play, Square, Check, Flame } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useGameFit } from '@/lib/GameFitContext';
-import { calcXP, calcCoins } from '@/lib/mockData';
+import { calcXP, calcCoins, getLevelForXP, getCurrentLevelXP, getNextLevelXP } from '@/lib/mockData';
+import { getRank } from '@/lib/ranks';
 import { validate, workoutDurationSchema } from '@/lib/validation';
 import { BADGES } from '@/lib/badges';
 import { DISCIPLINE_IDS, disciplineIcon } from '@/lib/disciplines';
@@ -15,8 +16,13 @@ import QuickStartTemplates from '@/components/gamefit/QuickStartTemplates';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 
-// gentle number count-up (interval-based so it works even in throttled tabs)
-function useCountUp(target, duration = 900, run = true) {
+// gentle number count-up (interval-based so it works even in throttled tabs).
+// Under prefers-reduced-motion the figure is simply the figure.
+const REDUCED_MOTION = typeof window !== 'undefined'
+  && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+function useCountUp(target, duration = 900, wanted = true) {
+  const run = wanted && !REDUCED_MOTION;
   const [value, setValue] = useState(run ? 0 : target);
   useEffect(() => {
     if (!run) { setValue(target); return; }
@@ -36,9 +42,11 @@ function useCountUp(target, duration = 900, run = true) {
 const EXERCISE_TYPES = DISCIPLINE_IDS;
 const DURATION_PRESETS = [15, 30, 45, 60, 90];
 const INTENSITIES = [
-  { label: 'Low', color: '#5FBF7C', bg: 'rgba(34,197,94,0.15)', multiplier: '×1' },
+  // Theme-aware text tokens: the literal greens and corals were ~2-3:1 on
+  // the light theme's white.
+  { label: 'Low', color: 'var(--gf-success)', bg: 'rgba(34,197,94,0.15)', multiplier: '×1' },
   { label: 'Medium', color: 'var(--gf-ember-text)', bg: 'rgba(255, 107, 0, 0.15)', multiplier: '×1.5' },
-  { label: 'High', color: '#E5614A', bg: 'rgba(239,68,68,0.15)', multiplier: '×2' },
+  { label: 'High', color: 'var(--gf-error)', bg: 'rgba(239,68,68,0.15)', multiplier: '×2' },
 ];
 
 export default function Train() {
@@ -118,8 +126,14 @@ export default function Train() {
         {/* Circular timer */}
         <div className="relative w-56 h-56 mb-8">
           <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="gf-timer-heat" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stopColor="#E53E3E" />
+                <stop offset="1" stopColor="#FF6B00" />
+              </linearGradient>
+            </defs>
             <circle cx="50" cy="50" r="44" fill="none" stroke="#28282C" strokeWidth="8" />
-            <circle cx="50" cy="50" r="44" fill="none" stroke="#F4B044" strokeWidth="8"
+            <circle cx="50" cy="50" r="44" fill="none" stroke="url(#gf-timer-heat)" strokeWidth="8"
               strokeDasharray={`${2 * Math.PI * 44}`}
               strokeDashoffset={`${2 * Math.PI * 44 * (1 - progress)}`}
               strokeLinecap="round" style={{ transition: 'stroke-dashoffset 1s linear' }} />
@@ -132,8 +146,7 @@ export default function Train() {
 
         <div className="flex gap-4">
           <button onClick={finishWorkout}
-            className="flex items-center gap-2 px-6 py-4 rounded-2xl font-heading font-black text-lg"
-            style={{ backgroundColor: '#F4B044', color: '#141416' }}>
+            className="gf-cta flex items-center gap-2 px-6 py-4 rounded-2xl font-heading font-black text-lg">
             <Check size={20} /> Finish Early
           </button>
           <button onClick={() => { clearInterval(intervalRef.current); setPhase('setup'); }}
@@ -243,7 +256,7 @@ export default function Train() {
                   border: `1.5px solid ${intensity === int.label ? int.color : 'var(--gf-border)'}`,
                 }}>
                 {int.label}
-                <span className="block text-xs opacity-70">{int.multiplier}</span>
+                <span className="block text-xs">{int.multiplier}</span>
               </button>
             ))}
           </div>
@@ -267,11 +280,11 @@ export default function Train() {
         <div className="rounded-2xl p-4 flex items-center justify-between"
           style={{ backgroundColor: 'rgba(244, 176, 68,0.08)', border: '1px solid rgba(244, 176, 68,0.3)' }}>
           <div>
-            <p className="font-body text-sm mb-0.5" style={{ color: '#A1A1AA' }}>You'll earn</p>
+            <p className="font-body text-sm mb-0.5" style={{ color: 'var(--gf-text-secondary)' }}>You'll earn</p>
             <p className="font-heading font-black text-2xl" style={{ color: 'var(--gf-gold-text)' }}>+{previewXP} XP</p>
           </div>
           <div className="text-right">
-            <p className="font-body text-sm mb-0.5" style={{ color: '#A1A1AA' }}>and</p>
+            <p className="font-body text-sm mb-0.5" style={{ color: 'var(--gf-text-secondary)' }}>and</p>
             <p className="font-mono text-2xl font-bold tabular-nums" style={{ color: 'var(--gf-ember-text)' }}>+{previewCoins}</p>
           </div>
         </div>
@@ -285,8 +298,8 @@ export default function Train() {
         )}
         <button onClick={startWorkout}
           disabled={!activeDuration}
-          className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all active:scale-95"
-          style={{ backgroundColor: activeDuration ? 'var(--gf-green)' : 'var(--gf-border)', color: activeDuration ? '#141416' : 'var(--gf-text-secondary)' }}>
+          className={`w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all active:scale-95 ${activeDuration ? 'gf-cta' : ''}`}
+          style={activeDuration ? undefined : { backgroundColor: 'var(--gf-border)', color: 'var(--gf-text-secondary)' }}>
           <Play size={22} /> Start Workout
         </button>
       </div>
@@ -301,80 +314,110 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
   const xpShown = useCountUp(xp, 900, !saveError);
   const coinsShown = useCountUp(coins, 900, !saveError);
 
+  // The context adds the workout to user.total_xp optimistically (and rolls
+  // it back on a failed save), so here the total already includes it.
+  const after = user.total_xp;
+  const before = Math.max(after - xp, 0);
+  const level = getLevelForXP(after);
+  const floor = getCurrentLevelXP(level);
+  const ceil = getNextLevelXP(level);
+  const span = Math.max(ceil - floor, 1);
+  const basePct = Math.min(Math.max((before - floor) / span, 0), 1) * 100;
+  const gainPct = Math.max(Math.min(Math.max((after - floor) / span, 0), 1) * 100 - basePct, 0);
+  const toGo = Math.max(ceil - after, 0);
+  const rank = getRank(level);
+  const nextRank = level >= 10 ? null : getRank(level + 1);
+
   useEffect(() => {
-    if (saveError) return;
-    // two quick bursts in brand colors
-    confetti({ particleCount: 70, spread: 75, origin: { y: 0.35 }, colors: ['#F4B044', '#FF6B00', '#B9C4CC'] });
-    const t = setTimeout(() => confetti({ particleCount: 40, spread: 100, origin: { y: 0.3 }, colors: ['#F4B044', '#F5F5F4'] }), 350);
+    if (saveError || REDUCED_MOTION) return;
+    // two quick bursts in the Ignition colors
+    confetti({ particleCount: 70, spread: 75, origin: { y: 0.3 }, colors: ['#E53E3E', '#FF6B00', '#F4B044'] });
+    const t = setTimeout(() => confetti({ particleCount: 40, spread: 100, origin: { y: 0.25 }, colors: ['#F4B044', '#F5F5F4', '#FF6B00'] }), 350);
     return () => clearTimeout(t);
   }, [saveError]);
 
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-10"
-      style={{ backgroundColor: '#141416' }}>
-      <motion.div className="text-center w-full max-w-sm" initial={{ scale: 0.6, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 14 }}>
+      style={{ backgroundColor: '#141416', color: '#F5F5F4' }}>
+      <motion.div className="w-full max-w-sm" initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}>
 
-        {/* the avatar celebrates with you */}
-        <motion.div className="flex justify-center mb-2"
-          initial={{ y: 14 }} animate={{ y: 0 }} transition={{ type: 'spring', damping: 8, delay: 0.15 }}>
-          <UserAvatar user={user} size={110} />
-        </motion.div>
-
-        <h2 className="font-heading font-black text-4xl text-white mb-1">
+        <h2 className="text-center font-heading text-base font-semibold" style={{ color: '#A1A1AA' }}>
           {saveError ? 'Not Saved' : 'Workout Complete!'}
         </h2>
-        <p className="font-body mb-6" style={{ color: '#A1A1AA' }}>
-          <Icon name={disciplineIcon(exerciseType)} size={18} className="inline-block align-[-3px] mr-1.5" />
-          {duration} min {exerciseType}
-        </p>
+        <div className="mt-3 flex flex-wrap justify-center gap-2">
+          <span className="flex items-center gap-1.5 rounded-full px-3 py-1.5 font-body text-sm font-medium"
+            style={{ backgroundColor: '#1E1E21', border: '1px solid #2E2E33' }}>
+            <Icon name={disciplineIcon(exerciseType)} size={16} />
+            {exerciseType}
+          </span>
+          <span className="rounded-full px-3 py-1.5 font-body text-sm font-medium"
+            style={{ backgroundColor: '#1E1E21', border: '1px solid #2E2E33' }}>
+            {duration} min
+          </span>
+        </div>
 
         {saveError ? (
-          <div className="mb-6 px-4 py-3 rounded-xl text-sm font-body"
+          <div className="mt-8 px-4 py-3 rounded-xl text-sm font-body"
             style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#E5614A', border: '1px solid rgba(239,68,68,0.3)' }}>
             {saveError}
           </div>
         ) : (
           <>
-            {/* counters */}
-            {/* Figures lead, labels recede. Mono tabular so the count-up does
-                not shift width while it runs. */}
-            <div className="flex gap-3 justify-center mb-4">
-              <div className="flex-1 px-4 py-4 rounded-2xl" style={{ backgroundColor: '#28282C', border: '1px solid rgba(244, 176, 68,0.3)' }}>
-                <p className="font-mono text-[34px] font-bold leading-none tabular-nums tracking-[-0.03em]"
-                  style={{ color: 'var(--gf-gold-text)' }}>+{xpShown}</p>
-                <p className="font-mono text-[9.5px] font-semibold uppercase tracking-[0.13em] mt-2"
-                  style={{ color: '#A1A1AA' }}>XP earned</p>
+            {/* The earned XP is the moment: one figure, as large as the screen
+                allows, in the reward color, with the avatar beside it. */}
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <UserAvatar user={user} size={78} />
+              <p className="flex items-baseline gap-2" aria-label={`Plus ${xp} XP`}>
+                <span className="font-heading text-[88px] font-extrabold leading-none tabular-nums tracking-[-0.04em]"
+                  style={{ color: '#F4B044' }} aria-hidden="true">+{xpShown}</span>
+                <span className="font-heading text-2xl font-extrabold" style={{ color: '#F4B044' }} aria-hidden="true">XP</span>
+              </p>
+            </div>
+
+            {/* Rank bar: what you had stays dim, what you just earned grows in
+                gold. The gain is the only part that moves. */}
+            <div className="mt-8">
+              <div className="flex items-center justify-between font-body text-[13px]">
+                <span className="font-semibold" style={{ color: rank.color }}>{rank.display}</span>
+                <span style={{ color: '#A1A1AA' }}>
+                  <span className="font-mono font-bold" style={{ color: '#F5F5F4' }}>{toGo.toLocaleString()}</span> XP to go
+                </span>
+                {nextRank && <span className="font-semibold" style={{ color: nextRank.color }}>{nextRank.display}</span>}
               </div>
-              <div className="flex-1 px-4 py-4 rounded-2xl" style={{ backgroundColor: '#28282C', border: '1px solid rgba(255, 107, 0, 0.3)' }}>
-                <p className="font-mono text-[34px] font-bold leading-none tabular-nums tracking-[-0.03em]"
-                  style={{ color: 'var(--gf-ember-text)' }}>+{coinsShown}</p>
-                <p className="font-mono text-[9.5px] font-semibold uppercase tracking-[0.13em] mt-2"
-                  style={{ color: '#A1A1AA' }}>Coins</p>
+              <div className="relative mt-2.5 h-3.5 overflow-hidden rounded-full" style={{ backgroundColor: '#26262A' }}
+                role="progressbar" aria-valuemin={0} aria-valuemax={span} aria-valuenow={Math.round(after - floor)}
+                aria-label={`${toGo} XP to ${nextRank ? nextRank.display : 'the top'}`}>
+                <div className="absolute inset-y-0 left-0" style={{ width: `${basePct}%`, backgroundColor: '#6B2A14' }} />
+                <div className="gf-xp-seg absolute inset-y-0"
+                  style={{ left: `${basePct}%`, width: `${gainPct}%`, backgroundImage: 'linear-gradient(90deg, #FF6B00, #F4B044)', animationDelay: '900ms' }} />
               </div>
             </div>
 
-            {/* streak */}
-            <motion.div className="flex items-center justify-center gap-2 mb-4 px-4 py-3 rounded-2xl"
-              style={{ backgroundColor: 'rgba(255, 107, 0, 0.08)', border: '1px solid rgba(255, 107, 0, 0.3)' }}
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-              <Flame size={18} color="var(--gf-ember-text)" fill="#FF6B00" />
-              <span className="font-heading font-black text-lg" style={{ color: 'var(--gf-ember-text)' }}>
-                {streak} day streak
-              </span>
-            </motion.div>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <div className="rounded-2xl px-4 py-4" style={{ backgroundColor: '#1E1E21', border: '1px solid #2E2E33' }}>
+                <p className="font-mono text-[26px] font-bold leading-none tabular-nums" style={{ color: '#F4B044' }}>+{coinsShown}</p>
+                <p className="mt-2 font-body text-xs" style={{ color: '#A1A1AA' }}>coins</p>
+              </div>
+              <div className="rounded-2xl px-4 py-4" style={{ backgroundColor: '#1E1E21', border: '1px solid #2E2E33' }}>
+                <p className="flex items-center gap-1.5 font-mono text-[26px] font-bold leading-none tabular-nums">
+                  <Flame size={22} color="#FF6B00" fill="#FF6B00" aria-hidden="true" />
+                  {streak}
+                </p>
+                <p className="mt-2 font-body text-xs" style={{ color: '#A1A1AA' }}>day streak</p>
+              </div>
+            </div>
 
             {/* badge unlocks */}
             {newBadges.map((b, i) => (
               <motion.div key={b.id}
-                className="flex items-center gap-3 px-4 py-3 rounded-2xl mb-3 text-left"
+                className="mt-3 flex items-center gap-3 px-4 py-3 rounded-2xl text-left"
                 style={{ backgroundColor: 'rgba(244,176,68,0.10)', border: '1px solid rgba(244,176,68,0.40)' }}
-                initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 + i * 0.15 }}>
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1 + i * 0.15 }}>
                 <b.Icon size={28} strokeWidth={1.8} aria-hidden="true" style={{ color: '#F4B044' }} />
                 <div>
-                  <p className="font-heading font-black text-sm" style={{ color: '#F4B044' }}>BADGE UNLOCKED</p>
-                  <p className="font-body text-sm text-white">{b.label} — {b.desc}</p>
+                  <p className="font-heading font-bold text-sm" style={{ color: '#F4B044' }}>BADGE UNLOCKED</p>
+                  <p className="font-body text-sm" style={{ color: '#F5F5F4' }}>{b.label} — {b.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -382,8 +425,7 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
         )}
 
         <button onClick={onDone}
-          className="w-full py-4 rounded-2xl font-heading font-black text-xl mt-2"
-          style={{ backgroundColor: '#F4B044', color: '#141416' }}>
+          className="gf-cta mt-8 h-14 w-full rounded-2xl font-heading font-bold text-base">
           Back to Dashboard
         </button>
       </motion.div>

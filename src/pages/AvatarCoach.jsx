@@ -223,9 +223,8 @@ export default function AvatarCoach() {
           <button
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || loading || !conversation}
-            className="w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-40"
-            style={{ backgroundColor: 'var(--gf-green)' }}>
-            <Send size={16} color="#141416" />
+            className="gf-cta w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-40">
+            <Send size={16} color="#FFFFFF" />
           </button>
         </div>
       </div>

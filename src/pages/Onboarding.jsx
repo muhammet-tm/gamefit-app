@@ -569,11 +569,8 @@ export default function Onboarding() {
       {/* CTA */}
       <div className="mt-6 space-y-3">
         <button onClick={next} disabled={!canProceed() || saving}
-          className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all active:scale-95"
-          style={{
-            backgroundColor: canProceed() ? '#F4B044' : '#2E2E33',
-            color: canProceed() ? '#141416' : '#52525B',
-          }}>
+          className={`w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all active:scale-95 ${canProceed() ? 'gf-cta' : ''}`}
+          style={canProceed() ? undefined : { backgroundColor: '#2E2E33', color: '#8A8A93' }}>
           {saving ? 'Setting up your profile...' : isLast ? "Let's Go!" : 'NEXT'}
           {!saving && !isLast && <ChevronRight size={22} />}
         </button>

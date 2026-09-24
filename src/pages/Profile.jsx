@@ -135,7 +135,7 @@ export default function Profile() {
         <div className="rounded-2xl px-4 py-3 flex items-center justify-between"
           style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}>
           <div className="flex items-center gap-3">
-            {theme === 'dark' ? <Moon size={18} color="var(--gf-purple)" /> : <Sun size={18} color="var(--gf-amber)" />}
+            {theme === 'dark' ? <Moon size={18} color="var(--gf-gold-text)" /> : <Sun size={18} color="var(--gf-ember-text)" />}
             <span className="font-body font-medium text-sm" style={{ color: 'var(--gf-text-primary)' }}>
               {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
             </span>
@@ -242,7 +242,7 @@ export default function Profile() {
                 <Zap size={18} strokeWidth={2.1} aria-hidden="true" />
                 <span className="font-body font-semibold text-sm" style={{ color: 'var(--gf-gold-text)' }}>Upgrade to Premium</span>
               </div>
-              <ChevronRight size={16} color="var(--gf-purple)" />
+              <ChevronRight size={16} color="var(--gf-gold-text)" />
             </button>
           ) : (
             <div className="px-4 py-3.5 flex items-center justify-between"
