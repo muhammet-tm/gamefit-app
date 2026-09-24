@@ -636,12 +636,25 @@ disconnect, and the Connect tab is the app's only revoke path. So
 gated only when `!isConnected`. Owner-confirmed behaviour: starting a new
 connection is blocked, ending an existing one never is.
 
-## Phase 12: Ignition redesign (branch `feat/ignition-redesign`, 2026-09-24)
+## Phase 12: Ignition redesign (shipped 2026-09-24, verified live)
 
-Both repos carry the change on `feat/ignition-redesign`, one commit per step
-(plan, tokens, hardcoded colors, signature moments, docs), so any step can be
-reverted alone and the whole redesign is one merge commit. Merging deploys to
-production, so it is the owner's call.
+Merged at the owner's instruction once CI was green: app PR #2 (merge commit
+`bc81faf`) and site PR #1 (`d07de76`). Both production deployments reported
+success and were checked on a cache-missed request (charcoal `theme-color`,
+the new hero avatar served as `image/webp`). Each repo's redesign is one
+merge commit, so `git revert -m 1 <sha>` rolls it back (see
+`docs/IGNITION_ROLLOUT.md`).
+
+**CI was red on main from 2026-08-25 until this merge, and it was not a test
+problem.** The e2e job built the app without `VITE_SUPABASE_URL` /
+`VITE_SUPABASE_ANON_KEY`; `src/api/supabase.js` calls `createClient()` at
+import time, so the bundle threw on load and 61 page tests failed on every
+run. The two public client values are now repo secrets
+(`gh secret list --repo muhammet-tm/gamefit-app`) passed to the e2e step in
+`ci.yml`. The first fully green run was the Ignition PR's (Chromium 49 passed,
+WebKit 48 passed; the rest are the credential-gated journeys, which skip
+because `E2E_EMAIL` / `E2E_PASSWORD` are still unset). If e2e goes red across
+the board again, check those secrets before the tests.
 
 What changed beyond the tokens:
 
