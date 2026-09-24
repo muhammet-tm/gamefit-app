@@ -29,8 +29,8 @@ export default function Splash() {
             title to announce and crawlers with no heading at all.
 
             Inline SVG rather than the app icon PNG, for two reasons. The icon
-            bakes its own navy rounded square, which draws a visible box on
-            this screen's ground. And it is a
+            bakes its own rounded square, which draws a visible box on this
+            screen's ground. And it is a
             second network round trip on the very first paint of the app.
 
             The wordmark carries the accessible name; the mascot beside it is
@@ -45,9 +45,9 @@ export default function Splash() {
           {/* tone is pinned rather than left on `auto` because this screen
               paints a literal charcoal in both themes, the Ignition ground.
               `auto` follows the palette, which would hand the light theme
-              dark lettering on charcoal. The native splash images are still
-              navy until they are regenerated (docs/IGNITION_ROLLOUT.md,
-              follow-ups). */}
+              dark lettering on charcoal. The native splash images were
+              regenerated on the same charcoal (#141416), so the hand-off from
+              the native splash to this screen is seamless again. */}
           <Wordmark height={38} tone="dark" title="GameFit" />
         </motion.h1>
 
