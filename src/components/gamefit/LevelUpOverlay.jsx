@@ -15,7 +15,7 @@ function BurstParticles() {
       id: i,
       x: Math.cos(rad) * distance,
       y: Math.sin(rad) * distance,
-      color: ['#F4B044', '#E0680E', '#7FBBD4', '#5FBF7C', '#FFFFFF'][i % 5],
+      color: ['#F4B044', '#FF6B00', '#7FBBD4', '#5FBF7C', '#FFFFFF'][i % 5],
       size: 6 + Math.random() * 8,
       delay: Math.random() * 0.3,
     };
@@ -39,7 +39,7 @@ function BurstParticles() {
 
 // Falling confetti
 function Confetti() {
-  const colors = ['#F4B044', '#E0680E', '#7FBBD4', '#5FBF7C', '#E5614A', '#FFFFFF'];
+  const colors = ['#F4B044', '#FF6B00', '#7FBBD4', '#5FBF7C', '#E5614A', '#FFFFFF'];
   const particles = Array.from({ length: 60 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
@@ -132,27 +132,27 @@ function LevelBanner({ newLevel, title, onClose }) {
       transition={{ type: 'spring', damping: 18 }}
     >
       <div className="rounded-2xl px-5 py-4 flex items-center gap-4 shadow-2xl"
-        style={{ background: 'linear-gradient(135deg, #F4B044, #E0680E)', border: '1px solid rgba(244, 176, 68,0.4)' }}>
+        style={{ background: 'linear-gradient(135deg, #F4B044, #FF6B00)', border: '1px solid rgba(244, 176, 68,0.4)' }}>
         {/* Animated icon */}
         <motion.div
           className="text-3xl flex-shrink-0"
           animate={{ rotate: [0, -15, 15, -10, 10, 0], scale: [1, 1.2, 1] }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <Trophy size={26} strokeWidth={2} aria-hidden="true" style={{ color: '#0B1A24' }} />
+          <Trophy size={26} strokeWidth={2} aria-hidden="true" style={{ color: '#141416' }} />
         </motion.div>
         <div className="flex-1 min-w-0">
-          <div className="font-heading font-black text-lg leading-none" style={{ color: '#0B1A24' }}>
+          <div className="font-heading font-black text-lg leading-none" style={{ color: '#141416' }}>
             LEVEL {newLevel} REACHED!
           </div>
-          <div className="font-body text-sm mt-0.5" style={{ color: 'rgba(11,26,36,0.72)' }}>
-            New rank: <span className="font-semibold" style={{ color: '#0B1A24' }}>{title}</span>
+          <div className="font-body text-sm mt-0.5" style={{ color: 'rgba(20, 20, 22,0.72)' }}>
+            New rank: <span className="font-semibold" style={{ color: '#141416' }}>{title}</span>
           </div>
         </div>
         {/* Progress pulse dot */}
         <motion.div
           className="w-3 h-3 rounded-full flex-shrink-0"
-          style={{ backgroundColor: '#0B1A24' }}
+          style={{ backgroundColor: '#141416' }}
           animate={{ scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
           transition={{ repeat: Infinity, duration: 1 }}
         />
@@ -258,7 +258,7 @@ export default function LevelUpOverlay() {
                     </p>
                     <motion.div
                       className="mt-2 px-5 py-2 rounded-xl inline-block font-heading text-xl font-black"
-                      style={{ background: 'linear-gradient(135deg, #F4B044, #E0680E)', color: '#0B1A24' }}
+                      style={{ background: 'linear-gradient(135deg, #F4B044, #FF6B00)', color: '#141416' }}
                       animate={{ scale: [1, 1.04, 1] }}
                       transition={{ repeat: Infinity, duration: 2 }}
                     >
@@ -285,7 +285,7 @@ export default function LevelUpOverlay() {
                   {/* Coins reward */}
                   <motion.div
                     className="flex items-center gap-3 mt-4 px-6 py-3 rounded-2xl w-full justify-center"
-                    style={{ backgroundColor: 'rgba(224, 104, 14,0.12)', border: '1px solid rgba(224, 104, 14,0.35)' }}
+                    style={{ backgroundColor: 'rgba(255, 107, 0, 0.12)', border: '1px solid rgba(255, 107, 0, 0.35)' }}
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 }}
@@ -295,7 +295,7 @@ export default function LevelUpOverlay() {
                       animate={{ rotate: [0, 20, -20, 0] }}
                       transition={{ repeat: Infinity, duration: 1.5, delay: 0.6 }}
                     ><Coins size={22} strokeWidth={2} aria-hidden="true" /></motion.span>
-                    <span className="font-heading text-2xl font-black" style={{ color: '#E0680E' }}>
+                    <span className="font-heading text-2xl font-black" style={{ color: 'var(--gf-ember-text)' }}>
                       +{levelUpData.bonusCoins} Bonus Coins!
                     </span>
                   </motion.div>
@@ -323,7 +323,7 @@ export default function LevelUpOverlay() {
                   {/* CTA button */}
                   <motion.button
                     className="w-full py-4 rounded-2xl font-heading font-black text-xl mt-5"
-                    style={{ backgroundColor: claimed ? 'rgba(244, 176, 68,0.3)' : '#F4B044', color: '#0B1A24' }}
+                    style={{ backgroundColor: claimed ? 'rgba(244, 176, 68,0.3)' : '#F4B044', color: '#141416' }}
                     whileTap={{ scale: 0.96 }}
                     onClick={handleClaim}
                     disabled={claimed}

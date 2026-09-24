@@ -9,7 +9,7 @@ export const inputStyle = {
 export const buttonStyle = {
   primary: {
     backgroundColor: 'var(--gf-green)',
-    color: '#0B1A24',
+    color: '#141416',
   },
   secondary: {
     backgroundColor: 'var(--gf-bg-elevated)',

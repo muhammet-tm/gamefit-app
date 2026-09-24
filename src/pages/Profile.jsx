@@ -154,7 +154,7 @@ export default function Profile() {
             <h3 className="font-heading font-black text-lg" style={{ color: 'var(--gf-text-primary)' }}>Profile</h3>
             <button onClick={() => editing ? handleSave() : setEditing(true)}
               className="px-4 py-1.5 rounded-xl font-body text-sm font-medium transition-all"
-              style={{ backgroundColor: editing ? 'var(--gf-green)' : 'var(--gf-bg-elevated)', color: editing ? '#0B1A24' : 'var(--gf-text-secondary)' }}>
+              style={{ backgroundColor: editing ? 'var(--gf-green)' : 'var(--gf-bg-elevated)', color: editing ? '#141416' : 'var(--gf-text-secondary)' }}>
               {saved ? 'Saved' : editing ? 'Save' : 'Edit'}
             </button>
           </div>

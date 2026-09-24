@@ -113,7 +113,7 @@ function AddMealModal({ onSave, onClose }) {
         </div>
         <button onClick={() => valid && onSave(form)} disabled={!valid}
           className="w-full py-4 rounded-2xl font-heading font-black text-lg flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-40"
-          style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
+          style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>
           <Plus size={20} /> Save Meal
         </button>
       </motion.div>
@@ -370,8 +370,7 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
             <button
               onClick={() => !snapLoading && fileInputRef.current?.click()}
               disabled={snapLoading}
-              className="w-full py-4 rounded-2xl font-heading font-black text-lg flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-70"
-              style={{ background: 'linear-gradient(135deg, #7FBBD4, #C026D3)', color: '#FFFFFF' }}>
+              className="gf-cta w-full py-4 rounded-2xl font-heading font-black text-lg flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-70">
               {snapLoading ? (
                 <><Loader2 size={20} className="animate-spin" /> Analyzing meal...</>
               ) : (
@@ -385,11 +384,11 @@ export default function NutritionTab({ user, atLimit, onLimitHit, incrementAIReq
         ) : (
           <button onClick={onLimitHit}
             className="w-full py-4 rounded-2xl font-heading font-black text-lg flex items-center justify-center gap-2"
-            style={{ background: 'linear-gradient(135deg, rgba(127, 187, 212,0.3), rgba(192,38,211,0.3))', border: '1px dashed rgba(127, 187, 212,0.5)', color: 'rgba(255,255,255,0.6)' }}>
+            style={{ backgroundColor: 'var(--gf-bg-elevated)', border: '1px dashed var(--gf-border)', color: 'var(--gf-text-secondary)' }}>
             <Lock size={18} />
             <span>Snap a Photo</span>
             <span className="ml-1 text-xs px-2 py-0.5 rounded-full font-body font-semibold"
-              style={{ backgroundColor: 'rgba(127, 187, 212,0.3)', color: '#C084FC' }}>PREMIUM</span>
+              style={{ backgroundColor: 'var(--gf-gold)', color: 'var(--gf-on-accent)' }}>PREMIUM</span>
           </button>
         )}
 

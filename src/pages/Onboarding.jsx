@@ -19,23 +19,23 @@ import {
 function Mascot({ size = 70 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 80 80">
-      <ellipse cx="40" cy="42" rx="22" ry="26" fill="#1A3242" />
-      <ellipse cx="30" cy="42" rx="8" ry="7" fill="#1A3242" />
-      <ellipse cx="50" cy="42" rx="8" ry="7" fill="#1A3242" />
-      <ellipse cx="30" cy="40" rx="5" ry="4.5" fill="#2A3040" />
-      <ellipse cx="50" cy="40" rx="5" ry="4.5" fill="#2A3040" />
-      <ellipse cx="40" cy="26" rx="16" ry="14" fill="#1A3242" />
+      <ellipse cx="40" cy="42" rx="22" ry="26" fill="#28282C" />
+      <ellipse cx="30" cy="42" rx="8" ry="7" fill="#28282C" />
+      <ellipse cx="50" cy="42" rx="8" ry="7" fill="#28282C" />
+      <ellipse cx="30" cy="40" rx="5" ry="4.5" fill="#3A3A40" />
+      <ellipse cx="50" cy="40" rx="5" ry="4.5" fill="#3A3A40" />
+      <ellipse cx="40" cy="26" rx="16" ry="14" fill="#28282C" />
       <rect x="28" y="18" width="24" height="8" rx="4" fill="#F4B044" />
       <circle cx="33" cy="27" r="4" fill="#F1EDE6" />
       <circle cx="47" cy="27" r="4" fill="#F1EDE6" />
-      <circle cx="34" cy="27" r="2.2" fill="#0B1A24" />
-      <circle cx="48" cy="27" r="2.2" fill="#0B1A24" />
+      <circle cx="34" cy="27" r="2.2" fill="#141416" />
+      <circle cx="48" cy="27" r="2.2" fill="#141416" />
       <circle cx="34.7" cy="26.3" r="0.8" fill="#F4B044" />
       <circle cx="48.7" cy="26.3" r="0.8" fill="#F4B044" />
       <path d="M36 32 Q40 35 44 32" stroke="#F4B044" strokeWidth="1.4" fill="none" strokeLinecap="round" />
-      <ellipse cx="40" cy="38" rx="6" ry="4" fill="#2A3040" />
-      <path d="M30 52 Q28 62 30 68" stroke="#1A3242" strokeWidth="6" strokeLinecap="round" fill="none" />
-      <path d="M50 52 Q52 62 50 68" stroke="#1A3242" strokeWidth="6" strokeLinecap="round" fill="none" />
+      <ellipse cx="40" cy="38" rx="6" ry="4" fill="#3A3A40" />
+      <path d="M30 52 Q28 62 30 68" stroke="#28282C" strokeWidth="6" strokeLinecap="round" fill="none" />
+      <path d="M50 52 Q52 62 50 68" stroke="#28282C" strokeWidth="6" strokeLinecap="round" fill="none" />
       <ellipse cx="30" cy="68" rx="5" ry="3" fill="#F4B044" />
       <ellipse cx="50" cy="68" rx="5" ry="3" fill="#F4B044" />
     </svg>
@@ -46,11 +46,11 @@ function SpeechBubble({ text }) {
   return (
     <div className="relative max-w-xs mx-auto mb-6">
       <div className="px-5 py-3 rounded-2xl rounded-bl-sm font-body text-base text-white text-center"
-        style={{ backgroundColor: '#1A3242', border: '1px solid #24455A' }}>
+        style={{ backgroundColor: '#28282C', border: '1px solid #2E2E33' }}>
         {text}
       </div>
       <div className="absolute -bottom-2 left-8 w-0 h-0"
-        style={{ borderLeft: '8px solid transparent', borderRight: '8px solid transparent', borderTop: '10px solid #1A3242' }} />
+        style={{ borderLeft: '8px solid transparent', borderRight: '8px solid transparent', borderTop: '10px solid #28282C' }} />
     </div>
   );
 }
@@ -58,7 +58,7 @@ function SpeechBubble({ text }) {
 // ── Progress Bar ──────────────────────────────────────────────────────────────
 function ProgressBar({ current, total }) {
   return (
-    <div className="w-full h-1.5 rounded-full mb-6" style={{ backgroundColor: '#24455A' }}>
+    <div className="w-full h-1.5 rounded-full mb-6" style={{ backgroundColor: '#2E2E33' }}>
       <motion.div className="h-full rounded-full" style={{ backgroundColor: '#F4B044' }}
         animate={{ width: `${(current / total) * 100}%` }} transition={{ duration: 0.4 }} />
     </div>
@@ -71,17 +71,17 @@ function OptionRow({ label, sublabel, Icon, selected, onSelect }) {
     <button onClick={onSelect}
       className="w-full flex items-center justify-between px-5 py-4 rounded-2xl mb-3 transition-all active:scale-98"
       style={{
-        backgroundColor: selected ? 'rgba(244, 176, 68,0.10)' : '#112532',
-        border: `1.5px solid ${selected ? '#F4B044' : '#24455A'}`,
+        backgroundColor: selected ? 'rgba(244, 176, 68,0.10)' : '#1E1E21',
+        border: `1.5px solid ${selected ? '#F4B044' : '#2E2E33'}`,
       }}>
       <div className="flex items-center gap-3">
-        {Icon && <Icon size={19} strokeWidth={2.1} style={{ color: selected ? '#F4B044' : '#88A5B7' }} aria-hidden="true" />}
+        {Icon && <Icon size={19} strokeWidth={2.1} style={{ color: selected ? '#F4B044' : '#A1A1AA' }} aria-hidden="true" />}
         <span className="font-body font-semibold text-base text-white">{label}</span>
       </div>
       <div className="flex items-center gap-2">
-        {sublabel && <span className="font-body text-sm" style={{ color: '#88A5B7' }}>{sublabel}</span>}
+        {sublabel && <span className="font-body text-sm" style={{ color: '#A1A1AA' }}>{sublabel}</span>}
         {selected && <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: '#F4B044' }}>
-          <Check size={12} color="#0B1A24" strokeWidth={3} />
+          <Check size={12} color="#141416" strokeWidth={3} />
         </div>}
       </div>
     </button>
@@ -132,10 +132,10 @@ function ScrollPicker({ value, onChange, min, max, unit, step = 1 }) {
               {isSelected ? (
                 <div className="flex items-baseline gap-1.5">
                   <span className="font-heading font-black text-5xl text-white leading-none">{v}</span>
-                  {unit && <span className="font-body font-semibold text-xl" style={{ color: '#88A5B7' }}>{unit}</span>}
+                  {unit && <span className="font-body font-semibold text-xl" style={{ color: '#A1A1AA' }}>{unit}</span>}
                 </div>
               ) : (
-                <span className="font-heading font-black text-2xl" style={{ color: '#4A5065' }}>{v}</span>
+                <span className="font-heading font-black text-2xl" style={{ color: '#52525B' }}>{v}</span>
               )}
             </div>
           );
@@ -176,8 +176,8 @@ function HealthIntegrations({ onConnectStrava, stravaBusy }) {
           disabled={app.comingSoon || stravaBusy}
           className="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl mb-3 transition-all active:scale-98"
           style={{
-            backgroundColor: '#112532',
-            border: '1.5px solid #24455A',
+            backgroundColor: '#1E1E21',
+            border: '1.5px solid #2E2E33',
             opacity: app.comingSoon ? 0.55 : 1,
           }}>
           <div className="flex items-center gap-3">
@@ -187,11 +187,11 @@ function HealthIntegrations({ onConnectStrava, stravaBusy }) {
             </div>
             <div className="text-left">
               <p className="font-body font-semibold text-sm text-white">{app.name}</p>
-              <p className="font-body text-xs" style={{ color: '#88A5B7' }}>{app.desc}</p>
+              <p className="font-body text-xs" style={{ color: '#A1A1AA' }}>{app.desc}</p>
             </div>
           </div>
           {app.comingSoon ? (
-            <span className="text-xs font-body font-semibold px-3 py-1 rounded-lg" style={{ backgroundColor: '#24455A', color: '#88A5B7' }}>
+            <span className="text-xs font-body font-semibold px-3 py-1 rounded-lg" style={{ backgroundColor: '#2E2E33', color: '#A1A1AA' }}>
               Soon
             </span>
           ) : (
@@ -322,10 +322,10 @@ export default function Onboarding() {
                 <button key={val} onClick={() => pickGender(val)}
                   className="rounded-2xl py-10 flex flex-col items-center gap-3 transition-all active:scale-95"
                   style={{
-                    backgroundColor: selected ? 'rgba(244, 176, 68,0.10)' : '#112532',
-                    border: `2px solid ${selected ? '#F4B044' : '#24455A'}`,
+                    backgroundColor: selected ? 'rgba(244, 176, 68,0.10)' : '#1E1E21',
+                    border: `2px solid ${selected ? '#F4B044' : '#2E2E33'}`,
                   }}>
-                  <Icon size={38} strokeWidth={2} style={{ color: selected ? '#F4B044' : '#88A5B7' }} aria-hidden="true" />
+                  <Icon size={38} strokeWidth={2} style={{ color: selected ? '#F4B044' : '#A1A1AA' }} aria-hidden="true" />
                   <span className="font-heading font-black text-lg" style={{ color: selected ? '#F4B044' : '#FFFFFF' }}>{label}</span>
                 </button>
               );
@@ -343,21 +343,21 @@ export default function Onboarding() {
           <div className="grid grid-cols-2 gap-3">
             {AVATAR_CLASSES.map(cls => {
               const selected = avatarClass === cls;
-              // Onboarding paints its own dark ground (#112532, white text)
+              // Onboarding paints its own dark ground (#1E1E21, white text)
               // regardless of the app theme, so it pins the dark palette.
               const cc = classColors(cls, 'dark');
               return (
                 <button key={cls} onClick={() => setAvatarClass(cls)}
                   className="rounded-2xl p-3 flex flex-col items-center gap-1.5 transition-all active:scale-95"
                   style={{
-                    backgroundColor: selected ? `${cc.glow}14` : '#112532',
-                    border: `2px solid ${selected ? cc.glow : '#24455A'}`,
+                    backgroundColor: selected ? `${cc.glow}14` : '#1E1E21',
+                    border: `2px solid ${selected ? cc.glow : '#2E2E33'}`,
                   }}>
                   <Avatar avatarClass={cls} tier={2} body={body} skinTone={skinTone} hair={hair} size={72} animate={false} theme="dark" />
                   <span className="font-heading font-black text-base" style={{ color: selected ? cc.text : '#FFFFFF' }}>
                     {CLASS_LABELS[cls]}
                   </span>
-                  <span className="font-body text-[10px] text-center leading-tight" style={{ color: '#88A5B7' }}>
+                  <span className="font-body text-[10px] text-center leading-tight" style={{ color: '#A1A1AA' }}>
                     {CLASS_TAGLINES[cls]}
                   </span>
                 </button>
@@ -383,8 +383,8 @@ export default function Onboarding() {
         <div className="w-full flex flex-col items-center">
           <ScrollPicker value={weightKg} onChange={setWeightKg} min={30} max={200} unit="kg" />
           {bmi && (
-            <div className="mt-4 px-5 py-3 rounded-2xl w-full" style={{ backgroundColor: '#112532', border: '1px solid #24455A' }}>
-              <p className="font-body text-sm text-center" style={{ color: '#88A5B7' }}>
+            <div className="mt-4 px-5 py-3 rounded-2xl w-full" style={{ backgroundColor: '#1E1E21', border: '1px solid #2E2E33' }}>
+              <p className="font-body text-sm text-center" style={{ color: '#A1A1AA' }}>
                 ⓘ Your BMI is <span className="text-white font-semibold">{bmi}</span> — <span style={{ color: 'var(--gf-gold-text)' }}>{bmiLabel}</span>
               </p>
             </div>
@@ -462,18 +462,18 @@ export default function Onboarding() {
         <div className="w-full flex flex-col items-center">
           <motion.div className="w-full" initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 180 }}>
             <h2 className="font-heading font-black text-3xl text-white text-center mb-2">Make it yours</h2>
-            <p className="font-body text-sm text-center mb-5" style={{ color: '#88A5B7' }}>
+            <p className="font-body text-sm text-center mb-5" style={{ color: '#A1A1AA' }}>
               Your avatar grows as you get stronger!
             </p>
             <div className="flex justify-center mb-6">
               <div className="p-6 rounded-3xl relative overflow-hidden"
-                style={{ backgroundColor: '#112532', border: '2px solid #F4B044' }}>
+                style={{ backgroundColor: '#1E1E21', border: '2px solid #F4B044' }}>
                 <div className="absolute inset-0 opacity-10" style={{ background: 'radial-gradient(circle at 50% 40%, #F4B044, transparent 60%)' }} />
                 <Avatar avatarClass={avatarClass || 'warrior'} body={body} skinTone={skinTone} hair={hair} size={150} tier={1} theme="dark" />
               </div>
             </div>
 
-            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#88A5B7' }}>Skin tone</p>
+            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#A1A1AA' }}>Skin tone</p>
             <div className="flex gap-2.5 justify-center mb-4">
               {Object.keys(SKIN_TONES).map(s => (
                 <button key={s} onClick={() => setSkinTone(s)}
@@ -484,7 +484,7 @@ export default function Onboarding() {
               ))}
             </div>
 
-            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#88A5B7' }}>Hair</p>
+            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#A1A1AA' }}>Hair</p>
             <div className="flex gap-2 mb-3">
               {hairStylesFor(body).map(style => {
                 const cur = hair.split('_');
@@ -492,7 +492,7 @@ export default function Onboarding() {
                 return (
                   <button key={style} onClick={() => setHair(`${style}_${cur[1] || 'black'}`)}
                     className="flex-1 py-2 rounded-xl font-body font-medium text-xs capitalize transition-all"
-                    style={{ backgroundColor: selected ? '#F4B044' : '#112532', color: selected ? '#0B1A24' : '#88A5B7', border: `1px solid ${selected ? '#F4B044' : '#24455A'}` }}>
+                    style={{ backgroundColor: selected ? '#F4B044' : '#1E1E21', color: selected ? '#141416' : '#A1A1AA', border: `1px solid ${selected ? '#F4B044' : '#2E2E33'}` }}>
                     {style}
                   </button>
                 );
@@ -521,7 +521,7 @@ export default function Onboarding() {
       content: (
         <div className="w-full">
           <h2 className="font-heading font-black text-2xl text-white mb-1">Health Connect</h2>
-          <p className="font-body text-sm mb-5" style={{ color: '#88A5B7' }}>
+          <p className="font-body text-sm mb-5" style={{ color: '#A1A1AA' }}>
             Connect your health apps to automatically sync your fitness data with GameFit.
           </p>
           <HealthIntegrations onConnectStrava={connectStrava} stravaBusy={stravaBusy} />
@@ -534,12 +534,12 @@ export default function Onboarding() {
   const isLast = step === TOTAL_STEPS - 1;
 
   return (
-    <div className="min-h-screen flex flex-col px-5 pb-8 pt-12" style={{ backgroundColor: '#0B1A24' }}>
+    <div className="min-h-screen flex flex-col px-5 pb-8 pt-12" style={{ backgroundColor: '#141416' }}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         {step > 0 ? (
-          <button onClick={back} className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#1A3242' }}>
-            <ChevronLeft size={18} color="#88A5B7" />
+          <button onClick={back} className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#28282C' }}>
+            <ChevronLeft size={18} color="#A1A1AA" />
           </button>
         ) : <div className="w-9" />}
         <div className="flex-1">
@@ -571,15 +571,15 @@ export default function Onboarding() {
         <button onClick={next} disabled={!canProceed() || saving}
           className="w-full py-4 rounded-2xl font-heading font-black text-xl flex items-center justify-center gap-2 transition-all active:scale-95"
           style={{
-            backgroundColor: canProceed() ? '#F4B044' : '#24455A',
-            color: canProceed() ? '#0B1A24' : '#4A5065',
+            backgroundColor: canProceed() ? '#F4B044' : '#2E2E33',
+            color: canProceed() ? '#141416' : '#52525B',
           }}>
           {saving ? 'Setting up your profile...' : isLast ? "Let's Go!" : 'NEXT'}
           {!saving && !isLast && <ChevronRight size={22} />}
         </button>
         {isLast && (
           <button onClick={() => navigate('/dashboard', { replace: true })}
-            className="w-full py-3 font-body text-sm" style={{ color: '#4A5065' }}>
+            className="w-full py-3 font-body text-sm" style={{ color: '#52525B' }}>
             Continue without connecting
           </button>
         )}

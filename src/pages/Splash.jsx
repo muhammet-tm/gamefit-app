@@ -17,7 +17,7 @@ export default function Splash() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center"
-      style={{ backgroundColor: '#0B1A24' }}>
+      style={{ backgroundColor: '#141416' }}>
       <motion.div
         className="flex flex-col items-center"
         initial={{ opacity: 0, scale: 0.7 }}
@@ -29,8 +29,8 @@ export default function Splash() {
             title to announce and crawlers with no heading at all.
 
             Inline SVG rather than the app icon PNG, for two reasons. The icon
-            bakes its own navy rounded square, and this screen is already navy,
-            so it drew a faintly visible box around the mascot. And it is a
+            bakes its own navy rounded square, which draws a visible box on
+            this screen's ground. And it is a
             second network round trip on the very first paint of the app.
 
             The wordmark carries the accessible name; the mascot beside it is
@@ -43,15 +43,17 @@ export default function Splash() {
         >
           <Mascot size={148} />
           {/* tone is pinned rather than left on `auto` because this screen
-              paints a literal #0B1A24 in both themes, to match the native
-              splash. `auto` follows the palette, which would hand the light
-              theme navy lettering on navy. */}
+              paints a literal charcoal in both themes, the Ignition ground.
+              `auto` follows the palette, which would hand the light theme
+              dark lettering on charcoal. The native splash images are still
+              navy until they are regenerated (docs/IGNITION_ROLLOUT.md,
+              follow-ups). */}
           <Wordmark height={38} tone="dark" title="GameFit" />
         </motion.h1>
 
          <motion.p
            className="font-body text-base"
-           style={{ color: '#88A5B7' }}
+           style={{ color: '#A1A1AA' }}
            initial={{ opacity: 0 }}
            animate={{ opacity: 1 }}
            transition={{ delay: 0.6 }}

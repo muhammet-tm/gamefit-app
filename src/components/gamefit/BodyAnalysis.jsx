@@ -27,7 +27,7 @@ const EXERCISE_MUSCLE_MAP = {
 const MUSCLE_META = {
   'Chest':     { color: '#F4B044', bg: 'rgba(244,176,68,0.14)' },
   'Back':      { color: '#E8A63F', bg: 'rgba(232,166,63,0.14)' },
-  'Arms':      { color: '#E0680E', bg: 'rgba(224,104,14,0.14)' },
+  'Arms':      { color: 'var(--gf-ember-text)', bg: 'rgba(255, 107, 0, 0.14)' },
   'Legs':      { color: '#7FBBD4', bg: 'rgba(127,187,212,0.14)' },
   'Core':      { color: '#B9C4CC', bg: 'rgba(185,196,204,0.14)' },
   'Cardio':    { color: '#E5614A', bg: 'rgba(229,97,74,0.14)' },

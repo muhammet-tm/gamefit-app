@@ -49,9 +49,9 @@ export default function Marketplace() {
         subtitle="Spend your coins wisely"
         showBackButton={false}
         rightAction={<div className="flex items-center gap-2 px-3 py-1.5 rounded-xl"
-          style={{ backgroundColor: 'rgba(224, 104, 14,0.1)', border: '1px solid rgba(224, 104, 14,0.3)' }}>
-          <Coins size={16} strokeWidth={2.3} style={{ color: '#E0680E' }} aria-hidden="true" />
-          <span className="font-heading font-black text-lg" style={{ color: '#E0680E' }}>{user.coins}</span>
+          style={{ backgroundColor: 'rgba(255, 107, 0, 0.1)', border: '1px solid rgba(255, 107, 0, 0.3)' }}>
+          <Coins size={16} strokeWidth={2.3} style={{ color: 'var(--gf-ember-text)' }} aria-hidden="true" />
+          <span className="font-heading font-black text-lg" style={{ color: 'var(--gf-ember-text)' }}>{user.coins}</span>
         </div>}
       />
         {/* Filter tabs */}
@@ -61,7 +61,7 @@ export default function Marketplace() {
               className="px-3 py-1.5 rounded-xl font-body text-sm font-medium transition-all"
               style={{
                 backgroundColor: filter === c ? 'var(--gf-amber)' : 'var(--gf-bg-elevated)',
-                color: filter === c ? '#0B1A24' : 'var(--gf-text-secondary)',
+                color: filter === c ? '#141416' : 'var(--gf-text-secondary)',
               }}>
               {c}
             </button>
@@ -72,7 +72,7 @@ export default function Marketplace() {
       <div className="px-5 pt-5">
         {/* Honest state: partner rewards are previews until real deals exist */}
         <div className="mb-4 px-4 py-3 rounded-xl flex items-center gap-3"
-          style={{ backgroundColor: 'rgba(224, 104, 14,0.08)', border: '1px solid rgba(224, 104, 14,0.3)' }}>
+          style={{ backgroundColor: 'rgba(255, 107, 0, 0.08)', border: '1px solid rgba(255, 107, 0, 0.3)' }}>
           <Construction size={20} strokeWidth={2.1} className="flex-shrink-0"
             style={{ color: 'var(--gf-ember-text)' }} aria-hidden="true" />
           <p className="font-body text-xs leading-relaxed" style={{ color: 'var(--gf-text-secondary)' }}>
@@ -116,7 +116,7 @@ export default function Marketplace() {
                   <p className="font-body text-xs leading-relaxed flex-1" style={{ color: 'var(--gf-text-secondary)' }}>{reward.description}</p>
 
                   <div className="flex items-center justify-between">
-                    <span className="font-heading font-black text-sm flex items-center gap-1" style={{ color: '#E0680E' }}>
+                    <span className="font-heading font-black text-sm flex items-center gap-1" style={{ color: 'var(--gf-ember-text)' }}>
                       <Coins size={13} strokeWidth={2.4} aria-hidden="true" />{reward.cost_coins}
                     </span>
                   </div>
@@ -175,7 +175,7 @@ export default function Marketplace() {
                 </button>
                 <button onClick={confirmRedeem}
                   className="flex-1 py-3.5 rounded-xl font-heading font-black text-base"
-                  style={{ backgroundColor: 'var(--gf-amber)', color: '#0B1A24' }}>
+                  style={{ backgroundColor: 'var(--gf-amber)', color: '#141416' }}>
                   Confirm
                 </button>
               </div>
@@ -216,7 +216,7 @@ export default function Marketplace() {
 
               <button onClick={() => setSuccessCode(null)}
                 className="w-full py-3.5 rounded-xl font-heading font-black text-base"
-                style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
+                style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>
                 Done
               </button>
             </motion.div>

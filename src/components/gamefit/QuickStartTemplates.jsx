@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Zap } from 'lucide-react';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 
-const INTENSITY_COLORS = { Low: '#5FBF7C', Medium: '#E0680E', High: '#E5614A' };
+const INTENSITY_COLORS = { Low: '#5FBF7C', Medium: '#FF6B00', High: '#E5614A' };
 
 const DEFAULT_TEMPLATES = [
   { id: 't1', name: 'Morning Run',      exercise_type: 'Running',        duration_min: 30, intensity: 'Medium' },
@@ -90,7 +90,7 @@ export default function QuickStartTemplates({ onLaunch }) {
             </div>
             <button onClick={addTemplate}
               className="w-full py-2.5 rounded-xl font-heading font-black text-base transition-all active:scale-95"
-              style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
+              style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>
               Save Template
             </button>
           </motion.div>

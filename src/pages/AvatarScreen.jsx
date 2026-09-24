@@ -129,7 +129,7 @@ export default function AvatarScreen() {
           {[['avatar', 'Avatar', VenetianMask], ['shop', 'Shop', ShoppingBag], ['connect', 'Connect', Link2]].map(([t, label, TabIcon]) => (
             <button key={t} onClick={() => setActiveTab(t)}
               className="flex-1 py-2.5 rounded-lg font-body font-medium text-sm transition-all flex items-center justify-center gap-1.5"
-              style={{ backgroundColor: activeTab === t ? 'var(--gf-green)' : 'transparent', color: activeTab === t ? '#0B1A24' : 'var(--gf-text-secondary)' }}>
+              style={{ backgroundColor: activeTab === t ? 'var(--gf-green)' : 'transparent', color: activeTab === t ? '#141416' : 'var(--gf-text-secondary)' }}>
               <TabIcon size={15} strokeWidth={2.2} aria-hidden="true" />
               {label}
             </button>
@@ -195,7 +195,7 @@ export default function AvatarScreen() {
                       <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-text-primary)' }}>{app.name}</p>
                       {isGated && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded font-body font-semibold"
-                          style={{ backgroundColor: 'rgba(224, 104, 14,0.15)', color: '#E0680E' }}>SOON</span>
+                          style={{ backgroundColor: 'rgba(255, 107, 0, 0.15)', color: 'var(--gf-ember-text)' }}>SOON</span>
                       )}
                     </div>
                     <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>{app.desc}</p>
@@ -302,7 +302,7 @@ export default function AvatarScreen() {
                 <div className="text-center mt-3 z-10">
                   <div className="flex items-center justify-center gap-2 mb-1">
                     <span className="px-3 py-1 rounded-full font-heading font-black text-sm"
-                      style={{ backgroundColor: tierCfg.color, color: currentTier >= 4 ? '#1A1A1A' : '#0B1A24' }}>
+                      style={{ backgroundColor: tierCfg.color, color: currentTier >= 4 ? '#1A1A1A' : '#141416' }}>
                       LVL {level}
                     </span>
                     <span className="font-heading font-black text-xl" style={{ color: 'var(--gf-text-primary)' }}>{tierCfg.label}</span>
@@ -417,7 +417,7 @@ export default function AvatarScreen() {
                 return (
                   <button key={style} onClick={() => updateAvatar('hair', `${style}_${currentColor}`)}
                     className="flex-1 py-2.5 rounded-xl font-body font-medium text-xs capitalize transition-all"
-                    style={{ backgroundColor: selected ? 'var(--gf-green)' : 'var(--gf-bg-elevated)', color: selected ? '#0B1A24' : 'var(--gf-text-secondary)', border: `1px solid ${selected ? 'var(--gf-green)' : 'var(--gf-border)'}` }}>
+                    style={{ backgroundColor: selected ? 'var(--gf-green)' : 'var(--gf-bg-elevated)', color: selected ? '#141416' : 'var(--gf-text-secondary)', border: `1px solid ${selected ? 'var(--gf-green)' : 'var(--gf-border)'}` }}>
                     {style}
                   </button>
                 );

@@ -172,7 +172,7 @@ export default function Leaderboard() {
                       <EntryAvatar entry={entry} size={podiumRank === 1 ? 60 : 48} />
                     </div>
                     <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-black"
-                      style={{ backgroundColor: medalColor, color: '#0B1A24' }}>
+                      style={{ backgroundColor: medalColor, color: '#141416' }}>
                       {podiumRank}
                     </span>
                   </div>

@@ -97,7 +97,7 @@ export default function Dashboard() {
                   no competing tap target here. */}
               <UserAvatar user={user} size={90} interactive />
               <span className="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full font-heading font-black text-xs"
-                style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
+                style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>
                 LVL {level}
               </span>
             </div>
@@ -109,8 +109,8 @@ export default function Dashboard() {
                 </p>
               </div>
               <div className="flex items-center gap-1.5 mb-3">
-                <Flame size={14} color="#E0680E" />
-                <span className="font-body text-sm font-medium" style={{ color: '#E0680E' }}>
+                <Flame size={14} color="var(--gf-ember-text)" />
+                <span className="font-body text-sm font-medium" style={{ color: 'var(--gf-ember-text)' }}>
                   {user.current_streak} day streak
                 </span>
               </div>
@@ -142,7 +142,7 @@ export default function Dashboard() {
           <motion.button
             onClick={() => navigate('/train')}
             className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl font-heading font-black uppercase tracking-[0.04em] transition-transform active:scale-[0.98]"
-            style={{ backgroundColor: 'var(--gf-gold)', color: '#0B1A24', fontSize: 15 }}
+            style={{ backgroundColor: 'var(--gf-gold)', color: '#141416', fontSize: 15 }}
             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
             whileTap={{ scale: 0.98 }}>
             <Dumbbell size={20} strokeWidth={2.1} aria-hidden="true" />

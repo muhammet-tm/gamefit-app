@@ -43,7 +43,7 @@ export default function BadgeGrid({ workouts, user }) {
               </p>
               {earned && (
                 <span className="text-[9px] font-body font-semibold px-1.5 py-0.5 rounded-full"
-                  style={{ backgroundColor: 'var(--gf-green)', color: '#0B1A24' }}>
+                  style={{ backgroundColor: 'var(--gf-green)', color: '#141416' }}>
                   Earned
                 </span>
               )}

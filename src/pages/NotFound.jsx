@@ -58,7 +58,7 @@ export default function NotFound() {
           <Link
             to="/dashboard"
             className="w-full h-12 rounded-xl flex items-center justify-center font-heading font-black text-sm"
-            style={{ backgroundColor: 'var(--gf-gold)', color: '#0B1A24' }}
+            style={{ backgroundColor: 'var(--gf-gold)', color: '#141416' }}
           >
             Go to dashboard
           </Link>
