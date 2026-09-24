@@ -137,36 +137,48 @@ Shipped and **verified live on gamefit-app.vercel.app**:
 All merged to `main`, pushed, Vercel bundle confirmed deployed
 (`index-01qmpXQy.js` at last check), production endpoints spot-checked 200 OK.
 
-## Design system (phase 1 of the redesign — shipped 2026-08-14)
+## Design system: Ignition (since 2026-09-24; replaced the navy system of 2026-08-14)
 
-The app and the marketing site share one palette and one type system. Both
-were swapped away from the original lime-on-near-black design, which was
-disciplined but is the most templated look in fitness software.
+The app and the marketing site share one palette and one type system. The
+owner chose **Direction A, "Ignition"** from five style directions on a design
+canvas; the change plan, gates, rollback and follow-ups are in
+`docs/IGNITION_ROLLOUT.md`. History: lime-on-near-black, then navy and gold
+(2026-08-14), then Ignition.
 
 **Palette** (`src/index.css`, mirrored in `gamefit-web/src/styles/tokens.css`):
 
 | Token | Dark | Light | Role |
 |---|---|---|---|
-| `--gf-bg-primary` | `#0B1A24` | `#EDF2F5` | Page ground |
-| `--gf-bg-surface` | `#112532` | `#FFFFFF` | Cards |
-| `--gf-bg-elevated` | `#1A3242` | `#DFE8EE` | Inputs, raised |
-| `--gf-text-primary` | `#F2F5F7` | `#0B1A24` | Text |
-| `--gf-text-secondary` | `#88A5B7` | `#4A6577` | Muted |
-| `--gf-gold` | `#F4B044` | `#F4B044` | The single accent — fills, rank, XP |
-| `--gf-gold-text` | `#F4B044` | `#8A5A06` | Gold **as text** (see below) |
-| `--gf-ember` | `#E0680E` | `#B34D06` | Streaks, intensity |
+| `--gf-bg-primary` | `#141416` | `#F4F4F5` | Page ground (charcoal) |
+| `--gf-bg-surface` | `#1E1E21` | `#FFFFFF` | Cards |
+| `--gf-bg-elevated` | `#28282C` | `#E9E9EC` | Inputs, raised |
+| `--gf-text-primary` | `#F5F5F4` | `#141416` | Text |
+| `--gf-text-secondary` | `#A1A1AA` | `#52525B` | Muted |
+| `--gf-gold` | `#F4B044` | `#F4B044` | XP, rewards, emblems (fills) |
+| `--gf-gold-text` | `#F4B044` | `#8A5A06` | Gold **as text** |
+| `--gf-ember` | `#FF6B00` | `#EA580C` | Heat: streaks, coins, active tab (fills) |
+| `--gf-ember-text` | `#FF6B00` | `#B13A09` | Ember **as text** |
+| `--gf-cta-from` / `-to` | `#D92B2B` / `#C8470E` | same | The action gradient, white text |
 
-Three rules that are easy to get wrong:
+Rules that are easy to get wrong:
 
-1. **Gold cannot be one value across both themes.** `#F4B044` is ~1.9:1 on
-   white. Fills keep the brand gold with navy text (9.38:1); gold *text* on a
-   light surface must use `--gf-gold-text`. Same split for ember.
-2. **The surface is the binding ground, not the page.** Tier labels and card
-   text sit on `--gf-bg-surface`, which is lighter. Bronze shipped for one
-   build at `#B5754A` — 4.72 on the page, 4.20 on a card — and axe caught it.
-   It is now `#C08657`.
-3. **Ember is 3.90 on `--gf-bg-elevated`.** On that surface it is for fills
-   and text ≥18px only.
+1. **The action gradient is for primary actions only** (`.gf-cta` utility in
+   `index.css`; `buttonStyle.primary` in `FormControl.jsx` for inline styles).
+   White text is 4.85:1 on the red end and 4.81:1 on the orange end. Never
+   use it for a destructive action: errors keep the coral `#E5614A`, so red
+   still reads as "act", not "failed". Gold means earned (XP, coins,
+   selection chips); the gradient means "do this".
+2. **Gold kept its old value on purpose.** The mockups used `#FFC107`; keeping
+   `#F4B044` means the husky's fur (defined as the same value) and the Gold
+   tier stay correct with no brand-asset regeneration.
+3. **Fill tokens are not text tokens.** `--gf-gold` and `--gf-ember` as text
+   on the light theme's white are ~1.9:1 and ~3.6:1. Use the `-text` twins.
+   The Ignition pass fixed nine places that got this wrong, including the
+   active bottom-nav tab.
+4. **The surface is the binding ground, not the page.** Tier labels sit on
+   `--gf-bg-surface`. Tier ratios on charcoal are recorded in `tiers.js`.
+5. **Never fade text to show state.** The streak calendar's future days were
+   faded to ~1:1; they now read as empty dashed cells. Axe finds these.
 
 Violet `#7C3AED` is gone entirely. It measured 3.36:1 and failed AA for body
 text, which the old `DESIGN.md` already recorded as a known failure. Apex tier
@@ -174,18 +186,20 @@ moved from violet to ember as a result. Tier colours live in
 `src/components/avatar/tiers.js` and are mirrored in the site's `tokens.css` —
 **change both together**.
 
-**Type**: Archivo (variable, width axis, set at ~118%) for display, Hanken
-Grotesk for UI and body, JetBrains Mono for figures. The app loads these from
-Google Fonts; the site self-hosts them via `@fontsource` so its CSP and the
-GDPR posture are unchanged.
+**Type**: Poppins (400 to 800) for display, UI and body, JetBrains Mono for
+figures. The app loads them from Google Fonts; the site self-hosts them via
+`@fontsource/poppins` (latin subset) so its CSP and the GDPR posture are
+unchanged. Poppins has no 900: `font-black` renders at 800. Site headings are
+sentence case (the expanded Archivo capitals are retired).
 
 Old token names (`--gf-green`, `--gf-amber`, `--gf-purple`) survive as aliases
 so the swap landed in one commit. They are removed as components migrate.
 
-Contrast is verified against the rendered DOM, not the token values: a scanner
-resolves each text node's actual painted background through alpha layers and
-checks it at the right threshold for its size and weight. Zero failures in
-both themes. The site additionally runs axe on every route in CI.
+Contrast is verified against the rendered DOM, not the token values. For
+Ignition, an axe color-contrast scan of Home, Leaderboard, Coach and Train in
+both themes, plus the workout-complete screen, reported zero failures (the
+signed-in screens need the QA login; see "Screenshots and signed-in checks"
+in the Phase 12 section). The site runs axe on every route.
 
 Phases 1-5 are shipped and live on both surfaces. **Phase 6 (avatars) is done
 on branch `feat/avatars`, not yet merged** — see below.
@@ -196,8 +210,10 @@ The diagnosis came from rendering contact sheets on the grounds the avatars
 actually sit on, which is the thing to repeat before touching this again:
 
 ```bash
-npx tsx scripts/render-avatars.mjs <outDir> --bg=#1A3242
+npx tsx scripts/render-avatars.mjs <outDir> --bg=#28282C
 ```
+
+(Ignition ground; it was `#1A3242` when this phase was written.)
 
 `--bg` matters. The script used to bake `#161A22`, the near-black phase 1
 deleted, so every previous art review judged the rigs against a background that
@@ -619,6 +635,56 @@ disconnect, and the Connect tab is the app's only revoke path. So
 `handleConnect` checks disconnect *before* the gate, and the row renders as
 gated only when `!isConnected`. Owner-confirmed behaviour: starting a new
 connection is blocked, ending an existing one never is.
+
+## Phase 12: Ignition redesign (branch `feat/ignition-redesign`, 2026-09-24)
+
+Both repos carry the change on `feat/ignition-redesign`, one commit per step
+(plan, tokens, hardcoded colors, signature moments, docs), so any step can be
+reverted alone and the whole redesign is one merge commit. Merging deploys to
+production, so it is the owner's call.
+
+What changed beyond the tokens:
+
+- About 250 inline colors bypassed the tokens. Navy neutrals were mapped
+  one-for-one to charcoal *literals* (so always-dark screens such as
+  Onboarding and Splash stay always-dark); old ember became the new orange.
+  Avatar art, the brand mark and third-party brand colors were excluded.
+- `XPRing.jsx` is new: the avatar inside a red-to-orange XP ring on Home. Its
+  resting arc is the real value and the CSS animation only draws it in, so a
+  blocked or reduced-motion render is still correct. `XPMeter.jsx` had no
+  callers left and was removed.
+- Workout complete: gold count-up beside the avatar, and a rank bar where only
+  the segment just earned grows. It relies on `addWorkout` having already
+  added the XP to `user.total_xp` optimistically (and rolled it back on
+  failure). The count-up now honours reduced motion.
+- Leaderboard: avatars on podium blocks (capped at 124px wide, so a sparse
+  board does not stretch one block across the screen); your row in orange.
+- Coach G: your bubbles use the action gradient; the old "Generate Plan"
+  button put white on gold at ~1.9:1.
+- `scripts/check-avatar-contrast.mjs` now tests the charcoal and light
+  Ignition grounds; it passes (closest class pair dE 34.0 dark, 27.3 light).
+- The native splash and icon backgrounds are still navy until regenerated
+  (`docs/IGNITION_ROLLOUT.md`, follow-ups); `capacitor.config.ts` was left
+  alone for the same reason.
+
+### Screenshots and signed-in checks
+
+Headless Chromium never passes the real Turnstile challenge, and the login
+page never reaches network idle (the captcha iframe holds a request open).
+Both screenshot scripts (`scripts/store-screenshots.mjs` here,
+`gamefit-web/scripts/capture-screens.mjs`) now load `/login` with
+`domcontentloaded` and wait for `[data-token-ready="true"]`. Run them against
+a local build made with the always-pass key, served by the `gamefit-preview`
+launch config:
+
+```bash
+VITE_TURNSTILE_SITE_KEY=1x00000000000000000000AA npm run build
+```
+
+This works only while Turnstile enforcement is off in Supabase. To render the
+workout-complete screen without writing to the live leaderboard, intercept
+`**/rest/v1/rpc/log_workout` in Chromium and fulfill it with a stub, and
+assert the stub was hit exactly once before trusting the screenshot.
 
 ## Known limitations (disclosed, not hidden)
 
