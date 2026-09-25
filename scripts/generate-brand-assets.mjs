@@ -32,7 +32,7 @@ function mascot({ size, padding = 0.12, rig = MASCOT_DETAILED }) {
 // transparent mark would sit on whatever the user picked.
 function iconSvg({ size = 1024, rounded = 0.2237, padding = 0.12, rig = MASCOT_DETAILED }) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-  <rect width="${size}" height="${size}" rx="${size * rounded}" fill="${BRAND.navy}"/>
+  <rect width="${size}" height="${size}" rx="${size * rounded}" fill="${BRAND.ground}"/>
   ${mascot({ size, padding, rig })}
 </svg>`;
 }
@@ -43,7 +43,7 @@ function splashSvg(size = 2732) {
   const wmH = size * 0.052;
   const wmW = (wmH * WORDMARK_WIDTH) / WORDMARK_HEIGHT;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-  <rect width="${size}" height="${size}" fill="${BRAND.navy}"/>
+  <rect width="${size}" height="${size}" fill="${BRAND.ground}"/>
   <g transform="translate(${(size - m) / 2},${size * 0.32})">${mascot({ size: m, padding: 0 })}</g>
   <g transform="translate(${(size - wmW) / 2},${size * 0.615}) scale(${wmH / WORDMARK_HEIGHT})">${wordmarkToSvg('dark')}</g>
 </svg>`;
@@ -56,13 +56,13 @@ function ogSvg() {
   const wmH = 92;
   const wmW = (wmH * WORDMARK_WIDTH) / WORDMARK_HEIGHT;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="${BRAND.navy}"/>
-  <circle cx="1050" cy="80" r="300" fill="${BRAND.gold}" opacity="0.06"/>
-  <circle cx="120" cy="560" r="240" fill="#E0680E" opacity="0.07"/>
+  <rect width="1200" height="630" fill="${BRAND.ground}"/>
+  <circle cx="1050" cy="80" r="300" fill="#E53E3E" opacity="0.08"/>
+  <circle cx="120" cy="560" r="240" fill="${BRAND.fur}" opacity="0.07"/>
   <rect x="86" y="171" width="288" height="288" rx="64" fill="${BRAND.surface}"/>
   <g transform="translate(86,171)">${mascot({ size: 288, padding: 0.1 })}</g>
   <g transform="translate(438,214) scale(${wmH / WORDMARK_HEIGHT})">${wordmarkToSvg('dark')}</g>
-  <text x="440" y="372" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#88A5B7">Fitness, Gamified.</text>
+  <text x="440" y="372" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#A1A1AA">Fitness, Gamified.</text>
   <text x="440" y="440" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#B9C4CC">Earn XP &#183; Keep streaks &#183; Evolve your avatar</text>
   <text x="440" y="482" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#B9C4CC">Train with an AI coach</text>
 </svg>`;
@@ -145,7 +145,7 @@ write(ogSvg(), 'public/og-image.png', 1200);
 write(iconSvg({ size: 1024, rounded: 0 }), 'resources/icon-only.png', 1024);
 write(iconSvg({ size: 1024, padding: 0.28, rounded: 0 }), 'resources/icon-foreground.png', 1024);
 fs.writeFileSync('resources/icon-background.png',
-  new Resvg(`<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024"><rect width="1024" height="1024" fill="${BRAND.navy}"/></svg>`).render().asPng());
+  new Resvg(`<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024"><rect width="1024" height="1024" fill="${BRAND.ground}"/></svg>`).render().asPng());
 console.log('wrote resources/icon-background.png');
 write(splashSvg(), 'resources/splash.png', 2732);
 write(splashSvg(), 'resources/splash-dark.png', 2732);

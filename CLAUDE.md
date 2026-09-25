@@ -169,8 +169,9 @@ Rules that are easy to get wrong:
    still reads as "act", not "failed". Gold means earned (XP, coins,
    selection chips); the gradient means "do this".
 2. **Gold kept its old value on purpose.** The mockups used `#FFC107`; keeping
-   `#F4B044` means the husky's fur (defined as the same value) and the Gold
-   tier stay correct with no brand-asset regeneration.
+   `#F4B044` kept the Gold tier and every existing reward usage correct.
+   The husky no longer shares it: since the recolor below, its fur is the
+   Ignition orange.
 3. **Fill tokens are not text tokens.** `--gf-gold` and `--gf-ember` as text
    on the light theme's white are ~1.9:1 and ~3.6:1. Use the `-text` twins.
    The Ignition pass fixed nine places that got this wrong, including the
@@ -460,7 +461,12 @@ on the cover and closing slides plus the wordmark set in Archivo. All four are
 now the drawn identity. PDF is 1.27 MB against Hub71's 10 MB cap, and the
 artifact was redeployed to its existing URL.
 
-**2026-08-19 recolor + sharper chin** (owner-requested): the husky is now
+**2026-09-24: superseded by the Ignition husky** (see Phase 12): orange fur
+`#FF6B00` (the dark theme's `--gf-ember`), charcoal linework and goggle frame
+(`#141416` / `#1E1E21`), charcoal icon ground. The chin and anchor notes
+below still hold; only the colors moved.
+
+**2026-08-19 recolor + sharper chin** (owner-requested): the husky became
 gold with deep-navy goggles — `fur: #F4B044` (deliberately the same value as
 `--gf-gold`), `frame: #1E3250`; the lenses stay `#A8D9F2` so the pupils
 survive — and the chin tapers to a soft point instead of a round arc. The
@@ -676,9 +682,19 @@ What changed beyond the tokens:
   button put white on gold at ~1.9:1.
 - `scripts/check-avatar-contrast.mjs` now tests the charcoal and light
   Ignition grounds; it passes (closest class pair dE 34.0 dark, 27.3 light).
-- The native splash and icon backgrounds are still navy until regenerated
-  (`docs/IGNITION_ROLLOUT.md`, follow-ups); `capacitor.config.ts` was left
-  alone for the same reason.
+- **Husky recolor (owner chose option B of three mockups on the design
+  canvas).** `src/lib/brand.js` is still the only definition: fur `#FF6B00`,
+  line `#141416`, frame `#1E1E21`, lens unchanged. Two keys were renamed so
+  the names stop lying: `BRAND.navy` is now `BRAND.ground`, and the wordmark
+  glyph tone `gold` is now `accent` (FIT is orange on dark and `#B13A09`, the
+  text-safe `--gf-ember-text`, on light; `Logo.jsx` reads
+  `var(--gf-ember-text)`). `generate-brand-assets.mjs` rebuilt `brand/`,
+  favicons, PWA icons, the OG image and `resources/`; the native icons and
+  splash were regenerated with `npx @capacitor/assets@3 generate` and
+  `#141416` on all four background flags, with its two side effects reverted
+  as in commit 4c91c80. `capacitor.config.ts` now uses charcoal. The site's
+  `Logo.astro` transcribes the same paths and colors. The Hub71 deck still
+  carries the gold mark and is the owner's to update.
 
 ### Screenshots and signed-in checks
 

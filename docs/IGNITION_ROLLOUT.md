@@ -129,14 +129,16 @@ a rollback carries no migration risk.
 | Avatar palettes were tuned on navy | The avatar gate re-runs against charcoal. Charcoal is neutral and close in lightness to navy, so the existing contour rule should hold. |
 | The light theme was not in the mockups | Derived palette, checked by the same scans; flagged for the owner to review on a phone. |
 | Site screenshots and store screenshots show the old app | Regenerated in this change where the scripts can run; otherwise listed below. |
-| Native splash stays navy | The web splash moves to charcoal. The native splash and icon background are regenerated before the first store build (Follow-ups). |
+| Native splash stays navy | Resolved: regenerated on charcoal with the husky recolor. |
 
 ## Follow-ups (owner decisions, not in this change)
 
-1. Recolor the husky mark to Ignition (orange fur, as in the mockups), which
-   means regenerating `brand/`, the favicons, the OG image, the native icons and
-   the Hub71 deck.
-2. Regenerate the native splash and icon backgrounds with
-   `npx @capacitor/assets@3 generate` before the first store build.
-3. Regenerate `store-assets/` if not done in this change.
+1. ~~Recolor the husky mark to Ignition.~~ Done 2026-09-24: the owner chose
+   option B (orange fur `#FF6B00`, charcoal linework and frame) from three
+   mockups on the design canvas. `brand/`, the favicons, the OG image and the
+   native icons were regenerated; the Hub71 deck is the owner's to update.
+2. ~~Regenerate the native splash and icon backgrounds.~~ Done with the husky:
+   `npx @capacitor/assets@3 generate` with `#141416` on all four background
+   flags; `capacitor.config.ts` follows.
+3. ~~Regenerate `store-assets/`.~~ Done in the redesign.
 4. Real-phone review of the light theme.
