@@ -3,7 +3,7 @@ import LegalLayout, { H, P, LI } from './LegalLayout';
 
 export default function Privacy() {
   return (
-    <LegalLayout title="Privacy Policy" updated="19 July 2026">
+    <LegalLayout title="Privacy Policy" updated="26 September 2026">
       <P>
         GameFit ("we", "us") is a gamified fitness application operated from the United Arab
         Emirates. This policy explains what personal data we collect, why, and the rights you
@@ -43,7 +43,9 @@ export default function Privacy() {
       <H>Our processors</H>
       <ul className="space-y-1.5">
         <LI><strong>Supabase</strong> — database, authentication and file storage.</LI>
-        <LI><strong>Vercel</strong> — application hosting and delivery.</LI>
+        <LI><strong>Vercel</strong> — application hosting and delivery, and Vercel Web Analytics,
+          which counts page views without cookies or personal identifiers. Query strings and
+          link fragments are removed before a page view is sent.</LI>
         <LI><strong>Stripe</strong> — subscription payments.</LI>
         <LI><strong>Anthropic</strong> — AI coaching responses.</LI>
         <LI><strong>PostHog</strong> — product analytics (event data).</LI>
