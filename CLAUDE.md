@@ -29,7 +29,7 @@ want branch → PR-style → merge discipline with no scope creep.
 | Edge Functions (Deno) | `coach-g`, `create-checkout`, `stripe-webhook`, `strava-auth`, `delete-account` | `supabase/functions/` |
 | Payments | Stripe subscriptions, AED prices discovered dynamically (no hardcoded price IDs), signature-verified webhook | `supabase/functions/create-checkout`, `stripe-webhook` |
 | AI coach | Claude Haiku, called only server-side, 10/mo free cap enforced in DB | `supabase/functions/coach-g` |
-| Analytics/monitoring | PostHog + Sentry, both env-key-gated no-ops until keys are added | `src/lib/analytics.js` |
+| Analytics/monitoring | Vercel Web Analytics for page views (live since 2026-09-26, production builds on Vercel only). PostHog + Sentry, both env-key-gated no-ops until keys are added | `vercelAnalytics()` in `vite.config.js`, `public/analytics-init.js`; `src/lib/analytics.js` |
 | Native shells | Capacitor 7, `android/` + `ios/` scaffolded, app id `online.gamefit.app` | `capacitor.config.ts` |
 
 Old Base44 app (`gamefit.online`, repo `muhammet-tm/gamefit-dev`) is still
@@ -830,6 +830,18 @@ source files no longer exist.
   backend and **no connection to this project's Supabase** — deliberately,
   so the site stays up regardless of the app's database state.
 - Forms go to Web3Forms, not to Postgres.
+- **Both surfaces count page views with Vercel Web Analytics** (2026-09-26),
+  as plain same-origin script tags added only when `VERCEL_ENV=production`.
+  Do not swap in the `@vercel/analytics` package on the site: its Astro
+  component is inlined, `generate-csp.mjs` hashes inline scripts into the
+  committed `vercel.json`, and on Vercel the component's text carries a
+  per-build seed, so the hash never matches and the CSP silently blocks it.
+  The app loads `public/analytics-init.js` first; its `beforeSend` hook
+  strips query strings and fragments (Strava `?code=`, auth tokens).
+  Vercel's script ignores `navigator.webdriver` and headless user agents, so
+  a Playwright visit sends no page view unless those are hidden. A 200 from
+  `/_vercel/insights/script.js` on production means Analytics is enabled in
+  that project's dashboard; each Vercel project is enabled separately.
 - 191 Playwright tests covering accessibility, the CSP under real headers,
   responsive behaviour and asset budgets.
 - `DESIGN.md` there is the design system; the site reuses this app's `--gf-*`

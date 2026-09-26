@@ -135,9 +135,37 @@ function siteUrlHtml() {
   };
 }
 
+/**
+ * Vercel Web Analytics: cookieless page views, counted by Vercel's own script.
+ *
+ * Only production builds on Vercel get the tags. Local, CI and Capacitor
+ * builds leave them out: /_vercel/insights exists only on Vercel, and inside
+ * the native shells the request would go to capacitor://localhost.
+ *
+ * Both scripts are same-origin files, so `script-src 'self'` allows them and
+ * connect-src 'self' covers the beacon. The @vercel/analytics package is not
+ * used; this needs two script tags and no dependency. analytics-init.js must
+ * run first: it installs the beforeSend hook that strips query strings and
+ * fragments. The insights script patches history.pushState, so client-side
+ * route changes are counted as page views.
+ */
+function vercelAnalytics() {
+  return {
+    name: 'gamefit-vercel-analytics',
+    apply: 'build',
+    transformIndexHtml() {
+      if (process.env.VERCEL_ENV !== 'production') return [];
+      return [
+        { tag: 'script', attrs: { src: '/analytics-init.js' }, injectTo: 'body' },
+        { tag: 'script', attrs: { src: '/_vercel/insights/script.js', defer: true }, injectTo: 'body' },
+      ];
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), siteUrlHtml(), seoFiles()],
+  plugins: [react(), siteUrlHtml(), seoFiles(), vercelAnalytics()],
   // Honour PORT when something assigns one. Vite otherwise ignores it and
   // auto-increments off 5173, which leaves any tool that assigned a port
   // pointing at nothing. Falls back to the usual 5173 for a plain `npm run dev`.
