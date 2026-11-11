@@ -21,6 +21,7 @@ export default function Privacy() {
         <LI><strong>Connected services (optional)</strong> — if you connect Strava, we store access tokens and basic athlete info to sync your activities. You can disconnect at any time.</LI>
         <LI><strong>Payment status</strong> — whether you have an active Premium subscription and your Stripe customer/subscription identifiers. We never see or store your card number.</LI>
         <LI><strong>Usage and diagnostics</strong> — app events (e.g. "workout logged") and crash reports, used to improve the product.</LI>
+        <LI><strong>Days you used the app</strong> — the calendar dates on which you opened GameFit while signed in. We record the date only, not the time of day, your location, your device, or the screens you viewed.</LI>
       </ul>
 
       <H>Why we process it</H>
@@ -30,6 +31,13 @@ export default function Privacy() {
         rank, level, XP and avatar appearance are visible to others — never your email, body
         metrics or private data); to keep the service secure; and to improve GameFit. We do not
         sell your personal data.
+      </P>
+      <P>
+        We also use the dates on which accounts were active (a workout logged, a Coach G
+        request, or the app opened) to measure how many people continue to use GameFit over
+        time. This is calculated for groups of accounts, never for one person. The resulting
+        totals and percentages may appear in published research about GameFit. No name, email
+        address, or individual record is included.
       </P>
 
       <H>AI processing</H>
@@ -60,8 +68,9 @@ export default function Privacy() {
         We keep your data while your account exists. You can permanently delete your account at
         any time in the app (Profile → Delete Account) or by following the steps at
         gamefit.online/delete-account. Deletion removes your profile, workouts, meals, coaching
-        logs, photos and rewards, and cancels any active subscription. Some payment records are
-        retained by Stripe as required by financial regulations.
+        logs, photos, rewards, and the record of days you used the app, and cancels any active
+        subscription. Some payment records are retained by Stripe as required by financial
+        regulations.
       </P>
 
       <H>Your rights</H>

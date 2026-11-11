@@ -507,9 +507,10 @@ FACT_LEDGER.md, with the headcount arithmetic a reviewer would check.
 
 ```bash
 npm run verify            # lint + emoji + avatar + unit + build + e2e
-npm run test:unit         # 14 Node test-runner tests: the coach adaptation rule
-npm run test:e2e          # 108 Playwright tests (builds first, ~5 min)
-npm run test:unit         # Node test runner: the coach adaptation rule
+npm run test:unit         # Node test runner, ~10 s: the coach adaptation rule
+                          # and the retention SQL, which runs the real
+                          # migrations in an in-process Postgres (Phase 14)
+npm run test:e2e          # Playwright, both browsers (builds first, ~5 min)
 npm run check:validation  # 137 recorded inputs through the zod form schemas
 npm run test:e2e:ui       # same, in the Playwright UI
 npm run check:avatar      # ground contrast, label contrast, class separation,
@@ -889,6 +890,103 @@ branch, this is the first thing to check.
 - **Still open:** `ios/App/CapApp-SPM/Package.swift` pins the Capacitor
   runtime at exactly 8.4.2, which the advisory covers. `npx cap sync` before
   the next iOS build rewrites it; npm audit cannot see that file.
+
+## Phase 14: retention measurement (branch `feat/retention-measurement`, 2026-11-11)
+
+**Not merged, migration not applied.** The owner steps are in
+`docs/RETENTION_MEASUREMENT.md`, which is also the methods reference for the
+book chapter: definitions, formulas with a worked example, and limits.
+
+**Apply the migration with `npx supabase db push` (dry run first) before the
+change reaches `main` on GitHub.** A local `git merge` is fine; the push, or
+merging a pull request, is the release. When PR #6 merged on 2026-11-11, three
+Edge Functions were redeployed automatically within nine seconds (most likely
+the Supabase GitHub integration), and migrations may be applied the same way.
+This branch changes no Edge Function.
+The migration is additive, so applying it early changes nothing users see.
+
+The paper claims to enhance retention and nothing measured it. This adds the
+measurement from the database alone, with no third-party service.
+
+**An active day** is an Asia/Dubai calendar day on which the server recorded a
+logged workout (`workouts.created_at`), an accepted Coach G request
+(`ai_request_logs.created_at`), or an app open (`activity_days`, new). Workouts
+and coach requests are read from their own tables, never copied, so history
+goes back to the first signup. Meal logs are excluded because the client can
+write that table's timestamps.
+
+What was added:
+
+- `supabase/migrations/20261111130001_retention_measurement.sql`:
+  `activity_days` (user, Dubai date, source; no time of day), the zero-argument
+  `record_app_open()` RPC, `analytics_excluded_users`, and four service-role
+  reporting functions: `retention_cohorts`, `retention_active_days`,
+  `retention_weekly_engagement`, `retention_report`.
+- `src/lib/activityDay.js` (the rule, import-free so Node can test it) and
+  `src/lib/appOpen.js` (the wiring), started from `main.jsx`.
+- `scripts/export-retention.mjs` and `npm run export:retention`.
+- 80 tests in `tests/unit/` (94 together with Phase 13's adaptation tests)
+  under `npm run test:unit`, which runs in `npm run verify` and in the CI
+  "Lint, guards and build" job.
+- `tests/app-open.spec.js`: the one browser test of the wiring. It signs in
+  with every Supabase call stubbed and is Chromium-only for the same reason
+  as the OTP test (WebKit does not honour cross-origin stubs).
+- A privacy page paragraph and list item for the new data.
+
+Things that are easy to get wrong:
+
+1. **Apply the migration before the frontend deploys.** The reverse order makes
+   every signed-in visit request a function that does not exist: a 404 in the
+   console (which fails the authed "no console error" test) and no data.
+2. **`app_open` history starts on the day the migration is applied.** For a
+   cohort that signed up earlier, the `any` definition understates its early
+   days. Use `core` or `workout` for those, and read `app_open_tracked`.
+3. **Unbounded retention is meaningless without its as-of day.** It can only
+   rise as time passes. Accounts that have not reached day N are in neither
+   the numerator nor the denominator (`eligible`), and a rate with nobody
+   eligible is null, not zero.
+4. **Supabase grants every new `public` function to `anon` and
+   `authenticated`.** Each function in the migration revokes explicitly, and
+   `tests/unit/retention-access.test.mjs` reads the grants from the catalog.
+   A new `retention_*` function fails that test until it is listed there.
+5. **The unit tests run the real migration files** in PGlite (Postgres as
+   WebAssembly, pinned exactly at 0.5.12), so they also prove the whole
+   migration chain applies to an empty database. PGlite is Postgres 18 and
+   production is 17.6; keep the SQL to features both have.
+6. **The export script does no arithmetic.** Every figure comes from
+   `retention_report()`. Keep it that way, or a number in the paper stops
+   tracing to one SQL function. The service role key comes from the
+   environment only and is never printed.
+7. **Exports do not live in this repository.** The owner keeps them in the
+   book chapter's working folder, in a `Retention data` subfolder, passed with
+   `--out`. Do not write that personal path into any tracked file.
+8. **Flag the QA account** in `analytics_excluded_users` (owner step 4). The
+   authed end-to-end journeys sign in with it and now record an app open.
+   Accounts with `role = 'admin'` are excluded automatically.
+
+How this sits with the branches that landed first (rebased onto `main` at
+`ca80af1` on 2026-11-11):
+
+- `20261111120001_coach_feedback.sql` (Phase 13) is already applied in
+  production, and this migration's version is later, so `db push` applies it
+  in order with no rename.
+- `test:unit` runs the glob `tests/unit/*.test.*`, which covers Phase 13's
+  `adaptation.test.ts` and this branch's `.mjs` tests. The PGlite harness also
+  applies `coach_feedback.sql`, so the unit step now checks that every
+  migration, including Phase 13's, applies to an empty database.
+- `feat/vercel-analytics` (PR #4, still open) sets the privacy page date to
+  26 September 2026; keep the later date.
+
+What this does not show: that gamification improves retention. The figures
+describe behaviour. The claim needs a comparison (a control condition or a
+benchmark under the same definition), and the system has neither.
+
+This branch adds one dev-only dependency, `@electric-sql/pglite` (pinned
+exactly), and changes no other package.
+
+Found in passing and not fixed: `GameFitContext.jsx` filters the free
+"4 / 10" coach counter by the UTC month while the server keys it by the Dubai
+month, which disagree for four hours at each month's start.
 
 ## Known limitations (disclosed, not hidden)
 

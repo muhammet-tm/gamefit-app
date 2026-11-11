@@ -49,6 +49,11 @@ ios/App/build/
 /blob-report/
 /playwright/.cache/
 
+# Default output folder of scripts/export-retention.mjs. The files hold counts
+# and rates only, but they are study data and belong with the paper, not in
+# the codebase.
+/retention-exports/
+
 # Obsidian vault artifacts from opening this folder in Obsidian. Not part of
 # the codebase and not created by any build step. Ignored so a `git add -A`
 # cannot sweep them into a commit — which is exactly what nearly happened

@@ -4,9 +4,11 @@ import App from '@/App.jsx'
 import '@/index.css'
 import { initAnalytics } from '@/lib/analytics'
 import { initNativeShell } from '@/lib/platform'
+import { initAppOpenTracking } from '@/lib/appOpen'
 
 initAnalytics()
 initNativeShell()
+initAppOpenTracking()
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <App />
