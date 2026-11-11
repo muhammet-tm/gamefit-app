@@ -30,7 +30,7 @@ want branch → PR-style → merge discipline with no scope creep.
 | Payments | Stripe subscriptions, AED prices discovered dynamically (no hardcoded price IDs), signature-verified webhook | `supabase/functions/create-checkout`, `stripe-webhook` |
 | AI coach | Claude Haiku, called only server-side, 10/mo free cap enforced in DB | `supabase/functions/coach-g` |
 | Analytics/monitoring | PostHog + Sentry, both env-key-gated no-ops until keys are added | `src/lib/analytics.js` |
-| Native shells | Capacitor 7, `android/` + `ios/` scaffolded, app id `online.gamefit.app` | `capacitor.config.ts` |
+| Native shells | Capacitor 8 (8.4.3 since 2026-11-11), `android/` + `ios/` scaffolded, app id `online.gamefit.app` | `capacitor.config.ts` |
 
 Old Base44 app (`gamefit.online`, repo `muhammet-tm/gamefit-dev`) is still
 live and untouched — DNS cutover to this app is a deliberate, not-yet-taken
@@ -343,7 +343,7 @@ GameFit has no customers yet and no premises, so all three would be fabricated.
 
 ### Testing (new — there was none)
 
-`tests/` holds 88 Playwright tests over desktop Chrome and mobile Safari, plus
+`tests/` holds 108 Playwright tests (54 per browser, as of 2026-11-11) over desktop Chrome and mobile Safari, plus
 `.github/workflows/ci.yml` running lint, guards, build, `npm audit
 --audit-level=moderate` and both browsers on every PR.
 
@@ -508,7 +508,9 @@ FACT_LEDGER.md, with the headcount arithmetic a reviewer would check.
 ```bash
 npm run verify            # lint + emoji + avatar + unit + build + e2e
 npm run test:unit         # 14 Node test-runner tests: the coach adaptation rule
-npm run test:e2e          # 88 Playwright tests (builds first, ~3 min)
+npm run test:e2e          # 108 Playwright tests (builds first, ~5 min)
+npm run test:unit         # Node test runner: the coach adaptation rule
+npm run check:validation  # 137 recorded inputs through the zod form schemas
 npm run test:e2e:ui       # same, in the Playwright UI
 npm run check:avatar      # ground contrast, label contrast, class separation,
                           # kit separation, skin/contour disjunction
@@ -858,6 +860,35 @@ Decisions left to the owner: whether this privacy change counts as "material"
 (the policy promises an in-app notice for those), and whether the privacy page
 should also list gender, which `coach-g` has always sent to Anthropic but the
 page does not name.
+
+## Dependencies: November 2026 advisories and zod 4 (merged 2026-11-11, PR #5)
+
+`npm audit` is a dated fact, not a property of the code: it was clean on
+25 September and showed 11 advisories on 11 November with no commit in
+between. PR #5 cleared them. If CI's audit job goes red on an untouched
+branch, this is the first thing to check.
+
+- The four `@capacitor/*` packages moved 8.4.2 to 8.4.3 together.
+  `@capacitor/cli` stays pinned exactly. A plain `npm audit fix` wanted to move
+  android, ios and core to 8.6.0 while the CLI stayed behind, so bump the four
+  by hand, then run the fix.
+- **zod is on version 4** (the only fix for GHSA-mrhx-c7xc-m3w5).
+  `src/lib/validation.js` is its only importer. Three things there are
+  deliberate: `error` replaces `invalid_type_error`; whole-number checks use
+  `.refine(Number.isInteger, msg)` because zod 4's `.int()` also rejects
+  integers beyond 2^53 with its own message; and `z.config({ jitless: true })`
+  stops zod probing for `eval`, which the app's CSP would report as a
+  violation (the e2e suite cannot see that, because `vite preview` sends no
+  CSP header).
+- `npm run check:validation` replays 137 recorded inputs and asserts pass or
+  fail, the parsed value and the exact message. 18 of them changed wording
+  between zod 3 and 4 (inputs no form sends: `null`, `undefined`, a
+  non-object, `Infinity`); the script keeps the old sentence beside the new
+  one (`node scripts/check-validation.mjs --list`). The owner accepted those
+  18 on 11 November 2026.
+- **Still open:** `ios/App/CapApp-SPM/Package.swift` pins the Capacitor
+  runtime at exactly 8.4.2, which the advisory covers. `npx cap sync` before
+  the next iOS build rewrites it; npm audit cannot see that file.
 
 ## Known limitations (disclosed, not hidden)
 
