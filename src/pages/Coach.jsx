@@ -12,7 +12,7 @@ import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import CoachMarkdown from '@/components/gamefit/CoachMarkdown';
-import { invokeFunction } from '@/api/supabase';
+import { invokeFunction, saveCoachFeedback } from '@/api/supabase';
 import { track } from '@/lib/analytics';
 
 const AI_LIMIT = 10;
@@ -53,6 +53,10 @@ export default function Coach() {
   const [planLoading, setPlanLoading] = useState(false);
   const [planResult, setPlanResult] = useState('');
   const [planRating, setPlanRating] = useState(null);
+  // True only while planResult is a real plan from Coach G. The same card also
+  // shows error messages, and those must not be rateable now that a rating is
+  // stored and steers later coaching.
+  const [planRateable, setPlanRateable] = useState(false);
 
   // Chat state
   const [messages, setMessages] = useState([
@@ -73,12 +77,14 @@ export default function Coach() {
     if (atLimit) { setShowPremium(true); return; }
     setPlanLoading(true);
     setPlanResult('');
+    setPlanRateable(false);
     const eq = equipment.length ? equipment : ['No Equipment'];
     try {
       const res = await invokeFunction('coach-g', {
         type: 'plan', days, sessionDuration, equipment: eq, injuries,
       });
       setPlanResult(res?.reply || 'Failed to generate plan. Please try again.');
+      setPlanRateable(Boolean(res?.reply));
       track('ai_request', { type: 'plan' });
     } catch (err) {
       if (err.premium_required) { setShowPremium(true); setPlanResult(''); }
@@ -121,8 +127,24 @@ export default function Coach() {
     }
   };
 
+  // Ratings are stored so the server can adapt later coaching: coach-g reads
+  // the user's recent ratings itself, so nothing here is sent along with a
+  // coaching request. The UI stays optimistic. The thank-you shows at once and
+  // a failed save is logged and otherwise ignored, because a rating is never
+  // worth interrupting the user for.
+  const saveRating = (requestType, rating) => {
+    saveCoachFeedback(requestType, rating)
+      .catch(err => console.warn('Coach feedback save failed:', err.message));
+  };
+
+  const ratePlan = (rating) => {
+    setPlanRating(rating);
+    saveRating('plan', rating);
+  };
+
   const rateMessage = (idx, rating) => {
     setMessages(prev => prev.map((m, i) => i === idx ? { ...m, rated: rating } : m));
+    saveRating('chat', rating);
   };
 
   const inputStyle = { backgroundColor: 'var(--gf-bg-elevated)', color: 'var(--gf-text-primary)', border: '1px solid var(--gf-border)' };
@@ -261,11 +283,11 @@ export default function Coach() {
             <motion.div className="rounded-2xl p-5" style={{ backgroundColor: 'var(--gf-bg-elevated)', border: '1px solid var(--gf-border)' }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <CoachMarkdown text={planResult} />
-              {!planRating && (
+              {planRateable && !planRating && (
                 <div className="flex gap-2 mt-4 pt-4" style={{ borderTop: '1px solid var(--gf-border)' }}>
                   <p className="font-body text-xs mr-auto" style={{ color: 'var(--gf-text-secondary)' }}>Rate this plan:</p>
                   {[{ label: 'Too Easy', Icon: ThumbsUp, val: 'too_easy' }, { label: 'Just Right', Icon: Check, val: 'just_right' }, { label: 'Too Hard', Icon: ThumbsDown, val: 'too_hard' }].map(r => (
-                    <button key={r.val} onClick={() => setPlanRating(r.val)}
+                    <button key={r.val} onClick={() => ratePlan(r.val)}
                       className="px-2 py-1 rounded-lg font-body text-xs transition-all active:scale-95"
                       style={{ backgroundColor: 'var(--gf-bg-surface)', color: 'var(--gf-text-secondary)', border: '1px solid var(--gf-border)' }}>
                       <span className="flex items-center gap-1">

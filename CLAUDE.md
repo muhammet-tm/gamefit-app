@@ -30,7 +30,7 @@ want branch → PR-style → merge discipline with no scope creep.
 | Payments | Stripe subscriptions, AED prices discovered dynamically (no hardcoded price IDs), signature-verified webhook | `supabase/functions/create-checkout`, `stripe-webhook` |
 | AI coach | Claude Haiku, called only server-side, 10/mo free cap enforced in DB | `supabase/functions/coach-g` |
 | Analytics/monitoring | PostHog + Sentry, both env-key-gated no-ops until keys are added | `src/lib/analytics.js` |
-| Native shells | Capacitor 7, `android/` + `ios/` scaffolded, app id `online.gamefit.app` | `capacitor.config.ts` |
+| Native shells | Capacitor 8 (8.4.3 since 2026-11-11), `android/` + `ios/` scaffolded, app id `online.gamefit.app` | `capacitor.config.ts` |
 
 Old Base44 app (`gamefit.online`, repo `muhammet-tm/gamefit-dev`) is still
 live and untouched — DNS cutover to this app is a deliberate, not-yet-taken
@@ -343,7 +343,7 @@ GameFit has no customers yet and no premises, so all three would be fabricated.
 
 ### Testing (new — there was none)
 
-`tests/` holds 88 Playwright tests over desktop Chrome and mobile Safari, plus
+`tests/` holds 108 Playwright tests (54 per browser, as of 2026-11-11) over desktop Chrome and mobile Safari, plus
 `.github/workflows/ci.yml` running lint, guards, build, `npm audit
 --audit-level=moderate` and both browsers on every PR.
 
@@ -506,8 +506,11 @@ FACT_LEDGER.md, with the headcount arithmetic a reviewer would check.
 ## Verification commands (run these, don't reason about it)
 
 ```bash
-npm run verify            # lint + emoji + avatar + build + e2e
-npm run test:e2e          # 88 Playwright tests (builds first, ~3 min)
+npm run verify            # lint + emoji + avatar + unit + build + e2e
+npm run test:unit         # 14 Node test-runner tests: the coach adaptation rule
+npm run test:e2e          # 108 Playwright tests (builds first, ~5 min)
+npm run test:unit         # Node test runner: the coach adaptation rule
+npm run check:validation  # 137 recorded inputs through the zod form schemas
 npm run test:e2e:ui       # same, in the Playwright UI
 npm run check:avatar      # ground contrast, label contrast, class separation,
                           # kit separation, skin/contour disjunction
@@ -715,8 +718,183 @@ workout-complete screen without writing to the live leaderboard, intercept
 `**/rest/v1/rpc/log_workout` in Chromium and fulfill it with a stub, and
 assert the stub was hit exactly once before trusting the screenshot.
 
+## Phase 13: adaptive coach loop (branch `feat/adaptive-coach-loop`, NOT deployed)
+
+**Status on 2026-11-11: committed on the branch only.** The migration has not
+been applied, the `coach-g` function has not been redeployed, and nothing is
+merged. Production behaves exactly as before until the owner runs the steps
+at the end of this section.
+
+**Why.** The published paper says Coach G has an adaptive feedback loop: the
+user rates a plan or answer as too easy, just right or too hard, and later
+coaching adapts. The code did not do that. `Coach.jsx` kept the rating in React
+state and discarded it, and the `coach-g` system prompt held profile fields
+only (no workout history, no ratings). This phase stores the rating and feeds
+it, with recent workouts, back into the prompt.
+
+What was added:
+
+- **Table `public.coach_feedback`**
+  (`supabase/migrations/20261111120001_coach_feedback.sql`): `id`, `user_id`
+  (cascades from `profiles`, so account deletion still removes everything),
+  `request_type` (`plan` / `chat` / `nutrition`), `rating` (`too_easy` /
+  `just_right` / `too_hard`), `created_at`. RLS on. A signed-in user can read
+  and insert only their own rows and cannot update or delete them.
+- **`supabase/functions/_shared/adaptation.ts`**: a pure function,
+  `buildAdaptationContext(ratings, workouts, now)`, that returns a block of at
+  most 8 lines (hard cap 12) for the system prompt, or `''` when there is no
+  data. No Deno, network or clock access, which is why it can be unit tested.
+- **`coach-g`** reads the user's last 5 ratings (30 days) and their workouts
+  (14 days) with the service client, filtered by the id from the verified JWT,
+  and appends the block right after the profile context. It does this for
+  `plan`, `nutrition` and `chat`, not for `meal_analysis`.
+- **`Coach.jsx`** now stores a rating when the user taps one, through
+  `saveCoachFeedback()` in `src/api/supabase.js`.
+- **`/privacy`** says that a summary of recent workouts and the difficulty
+  ratings go to Anthropic. The "DRAFT, pending legal review" banner is
+  untouched. The "Last updated" date was changed to 11 November 2026; adjust
+  it if the release date differs.
+- **`npm run test:unit`** (14 tests on Node's own test runner), also wired into
+  `npm run verify` and the CI "Lint, guards and build" job.
+
+**The adaptation rule** looks at the three most recent ratings from the last
+30 days, newest first:
+
+| Situation | Instruction given to the model |
+|---|---|
+| Latest is `too_hard`, or two of the three are | Reduce volume or intensity by about 10 to 20 percent, offer easier alternatives |
+| Latest is `too_easy` and none of the three is `too_hard` | Progress load or volume by about 5 to 10 percent |
+| Latest is `too_easy` but one of the three is `too_hard` (mixed) | No change |
+| Latest is `just_right` | Keep the load, vary the exercises |
+| No ratings in 30 days | No rating-based change |
+
+It is asymmetric on purpose. One "too hard" is enough to ease off, while
+progressing needs a clean recent record, because overshooting on the hard side
+is the mistake that hurts people. The block also ends with a line saying the
+safety rules and stated injuries take priority over the adaptation.
+
+The workout summary uses four real columns of `public.workouts`:
+`exercise_type`, `duration_min`, `intensity_level`, `created_at`. **`notes` is
+never read or sent**, because it is free text.
+
+**It fails open.** If either read fails (migration not applied, a missing
+grant, a slow database), `coach-g` logs one line, `adaptation context
+skipped`, with the table name and error code only, and answers without the
+block. There is a 3 second budget on the two reads. The prompt sent in that
+case is byte-identical to the one `main` sends today. The reads happen after
+validation and after the credit is reserved, so a refused request reads
+nothing. Validation, entitlement, credit reservation and refund are unchanged.
+
+Five things that are easy to get wrong here:
+
+1. **The client sends only `request_type` and `rating`.** The database fills in
+   `user_id` (from the login) and `created_at`, and the insert grant covers only
+   those two columns. Adding `user_id` to the insert in `saveCoachFeedback`
+   makes every save fail with `42501`. This is deliberate: a rating cannot be
+   dated into the future to outrank newer ones.
+2. **The migration states its grants in full** (`revoke all`, then
+   `grant select`, `grant insert (request_type, rating)`, and `grant all` to
+   `service_role`). The older migrations rely on new tables arriving fully
+   granted and then revoke. `supabase/config.toml` documents that Supabase is
+   moving to "new tables are not exposed unless granted", so this file is
+   written to be correct under both. Follow this pattern for any new table.
+3. **`sanitizeForPrompt` moved to `_shared/sanitize.ts`** and `helpers.ts`
+   re-exports it. `helpers.ts` imports `npm:@supabase/supabase-js`, which Node
+   cannot load, so the unit test could not have used the real sanitizer
+   otherwise. Keep `sanitize.ts` free of Deno imports.
+4. **`playwright.config.js` ignores `tests/unit/`.** Playwright's default
+   pattern matches `*.test.ts`. Without the ignore it imports the file and the
+   unit tests run inside the e2e process on every run.
+5. **An error message in the plan card is not rateable.** The card shows
+   failures as well as plans. The rating row used to appear under both; it is
+   now hidden for failures, because a stored rating steers later coaching.
+
+What the sanitizer does and does not do: it strips markup and punctuation and
+the module then flattens the value to one line of at most 24 characters. It
+does not remove ordinary words. In practice `exercise_type` can only hold one
+of the 11 values `log_workout` accepts, so this is defence in depth.
+
+Known limits: there is no cap on how many ratings one account can insert (the
+same is true of `meal_logs`), and nutrition plans have no rating buttons yet,
+so `request_type = 'nutrition'` is accepted by the table but never written.
+
+How this was checked, and what was not:
+
+- `npm run lint`, `npm run check:emoji`, `npm run test:unit` (14 of 14) and
+  `npm run build` pass.
+- The migration was applied to an in-process Postgres (PGlite, PostgreSQL 18)
+  with stand-in `anon` / `authenticated` / `service_role` roles, under both
+  grant regimes: 17 of 17 checks each (own-row insert and read, no `user_id`
+  or `created_at` from the client, no update or delete, nothing for `anon`,
+  service-role read, cascade on account deletion). **It has not been run
+  against Supabase.**
+- The real `coach-g/index.ts` was run under Node with the Supabase client,
+  Stripe and the Anthropic call faked: 34 of 34 checks, including the three
+  failure modes and the byte-identical prompt. **Deno is not installed on this
+  machine, so `deno check` was not run.** A `tsc` pass with shims for the Deno
+  globals reports one error, on a line that is unchanged from `main`
+  (implicit `any` in the chat `.filter`).
+- The Coach screen was driven in headless Chromium against the production
+  build with every backend call stubbed: 13 of 13 checks (the insert body, the
+  optimistic UI when the save fails, the unrateable error card).
+- **Not run: the Playwright e2e suite, and anything against the live
+  database, the live function or the real model.** Whether Claude Haiku
+  follows the instruction well is untested.
+
+**Owner steps to deploy, in this order** (each is safe on its own because the
+function fails open and a failed save is silent):
+
+1. Apply the migration. Run `npx supabase db push --dry-run` first. It must
+   list only `20261111120001_coach_feedback.sql`. If it lists older files,
+   stop, and paste that one file into the Supabase SQL editor instead. Then
+   run `npx supabase db push`.
+2. Deploy the function: `npx supabase functions deploy coach-g`.
+3. Merge `feat/adaptive-coach-loop` into `main` (`--no-ff`) and push. Vercel
+   deploys the frontend.
+4. Check on the live app: generate a plan, tap "Too Hard", and confirm one row
+   appears in `coach_feedback` in the Supabase table editor. Generate another
+   plan and read it for lighter volume or easier alternatives. Then open the
+   `coach-g` logs and confirm there is no `adaptation context skipped` line.
+
+Decisions left to the owner: whether this privacy change counts as "material"
+(the policy promises an in-app notice for those), and whether the privacy page
+should also list gender, which `coach-g` has always sent to Anthropic but the
+page does not name.
+
+## Dependencies: November 2026 advisories and zod 4 (merged 2026-11-11, PR #5)
+
+`npm audit` is a dated fact, not a property of the code: it was clean on
+25 September and showed 11 advisories on 11 November with no commit in
+between. PR #5 cleared them. If CI's audit job goes red on an untouched
+branch, this is the first thing to check.
+
+- The four `@capacitor/*` packages moved 8.4.2 to 8.4.3 together.
+  `@capacitor/cli` stays pinned exactly. A plain `npm audit fix` wanted to move
+  android, ios and core to 8.6.0 while the CLI stayed behind, so bump the four
+  by hand, then run the fix.
+- **zod is on version 4** (the only fix for GHSA-mrhx-c7xc-m3w5).
+  `src/lib/validation.js` is its only importer. Three things there are
+  deliberate: `error` replaces `invalid_type_error`; whole-number checks use
+  `.refine(Number.isInteger, msg)` because zod 4's `.int()` also rejects
+  integers beyond 2^53 with its own message; and `z.config({ jitless: true })`
+  stops zod probing for `eval`, which the app's CSP would report as a
+  violation (the e2e suite cannot see that, because `vite preview` sends no
+  CSP header).
+- `npm run check:validation` replays 137 recorded inputs and asserts pass or
+  fail, the parsed value and the exact message. 18 of them changed wording
+  between zod 3 and 4 (inputs no form sends: `null`, `undefined`, a
+  non-object, `Infinity`); the script keeps the old sentence beside the new
+  one (`node scripts/check-validation.mjs --list`). The owner accepted those
+  18 on 11 November 2026.
+- **Still open:** `ios/App/CapApp-SPM/Package.swift` pins the Capacitor
+  runtime at exactly 8.4.2, which the advisory covers. `npx cap sync` before
+  the next iOS build rewrites it; npm audit cannot see that file.
+
 ## Known limitations (disclosed, not hidden)
 
+- **The adaptive coach loop is built but not deployed.** See phase 13 for the
+  four owner steps. Until then ratings are still discarded and the coach still
+  sees profile fields only.
 - **iOS builds need a Mac** — user is on Windows. `docs/STORE_SUBMISSION.md`
   recommends Codemagic's free tier (cloud Mac builds from the GitHub repo).
 - **Captcha: the client half is built, the dashboard toggle is the last step.**

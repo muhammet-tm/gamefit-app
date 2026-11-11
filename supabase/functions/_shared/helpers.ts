@@ -128,13 +128,10 @@ export function resolveAllowedOrigin(req: Request, fallback = 'https://gamefit.o
   return fallback;
 }
 
-/** Strip a user-supplied string down to prompt-safe characters. */
-export function sanitizeForPrompt(value: unknown, maxLen = 200): string {
-  return String(value ?? '')
-    .replace(/[^\w\s,.'()/-]/g, '')
-    .slice(0, maxLen)
-    .trim();
-}
+// Strips a user-supplied string down to prompt-safe characters. It lives in
+// sanitize.ts (no Deno imports) so pure modules and their Node unit tests can
+// use the same function; re-exported here so every existing import still works.
+export { sanitizeForPrompt } from './sanitize.ts';
 
 /** Verify premium server-side against Stripe — never trust account_type. */
 export async function verifyPremium(

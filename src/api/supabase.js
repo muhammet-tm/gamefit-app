@@ -69,6 +69,25 @@ export async function invokeFunction(name, body = {}) {
   return data;
 }
 
+/**
+ * Store the difficulty rating a user gave one of Coach G's plans or answers.
+ * The server reads these back (never anything the client sends with a coaching
+ * request) to adapt later coaching.
+ *
+ * Only the two fields below are sent on purpose: the database fills in the
+ * user id and the timestamp itself and refuses a client that tries to set
+ * either. Throws on error; callers decide whether that matters.
+ *
+ * @param {'plan'|'chat'|'nutrition'} requestType
+ * @param {'too_easy'|'just_right'|'too_hard'} rating
+ */
+export async function saveCoachFeedback(requestType, rating) {
+  const { error } = await supabase
+    .from('coach_feedback')
+    .insert({ request_type: requestType, rating });
+  if (error) throw new Error(error.message);
+}
+
 /** Call a database function (RPC); throws on error. */
 export async function callRpc(name, params = {}) {
   const { data, error } = await supabase.rpc(name, params);

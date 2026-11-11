@@ -35,6 +35,16 @@ jobs:
       - name: Avatar palette contrast
         run: npm run check:avatar
 
+      # 137 recorded inputs through the form schemas: pass or fail, parsed
+      # value and exact message. Catches a zod upgrade that changes behaviour.
+      - name: Form validation behaviour
+        run: npm run check:validation
+
+      # Pure-logic tests on Node's own runner (no browser): the rule that turns
+      # difficulty ratings into Coach G's adaptation instruction.
+      - name: Unit tests
+        run: npm run test:unit
+
       - name: Build
         run: npm run build
 
