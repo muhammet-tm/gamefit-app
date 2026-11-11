@@ -35,6 +35,11 @@ jobs:
       - name: Avatar palette contrast
         run: npm run check:avatar
 
+      # Pure-logic tests on Node's own runner (no browser): the rule that turns
+      # difficulty ratings into Coach G's adaptation instruction.
+      - name: Unit tests
+        run: npm run test:unit
+
       - name: Build
         run: npm run build
 

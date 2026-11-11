@@ -4,11 +4,19 @@
 // limit), premium verification against Stripe, prompt-injection
 // sanitization, and age-appropriate safety behavior. The Anthropic key
 // never leaves the server.
+//
+// Plans, nutrition plans and chat answers are adapted to the user: their
+// recent workouts and the difficulty ratings they gave earlier answers are
+// read here, server-side, and summarised into the system prompt. The rule
+// lives in ../_shared/adaptation.ts.
 import Stripe from 'npm:stripe@14.21.0';
 import {
   withCors, json, getUser, getProfile, serviceClient,
   sanitizeForPrompt, verifyPremium,
 } from '../_shared/helpers.ts';
+import {
+  buildAdaptationContext, MAX_RATINGS, RATING_WINDOW_DAYS, WORKOUT_WINDOW_DAYS,
+} from '../_shared/adaptation.ts';
 
 const MODEL = 'claude-haiku-4-5-20251001';
 const FREE_MONTHLY_LIMIT = 10;
@@ -18,6 +26,64 @@ const FREE_MONTHLY_LIMIT = 10;
 // image requests cost an order of magnitude more tokens than text.
 const PREMIUM_DAILY_TEXT_LIMIT = 100;
 const PREMIUM_DAILY_MEAL_LIMIT = 30;
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+// A user can log at most 10 workouts a day (log_workout enforces it), so 14
+// days can never hold more than 140 rows. The limit is a backstop, not a page.
+const ADAPTATION_WORKOUT_ROWS = 200;
+// Time budget for the two reads together. Past it the answer goes out
+// unadapted rather than late.
+const ADAPTATION_TIMEOUT_MS = 3000;
+
+/**
+ * The adaptive feedback loop: the user's recent difficulty ratings and recent
+ * workouts, turned into a short block for the system prompt.
+ *
+ * Both reads use the service role, so RLS does not apply and the filter on
+ * `userId` is the access control: it must always be the id of the user the
+ * JWT authenticated, never anything from the request body.
+ *
+ * Fails open. Coaching must never depend on this: if either read fails (the
+ * migration not applied yet, a grant missing, the database slow), the answer
+ * is simply not adapted. Logs carry a table name and an error code only: no
+ * ids, no rows, and no error message, because a network error's message can
+ * quote the request URL, which contains the user id.
+ */
+async function loadAdaptationContext(userId: string, now: Date): Promise<string> {
+  try {
+    const db = serviceClient();
+    const signal = AbortSignal.timeout(ADAPTATION_TIMEOUT_MS);
+    const [ratings, workouts] = await Promise.all([
+      db.from('coach_feedback')
+        .select('rating, request_type, created_at')
+        .eq('user_id', userId)
+        .gte('created_at', new Date(now.getTime() - RATING_WINDOW_DAYS * DAY_MS).toISOString())
+        .order('created_at', { ascending: false })
+        .limit(MAX_RATINGS)
+        .abortSignal(signal),
+      db.from('workouts')
+        .select('exercise_type, duration_min, intensity_level, created_at')
+        .eq('user_id', userId)
+        .gte('created_at', new Date(now.getTime() - WORKOUT_WINDOW_DAYS * DAY_MS).toISOString())
+        .order('created_at', { ascending: false })
+        .limit(ADAPTATION_WORKOUT_ROWS)
+        .abortSignal(signal),
+    ]);
+    if (ratings.error || workouts.error) {
+      console.error(
+        'adaptation context skipped, query failed:',
+        ratings.error ? `coach_feedback ${ratings.error.code || 'no code'}` : '',
+        workouts.error ? `workouts ${workouts.error.code || 'no code'}` : '',
+      );
+      return '';
+    }
+    const block = buildAdaptationContext(ratings.data, workouts.data, now);
+    return block ? `\n\n${block}` : '';
+  } catch (e) {
+    console.error('adaptation context skipped:', (e as Error)?.name ?? 'error');
+    return '';
+  }
+}
 
 Deno.serve(withCors(async (req) => {
   // Tracks whether a free-tier credit was reserved, so it can be handed back
@@ -95,7 +161,10 @@ moderate training loads only, no supplement recommendations, no calorie
 deficits, and encourage involving a parent/guardian or school coach.`
       : '';
 
-    const systemPrompt = `You are Coach G, an expert AI fitness coach inside the GameFit app.
+    // A function rather than a string because the adaptation block is read
+    // later, once the request is known to be valid and a credit is reserved.
+    // It sits directly after the profile context it complements.
+    const buildSystemPrompt = (adaptationContext: string) => `You are Coach G, an expert AI fitness coach inside the GameFit app.
 You give personalized, motivating fitness advice. Be concise, practical, and encouraging.
 
 Safety rules (non-negotiable):
@@ -118,7 +187,7 @@ Formatting rules (the app renders Markdown natively — use it):
   {"type":"bar","title":"Daily macros (g)","data":[{"label":"Protein","value":140},{"label":"Carbs","value":220},{"label":"Fat","value":70}]}
   \`\`\`
   Supported types: "bar" and "pie". Only add a chart when it genuinely
-  clarifies numbers — never decorate.${minorSafety}${userContext}
+  clarifies numbers — never decorate.${minorSafety}${userContext}${adaptationContext}
 Always end responses with: "This is general guidance only — not medical advice. Consult a healthcare professional before starting any new exercise program."`;
 
     // ---- build the message payload per request type
@@ -238,6 +307,16 @@ Estimate portions realistically. If it is not food, use {"meal_name": "Not food"
     reservedUserId = user.id;
     reservedMonthKey = bucket.key;
 
+    // ---- adaptive feedback loop: recent workouts and difficulty ratings,
+    // read server-side for the authenticated user. Nothing the client sends
+    // (ratings, history, a user id) feeds this. Text requests only: a meal
+    // photo is analysed on its own terms. It runs here, after validation and
+    // the reservation, so nothing is read for a request that gets refused; it
+    // cannot fail the request (see loadAdaptationContext).
+    const adaptationContext = type === 'meal_analysis'
+      ? ''
+      : await loadAdaptationContext(user.id, now);
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -248,7 +327,7 @@ Estimate portions realistically. If it is not food, use {"meal_name": "Not food"
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 1024,
-        system: systemPrompt,
+        system: buildSystemPrompt(adaptationContext),
         messages,
       }),
     });

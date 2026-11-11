@@ -15,6 +15,12 @@ const isCI = !!process.env.CI;
 
 export default defineConfig({
   testDir: './tests',
+  // tests/unit/ holds Node test-runner files (`npm run test:unit`). Playwright's
+  // default pattern matches `*.test.ts`, so without this it imports them while
+  // collecting specs, and `node:test` then runs them inside the Playwright
+  // process on every e2e run (even `--list`), outside either runner's report.
+  // Verified by listing with and without this line.
+  testIgnore: '**/tests/unit/**',
   // Fail the build if a test was accidentally committed with .only on it.
   forbidOnly: isCI,
   // One retry locally to absorb genuine flake; two in CI where machines are
