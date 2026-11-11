@@ -40,8 +40,11 @@ jobs:
       - name: Form validation behaviour
         run: npm run check:validation
 
-      # Pure-logic tests on Node's own runner (no browser): the rule that turns
-      # difficulty ratings into Coach G's adaptation instruction.
+      # Node's own test runner, no browser: the rule that turns difficulty
+      # ratings into Coach G's adaptation instruction, and the retention tests.
+      # Those run the real migration files in an in-process Postgres (PGlite),
+      # so this step also proves every migration still applies to an empty
+      # database.
       - name: Unit tests
         run: npm run test:unit
 
