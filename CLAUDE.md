@@ -897,11 +897,12 @@ branch, this is the first thing to check.
 `docs/RETENTION_MEASUREMENT.md`, which is also the methods reference for the
 book chapter: definitions, formulas with a worked example, and limits.
 
-**Apply the migration with `npx supabase db push` (dry run first) before
-merging, not after.** When PR #6 merged on 2026-11-11, three Edge Functions
-were redeployed automatically within nine seconds (most likely the Supabase
-GitHub integration), and migrations may be applied the same way, so the merge
-is the release.
+**Apply the migration with `npx supabase db push` (dry run first) before the
+change reaches `main` on GitHub.** A local `git merge` is fine; the push, or
+merging a pull request, is the release. When PR #6 merged on 2026-11-11, three
+Edge Functions were redeployed automatically within nine seconds (most likely
+the Supabase GitHub integration), and migrations may be applied the same way.
+This branch changes no Edge Function.
 The migration is additive, so applying it early changes nothing users see.
 
 The paper claims to enhance retention and nothing measured it. This adds the

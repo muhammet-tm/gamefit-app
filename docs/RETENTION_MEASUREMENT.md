@@ -165,7 +165,10 @@ The order matters. The database must have the new function before the new fronte
 Otherwise every signed-in visit makes a request that fails, and no app opens are recorded.
 
 1. Merge the branch into `main` locally with `git merge --no-ff feat/retention-measurement`. Do
-   not push yet.
+   not push yet. Pushing `main` is the release: on 11 November 2026 a merge to `main` on GitHub
+   redeployed Edge Functions automatically within seconds, and migrations may be applied the same
+   way. If the branch goes through a pull request instead, run steps 2 to 4 from the branch's own
+   checkout before merging the pull request, because merging it is then the release.
 
 2. Apply the migration from the checkout that is linked to the Supabase project. The command
    lists the migrations it is about to apply and asks for confirmation. It should list
