@@ -21,12 +21,15 @@ export const TIER_GLOW = {
 // Adjacent tiers are separated by lightness or hue so the ladder reads as
 // five distinct steps rather than a gradient.
 // These values are mirrored in gamefit-web's tokens.css; change both together.
+// Labels (November 2026): the metal names became training levels, Beginner
+// to Elite, to match the athlete cast. The colours, and the metal names in
+// the comments above, are unchanged.
 export const TIER_CONFIG = {
-  1: { label: 'Bronze',   color: '#C08657', bg: 'rgba(192,134,87,0.10)',  border: 'rgba(192,134,87,0.35)',  glow: null },
-  2: { label: 'Silver',   color: '#B9C4CC', bg: 'rgba(185,196,204,0.08)', border: 'rgba(185,196,204,0.35)', glow: '#B9C4CC' },
-  3: { label: 'Gold',     color: '#F4B044', bg: 'rgba(244,176,68,0.08)',  border: 'rgba(244,176,68,0.4)',   glow: '#F4B044' },
-  4: { label: 'Platinum', color: '#7FBBD4', bg: 'rgba(127,187,212,0.08)', border: 'rgba(127,187,212,0.4)',  glow: '#7FBBD4' },
-  5: { label: 'Apex',     color: '#E0680E', bg: 'rgba(224,104,14,0.10)',  border: 'rgba(224,104,14,0.5)',   glow: '#E0680E' },
+  1: { label: 'Beginner',     color: '#C08657', bg: 'rgba(192,134,87,0.10)',  border: 'rgba(192,134,87,0.35)',  glow: null },
+  2: { label: 'Novice',       color: '#B9C4CC', bg: 'rgba(185,196,204,0.08)', border: 'rgba(185,196,204,0.35)', glow: '#B9C4CC' },
+  3: { label: 'Intermediate', color: '#F4B044', bg: 'rgba(244,176,68,0.08)',  border: 'rgba(244,176,68,0.4)',   glow: '#F4B044' },
+  4: { label: 'Advanced',     color: '#7FBBD4', bg: 'rgba(127,187,212,0.08)', border: 'rgba(127,187,212,0.4)',  glow: '#7FBBD4' },
+  5: { label: 'Elite',        color: '#E0680E', bg: 'rgba(224,104,14,0.10)',  border: 'rgba(224,104,14,0.5)',   glow: '#E0680E' },
 };
 
 // TIER_BADGES (medal emoji per tier) was removed: at both render sites the

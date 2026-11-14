@@ -8,12 +8,10 @@ import {
 } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { invokeFunction } from '@/api/supabase';
-import Avatar from '@/components/avatar/Avatar';
+import AthleteAvatar from '@/components/avatar/AthleteAvatar';
 import {
-  AVATAR_CLASSES, CLASS_LABELS, CLASS_TAGLINES, classColors,
-  SKIN_TONES, HAIR_COLORS, DEFAULT_CONFIG,
-  hairStylesFor, hairForBody, DEFAULT_HAIR_BY_BODY,
-} from '@/components/avatar/palettes';
+  ATHLETES, getAthlete, athleteForConfig, configForAthlete, disciplineOf,
+} from '@/components/avatar/athletes';
 
 // ── Mascot (little GameFit elephant-like coach) ───────────────────────────────
 function Mascot({ size = 70 }) {
@@ -222,28 +220,22 @@ export default function Onboarding() {
   const [fitnessGoal, setFitnessGoal] = useState(null);
   const [fitnessLevel, setFitnessLevel] = useState(null);
   const [weeklyGoal, setWeeklyGoal] = useState(null);
-  const [avatarClass, setAvatarClass] = useState(null);
-  const [skinTone, setSkinTone] = useState(DEFAULT_CONFIG.skin_tone);
-  const [hair, setHair] = useState(DEFAULT_CONFIG.hair);
+  const [athleteId, setAthleteId] = useState(null);
   const [stravaBusy, setStravaBusy] = useState(false);
 
   const bmi = weightKg && heightCm ? (weightKg / ((heightCm / 100) ** 2)).toFixed(1) : null;
   const bmiLabel = bmi ? (bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Healthy' : bmi < 30 ? 'Overweight' : 'Obese') : '';
 
-  // Gender picks the avatar rig: male and female are separately drawn
-  // characters, not one body with different hair. The body can still be
-  // changed later from the Avatar screen.
+  // Gender only orders the athlete list: people matching it come first.
+  // Anyone can pick any athlete, here or later from the Avatar screen.
   const body = gender === 'female' ? 'female' : 'male';
-  const pickGender = (g) => {
-    setGender(g);
-    setHair(prev => (prev === DEFAULT_CONFIG.hair
-      ? DEFAULT_HAIR_BY_BODY[g === 'female' ? 'female' : 'male']
-      : hairForBody(prev, g === 'female' ? 'female' : 'male')));
-  };
+  const pickGender = (g) => setGender(g);
+  const athleteOrder = [...ATHLETES].sort((a, b) => (b.body === body) - (a.body === body));
+  const chosen = getAthlete(athleteId) || athleteForConfig({ body });
 
   const canProceed = () => {
     if (step === 0) return !!gender;
-    if (step === 1) return !!avatarClass;
+    if (step === 1) return !!athleteId;
     if (step === 5) return !!fitnessGoal;
     if (step === 6) return !!fitnessLevel;
     if (step === 7) return !!weeklyGoal;
@@ -258,7 +250,7 @@ export default function Onboarding() {
       gender, age, weight_kg: weightKg, height_cm: heightCm,
       bmi: parseFloat(bmi), fitness_goal: fitnessGoal,
       fitness_level: fitnessLevel, weekly_goal: weeklyGoal,
-      avatar_config: { version: 3, class: avatarClass, body, skin_tone: skinTone, hair },
+      avatar_config: configForAthlete(chosen.id),
       onboarding_complete: true,
     };
     try {
@@ -334,31 +326,30 @@ export default function Onboarding() {
         </div>
       ),
     },
-    // 1 — Class pick
+    // 1 — Athlete pick. Ten preset people; the ones matching the gender
+    // picked on step 0 come first, but every athlete is open to everyone.
     {
-      mascotText: 'Choose your class, champion! You can change it anytime.',
+      mascotText: 'Pick the athlete you train as. You can change this anytime.',
       content: (
         <div className="w-full">
-          <h2 className="font-heading font-black text-3xl text-white mb-4">Choose your class</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {AVATAR_CLASSES.map(cls => {
-              const selected = avatarClass === cls;
-              // Onboarding paints its own dark ground (#1E1E21, white text)
-              // regardless of the app theme, so it pins the dark palette.
-              const cc = classColors(cls, 'dark');
+          <h2 className="font-heading font-black text-3xl text-white mb-4">Choose your athlete</h2>
+          <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Choose your athlete">
+            {athleteOrder.map(a => {
+              const selected = athleteId === a.id;
               return (
-                <button key={cls} onClick={() => setAvatarClass(cls)}
-                  className="rounded-2xl p-3 flex flex-col items-center gap-1.5 transition-all active:scale-95"
+                <button key={a.id} type="button" role="radio" aria-checked={selected}
+                  onClick={() => setAthleteId(a.id)}
+                  className="rounded-2xl p-2.5 flex flex-col items-center gap-1.5 transition-all active:scale-95"
                   style={{
-                    backgroundColor: selected ? `${cc.glow}14` : '#1E1E21',
-                    border: `2px solid ${selected ? cc.glow : '#2E2E33'}`,
+                    backgroundColor: selected ? 'rgba(244, 176, 68,0.10)' : '#1E1E21',
+                    border: `2px solid ${selected ? '#F4B044' : '#2E2E33'}`,
                   }}>
-                  <Avatar avatarClass={cls} tier={2} body={body} skinTone={skinTone} hair={hair} size={72} animate={false} theme="dark" />
-                  <span className="font-heading font-black text-base" style={{ color: selected ? cc.text : '#FFFFFF' }}>
-                    {CLASS_LABELS[cls]}
+                  <AthleteAvatar athleteId={a.id} tier={1} size={96} frame={false} />
+                  <span className="font-heading font-black text-base leading-tight" style={{ color: selected ? '#F4B044' : '#FFFFFF' }}>
+                    {a.name}
                   </span>
-                  <span className="font-body text-[10px] text-center leading-tight" style={{ color: '#A1A1AA' }}>
-                    {CLASS_TAGLINES[cls]}
+                  <span className="font-body text-[11px] leading-tight" style={{ color: '#A1A1AA' }}>
+                    {disciplineOf(a)} · {a.age}
                   </span>
                 </button>
               );
@@ -455,62 +446,23 @@ export default function Onboarding() {
         </div>
       ),
     },
-    // 8 — Look customizer + reveal
+    // 8 — Meet your athlete (replaced the skin and hair customiser)
     {
       mascotText: null,
       content: (
         <div className="w-full flex flex-col items-center">
           <motion.div className="w-full" initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 180 }}>
-            <h2 className="font-heading font-black text-3xl text-white text-center mb-2">Make it yours</h2>
+            <h2 className="font-heading font-black text-3xl text-white text-center mb-2">Meet {chosen.name}</h2>
             <p className="font-body text-sm text-center mb-5" style={{ color: '#A1A1AA' }}>
-              Your avatar grows as you get stronger!
+              {disciplineOf(chosen)}, {chosen.age}. {chosen.line}
             </p>
-            <div className="flex justify-center mb-6">
-              <div className="p-6 rounded-3xl relative overflow-hidden"
-                style={{ backgroundColor: '#1E1E21', border: '2px solid #F4B044' }}>
-                <div className="absolute inset-0 opacity-10" style={{ background: 'radial-gradient(circle at 50% 40%, #F4B044, transparent 60%)' }} />
-                <Avatar avatarClass={avatarClass || 'warrior'} body={body} skinTone={skinTone} hair={hair} size={150} tier={1} theme="dark" />
-              </div>
+            <div className="flex justify-center mb-5">
+              <AthleteAvatar athleteId={chosen.id} tier={1} moment="celebrate" size={170} priority />
             </div>
-
-            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#A1A1AA' }}>Skin tone</p>
-            <div className="flex gap-2.5 justify-center mb-4">
-              {Object.keys(SKIN_TONES).map(s => (
-                <button key={s} onClick={() => setSkinTone(s)}
-                  className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
-                  style={{ backgroundColor: SKIN_TONES[s].base, border: `3px solid ${skinTone === s ? '#F4B044' : 'transparent'}` }}>
-                  {skinTone === s && <Check size={13} color="white" strokeWidth={3} />}
-                </button>
-              ))}
-            </div>
-
-            <p className="font-body text-xs font-semibold mb-2 uppercase tracking-widest" style={{ color: '#A1A1AA' }}>Hair</p>
-            <div className="flex gap-2 mb-3">
-              {hairStylesFor(body).map(style => {
-                const cur = hair.split('_');
-                const selected = cur[0] === style;
-                return (
-                  <button key={style} onClick={() => setHair(`${style}_${cur[1] || 'black'}`)}
-                    className="flex-1 py-2 rounded-xl font-body font-medium text-xs capitalize transition-all"
-                    style={{ backgroundColor: selected ? '#F4B044' : '#1E1E21', color: selected ? '#141416' : '#A1A1AA', border: `1px solid ${selected ? '#F4B044' : '#2E2E33'}` }}>
-                    {style}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="flex gap-2.5 justify-center">
-              {Object.keys(HAIR_COLORS).map(c => {
-                const cur = hair.split('_');
-                const selected = (cur[1] || 'black') === c;
-                return (
-                  <button key={c} onClick={() => setHair(`${cur[0] || 'short'}_${c}`)}
-                    className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
-                    style={{ backgroundColor: HAIR_COLORS[c].base, border: `3px solid ${selected ? '#F4B044' : 'transparent'}` }}>
-                    {selected && <Check size={13} color="white" strokeWidth={3} />}
-                  </button>
-                );
-              })}
-            </div>
+            <p className="font-body text-sm text-center" style={{ color: '#A1A1AA' }}>
+              Every workout moves you up the ranks, from Beginner to Elite.
+              At Elite, {chosen.name} switches to the elite kit.
+            </p>
           </motion.div>
         </div>
       ),

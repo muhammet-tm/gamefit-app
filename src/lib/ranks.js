@@ -1,10 +1,12 @@
 // The rank ladder — one vocabulary for levels everywhere.
 // 10 levels map onto 5 ranks with sub-ranks (higher number = earlier):
-//   L1  Bronze II    L2  Bronze I
-//   L3  Silver II    L4  Silver I
-//   L5  Gold II      L6  Gold I
-//   L7  Platinum III L8  Platinum II   L9 Platinum I
-//   L10 APEX
+//   L1  Beginner II      L2  Beginner I
+//   L3  Novice II        L4  Novice I
+//   L5  Intermediate II  L6  Intermediate I
+//   L7  Advanced III     L8  Advanced II     L9 Advanced I
+//   L10 Elite
+// (Bronze, Silver, Gold, Platinum, and Apex until November 2026; the colours
+// still follow the metals.)
 import { TIER_CONFIG } from '@/components/avatar/tiers';
 import { getAvatarTier } from '@/lib/mockData';
 

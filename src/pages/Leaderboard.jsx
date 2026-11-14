@@ -6,7 +6,8 @@ import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import PullToRefresh from '@/components/gamefit/PullToRefresh';
 import { useGameFit } from '@/lib/GameFitContext';
 import { callRpc } from '@/api/supabase';
-import Avatar from '@/components/avatar/Avatar';
+import AthleteAvatar from '@/components/avatar/AthleteAvatar';
+import { athleteForConfig } from '@/components/avatar/athletes';
 import RankEmblem from '@/components/gamefit/RankEmblem';
 import { getRank } from '@/lib/ranks';
 import { normalizeAvatarConfig } from '@/components/avatar/migrate';
@@ -23,19 +24,10 @@ const PODIUM = {
   3: { height: 'h-16', edge: '#C08657', fill: 'var(--gf-bg-surface)', avatar: 72 },
 };
 
+// Podium places get the portrait card; list rows get the round face.
 function EntryAvatar({ entry, size }) {
-  const cfg = normalizeAvatarConfig(entry.avatar_config);
-  return (
-    <Avatar
-      avatarClass={cfg.class}
-      tier={entry.avatar_tier || 1}
-      skinTone={cfg.skin_tone}
-      hair={cfg.hair}
-      accessories={entry.equipped_accessory ? [entry.equipped_accessory] : []}
-      size={size}
-      animate={false}
-    />
-  );
+  const athlete = athleteForConfig(normalizeAvatarConfig(entry.avatar_config));
+  return <AthleteAvatar athleteId={athlete.id} tier={entry.avatar_tier || 1} size={size} />;
 }
 
 function RowSkeleton({ i }) {

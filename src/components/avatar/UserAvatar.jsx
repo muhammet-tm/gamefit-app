@@ -1,31 +1,37 @@
 import React from 'react';
-import Avatar from './Avatar';
+import AthleteAvatar from './AthleteAvatar';
 import { normalizeAvatarConfig } from './migrate';
+import { athleteForConfig } from './athletes';
 
 /**
- * Convenience wrapper: render a user object's avatar. Accepts any historical
- * avatar_config shape and the user's equipped shop accessory.
+ * Convenience wrapper: render a user object's athlete. Accepts any historical
+ * avatar_config shape; a profile that never picked an athlete shows the one
+ * matching its stored class and body.
+ *
+ * `moment` and `resting` choose the picture (see athletePose). The drawn SVG
+ * rig's props (`animate`, `revealFromTier`) are accepted and ignored so older
+ * call sites keep working.
  */
 export default function UserAvatar({
-  user, tier, size = 120, animate = true, className = '', style,
-  interactive = false, onActivate, revealFromTier,
+  user, tier, size = 120, className = '', style,
+  interactive = false, onActivate, moment = null, resting = false,
+  variant = 'auto', priority = false,
 }) {
   const cfg = normalizeAvatarConfig(user?.avatar_config, { gender: user?.gender });
+  const athlete = athleteForConfig(cfg);
   return (
-    <Avatar
-      avatarClass={cfg.class}
+    <AthleteAvatar
+      athleteId={athlete.id}
       tier={tier ?? user?.avatar_tier ?? 1}
-      body={cfg.body}
-      skinTone={cfg.skin_tone}
-      hair={cfg.hair}
-      accessories={user?.equipped_accessory ? [user.equipped_accessory] : []}
+      moment={moment}
+      resting={resting}
       size={size}
-      animate={animate}
-      className={className}
-      style={style}
+      variant={variant}
       interactive={interactive}
       onActivate={onActivate}
-      revealFromTier={revealFromTier}
+      priority={priority}
+      className={className}
+      style={style}
     />
   );
 }

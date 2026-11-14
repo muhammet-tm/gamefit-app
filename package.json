@@ -14,7 +14,7 @@
     "check:onboarding": "node scripts/check-onboarding-render.mjs",
     "typecheck": "tsc -p ./jsconfig.json",
     "preview": "vite preview",
-    "test:unit": "tsx --test tests/unit/adaptation.test.ts",
+    "test:unit": "tsx --test tests/unit/adaptation.test.ts tests/unit/athletes.test.ts",
     "verify": "npm run lint && npm run check:emoji && npm run check:avatar && npm run check:validation && npm run test:unit && npm run build && npm run test:e2e",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",

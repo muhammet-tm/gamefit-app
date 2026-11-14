@@ -8,6 +8,7 @@ import { getRank } from '@/lib/ranks';
 import RankEmblem from '@/components/gamefit/RankEmblem';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import UserAvatar from '@/components/avatar/UserAvatar';
+import { isRestDay } from '@/components/avatar/athletes';
 import BottomNav from '@/components/gamefit/BottomNav';
 import { disciplineIcon } from '@/lib/disciplines';
 import Icon from '@/components/ui/Icon';
@@ -97,8 +98,10 @@ export default function Dashboard() {
             label={`${user.total_xp.toLocaleString()} XP. ${xpToGo.toLocaleString()} XP to ${nextTitle}`}
           >
             {/* The ring is a readout, not a link, so the avatar keeps its
-                own tap reaction without a competing target. */}
-            <UserAvatar user={user} size={132} interactive />
+                own tap reaction without a competing target. The athlete
+                fills the ring's inner circle, head to waist. */}
+            <UserAvatar user={user} size={204} variant="bust" interactive priority
+              resting={isRestDay(user)} />
           </XPRing>
 
           <div className="mt-3 flex items-center gap-2">

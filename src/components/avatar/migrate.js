@@ -1,11 +1,15 @@
 // Normalize any historical avatar_config into the v3 shape:
-//   { version: 3, class, body, skin_tone, hair }
+//   { version: 3, class, body, skin_tone, hair, athlete? }
 // v1 (Base44 era): { gender, skin, outfit, hair }
 // v2: { version:2, class, skin_tone, hair }  — male rig only, no body field
+// `athlete` (November 2026) names the preset person shown as the avatar. It
+// is optional: a config without it shows the athlete matching its class and
+// body (see athleteForConfig in athletes.js).
 import {
   DEFAULT_CONFIG, AVATAR_CLASSES, SKIN_TONES, BODY_TYPES,
   hairStylesFor, hairForBody, DEFAULT_HAIR_BY_BODY,
 } from './palettes';
+import { getAthlete } from './athletes';
 
 const OUTFIT_TO_CLASS = {
   blue: 'knight',
@@ -57,14 +61,20 @@ export function normalizeAvatarConfig(config, opts = {}) {
   }
 
   if (config.version === 3) {
-    const body = BODY_TYPES.includes(config.body) ? config.body : genderBody;
-    return {
+    // A picked athlete fixes the class and body, so the two can never
+    // disagree about which discipline the profile belongs to.
+    const athlete = getAthlete(config.athlete);
+    const body = athlete ? athlete.body : (BODY_TYPES.includes(config.body) ? config.body : genderBody);
+    const out = {
       version: 3,
-      class: AVATAR_CLASSES.includes(config.class) ? config.class : DEFAULT_CONFIG.class,
+      class: athlete ? athlete.classKey
+        : (AVATAR_CLASSES.includes(config.class) ? config.class : DEFAULT_CONFIG.class),
       body,
       skin_tone: SKIN_TONES[config.skin_tone] ? config.skin_tone : DEFAULT_CONFIG.skin_tone,
       hair: validHair(config.hair, body) || DEFAULT_HAIR_BY_BODY[body],
     };
+    if (athlete) out.athlete = athlete.id;
+    return out;
   }
 
   if (config.version === 2) {
