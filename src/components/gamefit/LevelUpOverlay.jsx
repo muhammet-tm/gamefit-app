@@ -4,6 +4,7 @@ import { Trophy, Coins } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { getRank } from '@/lib/ranks';
 import UserAvatar from '@/components/avatar/UserAvatar';
+import { TIER_CONFIG } from '@/components/avatar/tiers';
 
 // Burst particle explosion from center
 function BurstParticles() {
@@ -243,8 +244,10 @@ export default function LevelUpOverlay() {
                       animate={{ opacity: 0.42 }}
                       transition={{ duration: 0.8, ease: 'easeOut' }}
                     />
-                    <UserAvatar user={user} tier={levelUpData.newTier} size={130}
-                      revealFromTier={levelUpData.prevTier} />
+                    {/* Reaching the top rank shows the elite kit; any other
+                        level-up shows the athlete celebrating. */}
+                    <UserAvatar user={user} tier={levelUpData.newTier} size={130} priority
+                      moment={levelUpData.newTier >= 5 && (levelUpData.prevTier ?? 0) < 5 ? null : 'celebrate'} />
                   </motion.div>
 
                   {/* Level number */}
@@ -278,7 +281,9 @@ export default function LevelUpOverlay() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.45 }}
                     >
-                      Avatar evolved to Tier {levelUpData.newTier}
+                      {levelUpData.newTier >= 5
+                        ? 'Elite rank reached. Elite kit unlocked.'
+                        : `New rank: ${TIER_CONFIG[levelUpData.newTier]?.label ?? ''}`}
                     </motion.div>
                   )}
 

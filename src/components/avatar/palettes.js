@@ -291,16 +291,19 @@ export const CLASS_COLORS = Object.fromEntries(
 
 export const AVATAR_CLASSES = ['warrior', 'mage', 'archer', 'knight', 'ninja'];
 
+// The stored keys stay the RPG ones; people see training disciplines. The
+// fantasy labels read as childish to the owner (November 2026), so only the
+// words changed: renaming the keys would rewrite every saved profile.
 export const CLASS_LABELS = {
-  warrior: 'Warrior', mage: 'Mage', archer: 'Archer', knight: 'Knight', ninja: 'Ninja',
+  warrior: 'Lifter', mage: 'Yogi', archer: 'Runner', knight: 'Gymnast', ninja: 'Fighter',
 };
 
 export const CLASS_TAGLINES = {
-  warrior: 'Raw power. Heavy lifts.',
-  mage: 'Mind over muscle.',
-  archer: 'Precision & endurance.',
-  knight: 'Discipline is armor.',
-  ninja: 'Speed in silence.',
+  warrior: 'Heavy lifts, steady progress.',
+  mage: 'Mobility, balance, and breath.',
+  archer: 'Distance and pace.',
+  knight: 'Control and body strength.',
+  ninja: 'Speed, power, and conditioning.',
 };
 
 export const DEFAULT_CONFIG = {

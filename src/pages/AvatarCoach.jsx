@@ -140,7 +140,7 @@ export default function AvatarCoach() {
           title="Avatar Coach" 
           subtitle="AI-powered RPG stat coaching"
           rightAction={<div className="w-10 h-10 overflow-hidden">
-            <UserAvatar user={user} tier={tier} size={40} animate={false} />
+            <UserAvatar user={user} tier={tier} size={40} variant="face" />
           </div>}
         />
       </ScreenTransition>

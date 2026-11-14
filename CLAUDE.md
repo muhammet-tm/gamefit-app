@@ -890,6 +890,66 @@ branch, this is the first thing to check.
   runtime at exactly 8.4.2, which the advisory covers. `npx cap sync` before
   the next iOS build rewrites it; npm audit cannot see that file.
 
+## Phase 14: the athlete cast replaces the drawn avatar (2026-11-14)
+
+The owner judged the RPG framing childish ("warriors, etc.") and the drawn SVG
+rig as not looking like real people. Between 11 and 14 November he approved one
+AI concept image as the target look and chose a cast of ten preset athletes,
+four images each. The images were generated with Seedream 5.0 Flash on
+Higgsfield (its terms of 23 October 2026, section 4.4: the user owns outputs
+and commercial use is not restricted). The approved image, the full-size
+sources and the generation pipeline live outside this repo, in the owner's
+`Studying materials\GameFit - Chapter book extension\Design directions`.
+
+- **`src/components/avatar/athletes.js` is the only definition of the cast:**
+  ten people, two per discipline (one man, one woman), each with relaxed,
+  celebrate, elite and rest images. It has no Vite aliases so Node can import it.
+- **Stored data did not change shape.** `avatar_config` stays v3 and gains
+  one optional key, `athlete`. A profile without it shows the athlete matching
+  its stored class and body (`athleteForConfig`), so no existing user changes
+  discipline. A valid `athlete` pins `class` and `body` in `normalizeAvatarConfig`,
+  so the two can never disagree. `tests/unit/athletes.test.ts` pins all ten
+  legacy pairs.
+- **Labels only, keys untouched.** Classes read Lifter (warrior), Runner
+  (archer), Fighter (ninja), Gymnast (knight), Yogi (mage). Ranks read Beginner,
+  Novice, Intermediate, Advanced, Elite; the tier colours still follow the
+  metals. The marketing site's copy still says Bronze to Apex (separate repo).
+- **`public/athletes/` is generated:** `node scripts/build-athlete-assets.mjs
+  <sourceDir>` writes 130 webp files (each pose at 240, 480 and 720 wide, plus
+  a face crop), about 1.6 MB. It needs ffmpeg; the build does not. Re-run it,
+  never hand-edit, if a source image changes. The unit test fails if any path
+  the app can request is missing.
+- **`<AthleteAvatar>` has three framings.** `portrait` is a 2:3 card: the
+  images carry their own charcoal stage, so they are framed, not cut out
+  (chroma keying fails because several kits are as dark as the background).
+  `bust` is a circle from head to waist, used inside Home's XP ring, where a
+  rectangle would poke through the ring. `face` is a round crop for widths
+  under 64px (leaderboard rows, coach header). Tier colours the frame; tier 5
+  wears the elite kit.
+- **Which picture shows:** a moment wins (workout complete, level-up:
+  celebrate), then the elite rank (elite kit), then a rest day (weekly target
+  met and nothing logged today: rest clothes), else relaxed. Reaching Elite on
+  a level-up shows the elite kit instead of the celebration.
+- **The tap reaction clears on a timer**, for the same reduced-motion reason
+  as phase 6. The browser pane throttles CSS transitions, so check the
+  overlay's inline `opacity` there, not the computed value.
+- Onboarding step 1 is now "Choose your athlete" (the gender picked on step 0
+  only orders the list) and step 8 is "Meet <name>"; the skin and hair
+  controls are gone. The Avatar tab's customiser became a ten-person picker,
+  and the evolution path became a rank path plus an elite-kit preview.
+- `/avatar-gallery` (dev only) gained an athlete bench with every framing.
+  The SVG rig, its palettes and `check:avatar` stay in the repo; the gallery is
+  now their only consumer.
+- `store-assets/` was regenerated against a local dev server with the
+  always-pass Turnstile key (phase 12's method; here the key sat in an
+  untracked `.env.development.local` instead of a build-time variable).
+  The workout-complete and level-up pictures were not captured signed in;
+  the athlete bench and the onboarding reveal cover the celebrate image.
+- **Open, the owner's decision:** the accessory shop still sells fantasy items
+  (War Crown, Angel Wings, Neon Blade) that the rig drew on the body. The
+  athletes cannot wear them, so an equipped item now shows only as the badge
+  on the Avatar tab.
+
 ## Known limitations (disclosed, not hidden)
 
 - **The adaptive coach loop is built but not deployed.** See phase 13 for the
@@ -918,9 +978,9 @@ branch, this is the first thing to check.
   walkthrough is still outstanding.
 - Legal pages are drafts, not lawyer-reviewed.
 - Engagement emails not scheduled; marketplace is a placeholder; friends
-  leaderboard is teased but not built; avatar has a known shoulder-seam
-  artifact at large render sizes; QA test account needs cleanup before
-  public launch.
+  leaderboard is teased but not built; the drawn SVG rig (dev gallery only
+  since phase 14) has a known shoulder-seam artifact at large render sizes;
+  QA test account needs cleanup before public launch.
 
 ## Open issues / things to watch
 

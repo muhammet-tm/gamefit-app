@@ -7,6 +7,8 @@ import {
   BODY_TYPES, BODY_LABELS, hairStylesFor,
 } from '@/components/avatar/palettes';
 import { ACCESSORY_LAYERS } from '@/components/avatar/layers/accessories';
+import AthleteAvatar from '@/components/avatar/AthleteAvatar';
+import { ATHLETES, disciplineOf } from '@/components/avatar/athletes';
 
 const ACCESSORY_IDS = Object.keys(ACCESSORY_LAYERS);
 
@@ -27,6 +29,31 @@ export default function AvatarGallery() {
       <h1 className="font-heading font-black text-2xl mb-1" style={{ color: 'var(--gf-gold-text)' }}>
         Avatar Gallery (dev)
       </h1>
+      {/* Athlete bench: the cast in every framing the app uses, so the
+          signed-in screens' avatars can be checked without signing in. */}
+      <section className="mb-10" aria-label="Athlete bench">
+        <h2 className="font-heading font-black text-lg mb-1" style={{ color: '#FFFFFF' }}>Athletes</h2>
+        <p className="font-body text-sm mb-4" style={{ color: '#A1A1AA' }}>
+          Portrait at Beginner, Intermediate, and Elite; rest day; bust (Home ring); faces at 44 and 36. The first portrait in each row is interactive.
+        </p>
+        <div className="space-y-4">
+          {ATHLETES.map(a => (
+            <div key={a.id} className="flex flex-wrap items-end gap-3" data-athlete={a.id}>
+              <span className="w-24 font-body text-xs" style={{ color: '#A1A1AA' }}>
+                {a.name}<br />{disciplineOf(a)}
+              </span>
+              <AthleteAvatar athleteId={a.id} tier={1} size={96} interactive />
+              <AthleteAvatar athleteId={a.id} tier={3} size={96} />
+              <AthleteAvatar athleteId={a.id} tier={5} size={96} />
+              <AthleteAvatar athleteId={a.id} tier={2} size={96} resting />
+              <AthleteAvatar athleteId={a.id} tier={2} size={120} variant="bust" />
+              <AthleteAvatar athleteId={a.id} tier={2} size={44} />
+              <AthleteAvatar athleteId={a.id} tier={4} size={36} />
+            </div>
+          ))}
+        </div>
+      </section>
+
       <p className="font-body text-sm mb-4" style={{ color: '#A1A1AA' }}>
         5 classes × 5 tiers · {body} · skin: {skin} · hair: {hair} {accessory && `· acc: ${accessory}`}
       </p>

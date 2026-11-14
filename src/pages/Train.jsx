@@ -367,7 +367,7 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
             {/* The earned XP is the moment: one figure, as large as the screen
                 allows, in the reward color, with the avatar beside it. */}
             <div className="mt-6 flex items-center justify-center gap-3">
-              <UserAvatar user={user} size={78} />
+              <UserAvatar user={user} size={78} moment="celebrate" priority />
               <p className="flex items-baseline gap-2" aria-label={`Plus ${xp} XP`}>
                 <span className="font-heading text-[88px] font-extrabold leading-none tabular-nums tracking-[-0.04em]"
                   style={{ color: '#F4B044' }} aria-hidden="true">+{xpShown}</span>
