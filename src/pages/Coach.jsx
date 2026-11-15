@@ -101,11 +101,14 @@ export default function Coach() {
       setPlanResult(res?.reply || 'Failed to generate plan. Please try again.');
       setPlanRateable(Boolean(res?.reply));
       track('ai_request', { type: 'plan' });
+      // Only an answered request costs a credit: the server refuses a capped
+      // one and refunds a failed one, so counting in the catch would put the
+      // counter ahead of the cap until the next reload.
+      incrementAIRequests();
     } catch (err) {
       if (err.premium_required) { setShowPremium(true); setPlanResult(''); }
       else setPlanResult(err.message || 'Failed to generate plan. Please try again.');
     }
-    incrementAIRequests();
     setPlanLoading(false);
     setPlanRating(null);
   };

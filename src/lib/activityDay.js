@@ -27,6 +27,16 @@ export function dubaiDay(date = new Date()) {
 }
 
 /**
+ * 'YYYY-MM' in Asia/Dubai: the month the free coach allowance is counted in.
+ * The server keys ai_request_logs.month_key the same way
+ * (supabase/functions/_shared/calendar.ts), so the "4 / 10" counter and the
+ * cap always read the same rows.
+ */
+export function dubaiMonth(date = new Date()) {
+  return dubaiDay(date).slice(0, 7);
+}
+
+/**
  * Whether an app open still needs reporting.
  *
  * `lastRecordedDay` is the Dubai day the server confirmed last time (or

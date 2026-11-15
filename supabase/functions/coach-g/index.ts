@@ -18,6 +18,7 @@ import {
   buildAdaptationContext, MAX_RATINGS, RATING_WINDOW_DAYS, WORKOUT_WINDOW_DAYS,
 } from '../_shared/adaptation.ts';
 import { COACH_NAME } from '../_shared/coach.ts';
+import { dubaiDate, dubaiMonth } from '../_shared/calendar.ts';
 
 const MODEL = 'claude-haiku-4-5-20251001';
 const FREE_MONTHLY_LIMIT = 10;
@@ -265,22 +266,16 @@ Estimate portions realistically. If it is not food, use {"meal_name": "Not food"
     // Reserving BEFORE the Anthropic call (rather than logging after) is what
     // makes the cap race-safe: consume_ai_credit takes a per-user advisory
     // lock, so concurrent requests cannot all read the same count and all
-    // pass. Free tier counts per calendar month; premium counts per Dubai day
-    // (UTC+4 year-round, matching logged_date inside the RPC) in two buckets,
-    // because the same table + RPC serve both — the bucket lives in the key.
+    // pass. Free tier counts per Dubai calendar month; premium counts per Dubai
+    // day (matching logged_date inside the RPC) in two buckets, because the
+    // same table + RPC serve both — the bucket lives in the key. Both come
+    // from ../_shared/calendar.ts; the browser's counter reads the same month.
     const now = new Date();
     const bucket = isPremium
-      ? (() => {
-          const dubaiDay = new Date(now.getTime() + 4 * 60 * 60 * 1000)
-            .toISOString().slice(0, 10);
-          return type === 'meal_analysis'
-            ? { key: `day:${dubaiDay}:meal`, limit: PREMIUM_DAILY_MEAL_LIMIT }
-            : { key: `day:${dubaiDay}:text`, limit: PREMIUM_DAILY_TEXT_LIMIT };
-        })()
-      : {
-          key: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`,
-          limit: FREE_MONTHLY_LIMIT,
-        };
+      ? (type === 'meal_analysis'
+          ? { key: `day:${dubaiDate(now)}:meal`, limit: PREMIUM_DAILY_MEAL_LIMIT }
+          : { key: `day:${dubaiDate(now)}:text`, limit: PREMIUM_DAILY_TEXT_LIMIT })
+      : { key: dubaiMonth(now), limit: FREE_MONTHLY_LIMIT };
     const { data: granted, error: creditError } = await serviceClient()
       .rpc('consume_ai_credit', {
         p_user_id: user.id,
@@ -352,6 +347,9 @@ Estimate portions realistically. If it is not food, use {"meal_name": "Not food"
         const parsed = JSON.parse(text.replace(/```json?|```/g, '').trim());
         return json({ analysis: parsed, meta: { version: 1 } });
       } catch (_) {
+        // The model answered, but not with the JSON the meal card needs, so
+        // the user got nothing they can use: hand the credit back.
+        await refundCredit();
         return json({ error: 'Could not analyze this photo — try a clearer shot.' }, 422);
       }
     }
