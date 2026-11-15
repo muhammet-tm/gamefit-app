@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, BarChart2, Brain, Check, Crown, Shield, Trophy, Zap } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
+import { COACH_NAME } from '@/lib/coach';
 import { invokeFunction } from '@/api/supabase';
 import { track } from '@/lib/analytics';
 import { hidePurchases } from '@/lib/platform';
@@ -15,7 +16,7 @@ const PLANS = [
 const FEATURES = [
   { icon: Trophy,   color: 'var(--gf-ember-text)', title: 'Global Leaderboard',       desc: 'Compete with athletes worldwide and climb the ranks' },
   { icon: Brain,    color: '#7FBBD4', title: 'Personalized Nutrition',    desc: 'AI-generated meal plans tailored to your exact fitness profile' },
-  { icon: Zap,      color: 'var(--gf-gold-text)', title: 'Unlimited AI Coaching',     desc: 'Unlimited Coach G requests — workouts, advice & plans' },
+  { icon: Zap,      color: 'var(--gf-gold-text)', title: 'Unlimited AI Coaching',     desc: `Unlimited ${COACH_NAME} requests: workouts, advice and plans` },
   { icon: BarChart2,color: '#4FC3F7', title: 'Advanced Analytics',        desc: 'Deep stats on progress, body composition trends & insights' },
   { icon: Shield,   color: '#E5614A', title: 'Exclusive Avatar Items',    desc: 'Unlock premium skins, accessories & legendary tier gear' },
   { icon: Crown,    color: 'var(--gf-ember-text)', title: 'Premium Badge',             desc: 'Show off the PRO badge on your profile and leaderboard' },

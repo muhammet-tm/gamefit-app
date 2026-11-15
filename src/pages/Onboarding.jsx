@@ -9,49 +9,11 @@ import {
 import { useGameFit } from '@/lib/GameFitContext';
 import { invokeFunction } from '@/api/supabase';
 import AthleteAvatar from '@/components/avatar/AthleteAvatar';
+import CoachLine from '@/components/brand/CoachLine';
+import { COACH_NAME } from '@/lib/coach';
 import {
   ATHLETES, getAthlete, athleteForConfig, configForAthlete, disciplineOf,
 } from '@/components/avatar/athletes';
-
-// ── Mascot (little GameFit elephant-like coach) ───────────────────────────────
-function Mascot({ size = 70 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 80 80">
-      <ellipse cx="40" cy="42" rx="22" ry="26" fill="#28282C" />
-      <ellipse cx="30" cy="42" rx="8" ry="7" fill="#28282C" />
-      <ellipse cx="50" cy="42" rx="8" ry="7" fill="#28282C" />
-      <ellipse cx="30" cy="40" rx="5" ry="4.5" fill="#3A3A40" />
-      <ellipse cx="50" cy="40" rx="5" ry="4.5" fill="#3A3A40" />
-      <ellipse cx="40" cy="26" rx="16" ry="14" fill="#28282C" />
-      <rect x="28" y="18" width="24" height="8" rx="4" fill="#F4B044" />
-      <circle cx="33" cy="27" r="4" fill="#F1EDE6" />
-      <circle cx="47" cy="27" r="4" fill="#F1EDE6" />
-      <circle cx="34" cy="27" r="2.2" fill="#141416" />
-      <circle cx="48" cy="27" r="2.2" fill="#141416" />
-      <circle cx="34.7" cy="26.3" r="0.8" fill="#F4B044" />
-      <circle cx="48.7" cy="26.3" r="0.8" fill="#F4B044" />
-      <path d="M36 32 Q40 35 44 32" stroke="#F4B044" strokeWidth="1.4" fill="none" strokeLinecap="round" />
-      <ellipse cx="40" cy="38" rx="6" ry="4" fill="#3A3A40" />
-      <path d="M30 52 Q28 62 30 68" stroke="#28282C" strokeWidth="6" strokeLinecap="round" fill="none" />
-      <path d="M50 52 Q52 62 50 68" stroke="#28282C" strokeWidth="6" strokeLinecap="round" fill="none" />
-      <ellipse cx="30" cy="68" rx="5" ry="3" fill="#F4B044" />
-      <ellipse cx="50" cy="68" rx="5" ry="3" fill="#F4B044" />
-    </svg>
-  );
-}
-
-function SpeechBubble({ text }) {
-  return (
-    <div className="relative max-w-xs mx-auto mb-6">
-      <div className="px-5 py-3 rounded-2xl rounded-bl-sm font-body text-base text-white text-center"
-        style={{ backgroundColor: '#28282C', border: '1px solid #2E2E33' }}>
-        {text}
-      </div>
-      <div className="absolute -bottom-2 left-8 w-0 h-0"
-        style={{ borderLeft: '8px solid transparent', borderRight: '8px solid transparent', borderTop: '10px solid #28282C' }} />
-    </div>
-  );
-}
 
 // ── Progress Bar ──────────────────────────────────────────────────────────────
 function ProgressBar({ current, total }) {
@@ -164,11 +126,6 @@ const HEALTH_APPS = [
 function HealthIntegrations({ onConnectStrava, stravaBusy }) {
   return (
     <div className="w-full">
-      <div className="flex justify-center mb-4">
-        <Mascot size={60} />
-      </div>
-      <SpeechBubble text="Connect a health app to sync activities automatically — or do it later from your Avatar screen." />
-
       {HEALTH_APPS.map(app => (
         <button key={app.id} onClick={app.comingSoon ? undefined : onConnectStrava}
           disabled={app.comingSoon || stravaBusy}
@@ -297,7 +254,8 @@ export default function Onboarding() {
   const steps = [
     // 0 — Gender
     {
-      mascotText: "Alright! Let's get some basic info down.",
+      mascotText: `Hi, I'm ${COACH_NAME}, your coach. Let's get some basic info down.`,
+      pose: 'wave',
       content: (
         <div className="w-full">
           <h2 className="font-heading font-black text-3xl text-white mb-4">I am...</h2>
@@ -330,6 +288,7 @@ export default function Onboarding() {
     // picked on step 0 come first, but every athlete is open to everyone.
     {
       mascotText: 'Pick the athlete you train as. You can change this anytime.',
+      pose: 'present',
       content: (
         <div className="w-full">
           <h2 className="font-heading font-black text-3xl text-white mb-4">Choose your athlete</h2>
@@ -361,6 +320,7 @@ export default function Onboarding() {
     // 2 — Age
     {
       mascotText: 'How old are you?',
+      pose: 'listen',
       content: (
         <div className="w-full flex flex-col items-center">
           <ScrollPicker value={age} onChange={setAge} min={16} max={100} unit="yrs" />
@@ -370,6 +330,7 @@ export default function Onboarding() {
     // 3 — Weight
     {
       mascotText: "What's your current weight?",
+      pose: 'point',
       content: (
         <div className="w-full flex flex-col items-center">
           <ScrollPicker value={weightKg} onChange={setWeightKg} min={30} max={200} unit="kg" />
@@ -385,7 +346,8 @@ export default function Onboarding() {
     },
     // 4 — Height
     {
-      mascotText: "How tall are you?",
+      mascotText: 'How tall are you?',
+      pose: 'reach',
       content: (
         <div className="w-full flex flex-col items-center">
           <ScrollPicker value={heightCm} onChange={setHeightCm} min={120} max={220} unit="cm" />
@@ -395,6 +357,7 @@ export default function Onboarding() {
     // 5 — Fitness Goal
     {
       mascotText: 'What is your top fitness goal?',
+      pose: 'idea',
       content: (
         <div className="w-full">
           {[
@@ -414,6 +377,7 @@ export default function Onboarding() {
     // 6 — Experience
     {
       mascotText: 'How experienced are you with working out?',
+      pose: 'think',
       content: (
         <div className="w-full">
           {[
@@ -430,7 +394,8 @@ export default function Onboarding() {
     },
     // 7 — Weekly target
     {
-      mascotText: 'How many days a week will you train? Be honest — streaks are won by realists!',
+      mascotText: 'How many days a week will you train? Be honest: streaks are won by realists.',
+      pose: 'thumbsUp',
       content: (
         <div className="w-full">
           <h2 className="font-heading font-black text-3xl text-white mb-4">My weekly target</h2>
@@ -448,7 +413,8 @@ export default function Onboarding() {
     },
     // 8 — Meet your athlete (replaced the skin and hair customiser)
     {
-      mascotText: null,
+      mascotText: `Good pick. ${chosen.name} is ready when you are.`,
+      pose: 'clap',
       content: (
         <div className="w-full flex flex-col items-center">
           <motion.div className="w-full" initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 180 }}>
@@ -469,7 +435,8 @@ export default function Onboarding() {
     },
     // 9 — Health Integrations
     {
-      mascotText: null,
+      mascotText: 'Sync your workouts from a health app, or skip this for now.',
+      pose: 'run',
       content: (
         <div className="w-full">
           <h2 className="font-heading font-black text-2xl text-white mb-1">Health Connect</h2>
@@ -499,13 +466,10 @@ export default function Onboarding() {
         </div>
       </div>
 
-      {/* Mascot + Bubble */}
-      {step !== 8 && step !== 9 && (
-        <div className="flex items-start gap-3 mb-5">
-          <Mascot size={60} />
-          {currentStep.mascotText && <SpeechBubble text={currentStep.mascotText} />}
-        </div>
-      )}
+      {/* The coach. It stays mounted across steps, so each new pose eases
+          in from the last one instead of the figure popping in again, and
+          it talks while the line types out. */}
+      <CoachLine text={currentStep.mascotText} pose={currentStep.pose} size={64} tone="dark" className="mb-5" />
 
       {/* Step Content */}
       <div className="flex-1 overflow-y-auto no-scrollbar">

@@ -8,6 +8,7 @@ import BottomNav from '@/components/gamefit/BottomNav';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import ReactMarkdown from 'react-markdown';
+import { COACH_NAME } from '@/lib/coach';
 
 const STAT_CONFIG = [
   { key: 'strength', label: 'STR', icon: Swords, color: '#E5614A', bg: 'rgba(239,68,68,0.15)', fontSize: 'text-xs' },
@@ -167,7 +168,7 @@ export default function AvatarCoach() {
               style={{ backgroundColor: 'rgba(244, 176, 68,0.15)', color: 'var(--gf-gold-text)', border: '1px solid rgba(244, 176, 68,0.3)' }}>
               G
             </div>
-            <p className="font-heading font-black text-lg mb-1" style={{ color: 'var(--gf-text-primary)' }}>Coach G is ready</p>
+            <p className="font-heading font-black text-lg mb-1" style={{ color: 'var(--gf-text-primary)' }}>{COACH_NAME} is ready</p>
             <p className="font-body text-sm mb-6" style={{ color: 'var(--gf-text-secondary)' }}>
               Ask me anything about your avatar stats or training plan
             </p>
@@ -212,7 +213,7 @@ export default function AvatarCoach() {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
-            placeholder="Ask Coach G about your avatar stats..."
+            placeholder={`Ask ${COACH_NAME} about your avatar stats...`}
             className="flex-1 rounded-xl px-4 py-3 font-body text-sm outline-none"
             style={{
               backgroundColor: 'var(--gf-bg-elevated)',

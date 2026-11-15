@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Bell, Sun, Moon, Dumbbell, Bot, ShoppingBag, Trophy, Droplet } from 'lucide-react';
+import { Bell, Sun, Moon, Dumbbell, Bot, ShoppingBag, Trophy, Droplet, MessageCircle } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { getNextLevelXP, getCurrentLevelXP } from '@/lib/mockData';
 import { getRank } from '@/lib/ranks';
@@ -20,6 +20,8 @@ import StatTile from '@/components/gamefit/StatTile';
 import ProgressChart from '@/components/gamefit/ProgressChart';
 import PullToRefresh from '@/components/gamefit/PullToRefresh';
 import { formatDistanceToNow } from 'date-fns';
+import CoachPup from '@/components/brand/CoachPup';
+import { COACH_NAME, coachMoment } from '@/lib/coach';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -52,6 +54,7 @@ export default function Dashboard() {
   ];
 
   const recentWorkouts = workouts.slice(0, 3);
+  const tip = coachMoment(user);
 
 
   return (
@@ -142,6 +145,27 @@ export default function Dashboard() {
           />
           <StatTile value={user.coins} label="Coins" tone="gold" />
         </div>
+
+        {/* The coach's line for today, from the player's own numbers
+            (see coachMoment). The pup is tappable: it cheers. */}
+        <motion.section aria-label={`${COACH_NAME} says`}
+          className="flex items-center gap-3 rounded-2xl py-2.5 pl-2 pr-3"
+          style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}
+          initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <CoachPup pose={tip.pose} size={58} interactive className="flex-shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="font-body text-[10.5px] font-semibold uppercase tracking-[0.06em]"
+              style={{ color: 'var(--gf-gold-text)' }}>{COACH_NAME}</p>
+            <p className="mt-0.5 font-body text-sm leading-snug" style={{ color: 'var(--gf-text-primary)' }}>
+              {tip.line}
+            </p>
+          </div>
+          <button onClick={() => navigate('/coach')} aria-label={`Ask ${COACH_NAME}`}
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl transition-transform active:scale-95"
+            style={{ backgroundColor: 'var(--gf-bg-elevated)' }}>
+            <MessageCircle size={18} strokeWidth={2} aria-hidden="true" style={{ color: 'var(--gf-text-secondary)' }} />
+          </button>
+        </motion.section>
 
         {/* Primary action */}
         <div>

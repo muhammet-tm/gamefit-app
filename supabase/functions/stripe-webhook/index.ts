@@ -4,6 +4,7 @@
 // invoice.payment_failed, customer.subscription.deleted.
 import Stripe from 'npm:stripe@14.21.0';
 import { json, serviceClient } from '../_shared/helpers.ts';
+import { COACH_NAME } from '../_shared/coach.ts';
 
 async function sendEmail(to: string, subject: string, text: string) {
   const key = Deno.env.get('RESEND_API_KEY');
@@ -76,7 +77,7 @@ Deno.serve(async (req) => {
 Your GameFit Premium subscription is now active!
 
 You now have access to:
-👑 Unlimited AI coaching with Coach G
+👑 Unlimited AI coaching with ${COACH_NAME}
 🥗 AI-powered nutrition tracking & meal snap
 📊 Advanced analytics
 

@@ -14,6 +14,8 @@ import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import CoachMarkdown from '@/components/gamefit/CoachMarkdown';
 import { invokeFunction, saveCoachFeedback } from '@/api/supabase';
 import { track } from '@/lib/analytics';
+import CoachPup from '@/components/brand/CoachPup';
+import { COACH_NAME } from '@/lib/coach';
 
 const AI_LIMIT = 10;
 
@@ -53,14 +55,14 @@ export default function Coach() {
   const [planLoading, setPlanLoading] = useState(false);
   const [planResult, setPlanResult] = useState('');
   const [planRating, setPlanRating] = useState(null);
-  // True only while planResult is a real plan from Coach G. The same card also
+  // True only while planResult is a real plan from the coach. The same card also
   // shows error messages, and those must not be rateable now that a rating is
   // stored and steers later coaching.
   const [planRateable, setPlanRateable] = useState(false);
 
   // Chat state
   const [messages, setMessages] = useState([
-    { role: 'ai', content: "Hey! I'm Coach G, your AI fitness coach. Ask me anything about workouts, nutrition, recovery, or training plans. I'm here to help you level up!" }
+    { role: 'ai', content: `Hey! I'm ${COACH_NAME}, your AI fitness coach. Ask me anything about workouts, nutrition, recovery, or training plans. I'm here to help you level up!` }
   ]);
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
@@ -68,6 +70,19 @@ export default function Coach() {
   const [showDurationSheet, setShowDurationSheet] = useState(false);
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+
+  // The newest coach reply gets a talking face for about as long as it would
+  // take to say a short version of it, then the face goes quiet. Replies
+  // arrive whole (no streaming), so this is timed, not tied to the text.
+  const [talkingIdx, setTalkingIdx] = useState(0);
+  useEffect(() => {
+    const last = messages.length - 1;
+    if (messages[last]?.role !== 'ai') return undefined;
+    setTalkingIdx(last);
+    const ms = Math.min(600 + messages[last].content.length * 18, 3200);
+    const t = setTimeout(() => setTalkingIdx(-1), ms);
+    return () => clearTimeout(t);
+  }, [messages]);
 
   const toggleEquipment = (e) => {
     setEquipment(prev => prev.includes(e) ? prev.filter(x => x !== e) : [...prev, e]);
@@ -153,7 +168,7 @@ export default function Coach() {
     <div className="min-h-screen pb-20 flex flex-col" style={{ backgroundColor: 'var(--gf-bg-primary)' }}>
       <ScreenTransition direction="forward">
         <ScreenHeader 
-          title="Coach G" 
+          title={COACH_NAME}
           subtitle="Your AI fitness coach"
           showBackButton={false}
           rightAction={!isPremium && (
@@ -167,7 +182,7 @@ export default function Coach() {
         {/* Medical disclaimer — always visible on the coaching surface */}
         <p className="px-5 pt-2 font-body text-[10px] leading-snug" style={{ color: 'var(--gf-text-secondary)' }}>
           <Stethoscope size={11} strokeWidth={2.2} className="inline-block align-[-1px] mr-0.5" aria-hidden="true" />
-          Coach G gives general fitness guidance only — not medical advice. Consult a
+          {COACH_NAME} gives general fitness guidance only, not medical advice. Consult a
           professional before starting a new program.
         </p>
 
@@ -332,7 +347,11 @@ export default function Coach() {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-5 py-2 space-y-3">
             {messages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div key={i} className={`flex items-end gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                {msg.role !== 'user' && (
+                  <CoachPup variant="face" size={30} decorative talking={i === talkingIdx}
+                    pose={i === 0 ? 'wave' : 'idle'} className="mb-0.5 flex-shrink-0" />
+                )}
                 <div className="max-w-[85%]">
                   <div className={`px-4 py-3 rounded-2xl font-body text-sm leading-relaxed ${msg.role === 'user' ? 'gf-cta' : ''}`}
                     style={msg.role === 'user'
@@ -364,7 +383,9 @@ export default function Coach() {
               </div>
             ))}
             {chatLoading && (
-              <div className="flex justify-start">
+              <div className="flex items-end gap-2 justify-start">
+                {/* Eyes up while the reply is on its way: the face is thinking. */}
+                <CoachPup variant="face" size={30} decorative pose="think" className="mb-0.5 flex-shrink-0" />
                 <div className="px-4 py-3 rounded-2xl" style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1px solid var(--gf-border)' }}>
                   <div className="flex gap-1">
                     {[0, 0.2, 0.4].map((d, i) => (
@@ -383,7 +404,7 @@ export default function Coach() {
             <input value={chatInput} maxLength={500}
               onChange={e => setChatInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleChat()}
-              placeholder={atLimit ? 'Upgrade to send more messages' : "Ask Coach G anything..."}
+              placeholder={atLimit ? 'Upgrade to send more messages' : `Ask ${COACH_NAME} anything...`}
               disabled={atLimit}
               className="flex-1 px-4 py-3 rounded-xl font-body text-sm outline-none"
               style={{ ...inputStyle, opacity: atLimit ? 0.5 : 1 }} />

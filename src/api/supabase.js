@@ -70,7 +70,7 @@ export async function invokeFunction(name, body = {}) {
 }
 
 /**
- * Store the difficulty rating a user gave one of Coach G's plans or answers.
+ * Store the difficulty rating a user gave one of the coach's plans or answers.
  * The server reads these back (never anything the client sends with a coaching
  * request) to adapt later coaching.
  *

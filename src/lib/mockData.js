@@ -1,3 +1,4 @@
+import { COACH_NAME } from './coach';
 // Mock data for GameFit app
 
 export const MOCK_USER = {
@@ -105,7 +106,7 @@ export const MOCK_REWARDS = [
 export const MOCK_NOTIFICATIONS = [
   { id: 'n1', title: 'Streak at Risk!', body: 'Your 5-day streak is at risk! Log a workout to keep it alive.', type: 'streak_risk', is_read: false, created_at: '2024-06-05T09:00:00Z' },
   { id: 'n2', title: 'Level Up!', body: 'You reached Level 4! Check your new avatar evolution.', type: 'level_up', is_read: true, created_at: '2024-06-03T20:00:00Z' },
-  { id: 'n3', title: 'Coach G Has Tips', body: 'Coach G has a new personalized recommendation for you.', type: 'ai_tip', is_read: false, created_at: '2024-06-02T14:30:00Z' },
+  { id: 'n3', title: `${COACH_NAME} Has Tips`, body: `${COACH_NAME} has a new personalized recommendation for you.`, type: 'ai_tip', is_read: false, created_at: '2024-06-02T14:30:00Z' },
   { id: 'n4', title: 'Weekly Summary', body: 'Last week: 3 workouts, 390 XP earned. Keep it up!', type: 'weekly_summary', is_read: true, created_at: '2024-06-01T09:00:00Z' },
 ];
 

@@ -996,6 +996,64 @@ originals, cut-outs and generation record are in the owner's
 - `/avatar-gallery` has a Kit Bag bench: every athlete in all four pictures
   with any floor and wear item, plus the three finish effects.
 
+## Phase 16: the coach pup (branch `feat/coach-pup`, 2026-11-15)
+
+The owner picked mascot option 01 of the mascot study: a full-body Siberian
+husky (slate and white fur, ice-blue eyes, an Ignition-orange tee) that is
+the AI coach's face everywhere. It replaces three things at once: the
+goggled orange husky of phase 9 in the logo and icons, the separate little
+figure onboarding used to draw, and the faceless chat.
+
+- **The rig** is `src/components/brand/CoachPup.jsx` with its data in
+  `pupRig.js` (palette and 20 poses: idle, wave, cheer, clap, thumbsUp,
+  fistPump, present, point, listen, think, idea, talk, worried, sad, sleep,
+  stretch, reach, run, shrug, love). SVG built from JSX, no innerHTML. A
+  requestAnimationFrame loop writes transforms to refs, so a pose change
+  eases in and the pup breathes, blinks and wags without a React render per
+  frame. It pauses off screen and in hidden tabs, and under reduced motion it
+  holds the pose still.
+- Props worth knowing: `variant="face"` (head only, for chat), `talking`,
+  `interactive` (tap to cheer), `decorative` (aria-hidden, for when text
+  beside it says everything, such as inside the splash `<h1>`), and
+  `settle={ms}` (relax to idle, because a wave that never stops reads as a
+  glitch). Emotes are left out of the face variant: they sit on the body
+  grid and would poke out of the square crop.
+- `CoachLine.jsx` is the pup plus a bubble that types the line while the
+  mouth moves. The full line is laid out invisibly under the typed part, so
+  the bubble never changes size, and screen readers get it whole.
+  `tone="dark"` is for the screens that paint charcoal in both themes
+  (onboarding, workout complete).
+- **Where it appears:** splash and sign-in (wave, then settle), every
+  onboarding step with its own pose (the figure stays mounted, so poses
+  morph instead of popping), Home's tip card (`coachMoment(user)` in
+  `src/lib/coach.js` picks pose and line from the player's numbers), the chat
+  (a face beside every reply, talking for a moment on the newest one,
+  thinking while a reply loads), workout complete (`completionLine`), and the
+  404 page (shrug). `/avatar-gallery` benches every pose and the five
+  workout-complete lines, because that screen needs a real workout.
+- **The logo and icons are the pup's head.** `brand.js` draws it in the
+  rig's own coordinates and places it with one transform per rig
+  (`HEAD_ON_GRID`), so the mark and the moving coach are the same face.
+  `shapesToSvg` and `Logo.jsx` both apply that transform. FIT keeps the
+  Ignition orange through a new `BRAND.accent`; `BRAND.fur` is slate now, so
+  never colour anything orange from `fur` again. Regenerated with
+  `npx tsx scripts/generate-brand-assets.mjs` and `npx @capacitor/assets@3
+  generate` with `#141416` on all four background flags; its usual side
+  effects (manifest rewrite, stray root `icons/`, line-ending-only changes to
+  AndroidManifest, the anydpi XML and the iOS Contents.json) were reverted.
+- **The coach's name is one constant per runtime:** `COACH_NAME` in
+  `src/lib/coach.js` (app, legal pages, route titles, llms.txt through
+  `vite.config.js`) and in `supabase/functions/_shared/coach.ts` (the
+  `coach-g` system prompt and limit message, the Premium welcome email).
+  `tests/unit/coach.test.ts` fails if the two differ or if a listed file
+  spells the name out. It is still "Coach G": the owner asked for a better
+  name and has not picked one. Renaming is those two lines, then a deploy of
+  `coach-g` and `stripe-webhook`. The function's folder name stays `coach-g`;
+  it is an endpoint path, not something users see.
+- Not carried over yet: the marketing site's `Logo.astro` (separate repo)
+  still draws the phase 9 husky; `store-assets/` and the site's screens
+  predate the Home tip card.
+
 ## Known limitations (disclosed, not hidden)
 
 - **The adaptive coach loop is built but not deployed.** See phase 13 for the

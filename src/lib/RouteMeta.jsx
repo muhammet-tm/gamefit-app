@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { COACH_NAME } from './coach';
 
 const SUFFIX = 'GameFit';
 
@@ -24,7 +25,7 @@ const META = {
   '/onboarding': ['Set up your athlete', 'Pick your class, set a weekly target and build your avatar.'],
   '/dashboard': ['Dashboard', 'Your XP, streak, rank and weekly progress at a glance.'],
   '/train': ['Train', 'Log a workout and earn XP, coins and streak credit.'],
-  '/coach': ['Coach G', 'Ask Coach G for a workout plan, a meal plan or training advice.'],
+  '/coach': [COACH_NAME, `Ask ${COACH_NAME} for a workout plan, a meal plan or training advice.`],
   '/leaderboard': ['Leaderboard', 'See where you rank against other GameFit athletes.'],
   '/marketplace': ['Marketplace', 'Spend your coins on gear and accessories for your avatar.'],
   '/avatar': ['Your avatar', 'Evolve your avatar through five classes and five tiers as you rank up.'],

@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { useGameFit } from '@/lib/GameFitContext';
 import { formatDistanceToNow } from 'date-fns';
+import { COACH_NAME } from '@/lib/coach';
 
 // Icons carry a tint so a notification's type reads before its text does. The
 // emoji these replaced rendered in whatever the OS supplied, which meant the
@@ -12,7 +13,7 @@ import { formatDistanceToNow } from 'date-fns';
 const TYPE_META = {
   streak_risk: { Icon: Flame, label: 'Streak Risk', tint: 'var(--gf-ember-text)' },
   level_up: { Icon: ChevronsUp, label: 'Level Up', tint: 'var(--gf-gold-text)' },
-  ai_tip: { Icon: Bot, label: 'Coach G', tint: 'var(--gf-text-secondary)' },
+  ai_tip: { Icon: Bot, label: COACH_NAME, tint: 'var(--gf-text-secondary)' },
   reward_expiry: { Icon: Coins, label: 'Reward', tint: 'var(--gf-gold-text)' },
   weekly_summary: { Icon: BarChart3, label: 'Summary', tint: 'var(--gf-text-secondary)' },
 };

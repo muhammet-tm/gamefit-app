@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import path from 'path'
+import { COACH_NAME } from './src/lib/coach.js'
 
 // The public address of this deployment. Everything that has to spell out an
 // absolute URL — canonical tag, Open Graph image, sitemap, robots — derives
@@ -92,7 +93,7 @@ function seoFiles() {
         '- Evolve an avatar across 5 classes and 5 tiers, drawn as layered SVG',
         '  (not 3D), with two body rigs and unlockable gear.',
         '- Compete on a leaderboard against other athletes.',
-        '- Chat with "Coach G", an AI fitness coach built on Anthropic Claude Haiku.',
+        `- Chat with "${COACH_NAME}", an AI fitness coach built on Anthropic Claude Haiku.`,
         '  Free accounts get 10 coaching messages a month; Premium is unlimited.',
         '',
         '## Facts that are commonly got wrong',

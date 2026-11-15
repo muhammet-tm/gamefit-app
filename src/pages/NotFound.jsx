@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Compass, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import CoachPup from '@/components/brand/CoachPup';
 
 /**
  * The 404 page.
@@ -22,12 +23,7 @@ export default function NotFound() {
       style={{ backgroundColor: 'var(--gf-bg-primary)' }}
     >
       <div className="w-full max-w-sm text-center">
-        <div
-          className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-6"
-          style={{ backgroundColor: 'var(--gf-bg-elevated)' }}
-        >
-          <Compass size={28} color="var(--gf-gold-text)" aria-hidden="true" />
-        </div>
+        <CoachPup pose="shrug" size={104} decorative className="mx-auto mb-5" />
 
         <p
           className="font-mono text-sm tracking-widest mb-2"

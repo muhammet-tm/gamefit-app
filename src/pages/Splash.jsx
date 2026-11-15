@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useGameFit } from '@/lib/GameFitContext';
-import { Mascot, Wordmark } from '@/components/brand/Logo';
+import { Wordmark } from '@/components/brand/Logo';
+import CoachPup from '@/components/brand/CoachPup';
 
 export default function Splash() {
   const navigate = useNavigate();
@@ -33,15 +34,17 @@ export default function Splash() {
             screen's ground. And it is a
             second network round trip on the very first paint of the app.
 
-            The wordmark carries the accessible name; the mascot beside it is
-            decorative, or a screen reader announces "GameFit" twice. */}
+            The wordmark carries the accessible name; the coach pup above it
+            is decorative, or a screen reader announces two names. It waves
+            once and settles, because a wave that never stops reads as a
+            loop glitch on a screen that lasts 2.5 seconds. */}
         <motion.h1
           className="mb-5 flex flex-col items-center gap-5"
           initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, type: 'spring' }}
         >
-          <Mascot size={148} />
+          <CoachPup pose="wave" size={124} settle={1900} decorative />
           {/* tone is pinned rather than left on `auto` because this screen
               paints a literal charcoal in both themes, the Ignition ground.
               `auto` follows the palette, which would hand the light theme

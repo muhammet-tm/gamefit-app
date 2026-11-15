@@ -11,6 +11,10 @@ import AthleteAvatar from '@/components/avatar/AthleteAvatar';
 import { ATHLETES, ATHLETE_POSES, disciplineOf } from '@/components/avatar/athletes';
 import { itemsForSlot } from '@/components/avatar/kitbag';
 import FinishEffect from '@/components/gamefit/FinishEffect';
+import CoachPup from '@/components/brand/CoachPup';
+import { POSE_NAMES } from '@/components/brand/pupRig';
+import CoachLine from '@/components/brand/CoachLine';
+import { completionLine } from '@/lib/coach';
 
 const ACCESSORY_IDS = Object.keys(ACCESSORY_LAYERS);
 
@@ -57,6 +61,39 @@ export default function AvatarGallery() {
               <AthleteAvatar athleteId={a.id} tier={4} size={36} />
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Coach pup bench: every pose, plus the face variant used in chat. */}
+      <section className="mb-10" aria-label="Coach pup bench">
+        <h2 className="font-heading font-black text-lg mb-1" style={{ color: '#FFFFFF' }}>Coach pup</h2>
+        <p className="font-body text-sm mb-3" style={{ color: '#A1A1AA' }}>Every pose, then the face at 40, 32 and 24 px.</p>
+        <div className="flex flex-wrap gap-3">
+          {POSE_NAMES.map(p => (
+            <div key={p} data-pup-pose={p} className="flex flex-col items-center gap-1 rounded-xl p-2" style={{ backgroundColor: '#1E1E21' }}>
+              <CoachPup pose={p} size={110} />
+              <span className="font-body text-[11px]" style={{ color: '#A1A1AA' }}>{p}</span>
+            </div>
+          ))}
+          <div className="flex items-end gap-2 rounded-xl p-3" style={{ backgroundColor: '#1E1E21' }} data-pup-faces>
+            <CoachPup variant="face" pose="talk" size={40} talking />
+            <CoachPup variant="face" pose="idle" size={32} />
+            <CoachPup variant="face" pose="cheer" size={24} />
+          </div>
+        </div>
+        {/* Workout complete is only reachable by logging a real workout, so
+            its five coach lines are shown here instead. */}
+        <div className="mt-4 grid gap-3 sm:grid-cols-2" data-pup-lines>
+          {[
+            { saveError: 'offline' },
+            { badge: 'First Sweat', streak: 1 },
+            { nextRank: 'Novice II', toGo: 40, near: true, streak: 3 },
+            { streak: 6 },
+            { streak: 1 },
+          ].map((s, i) => {
+            const c = completionLine(s);
+            return <CoachLine key={i} text={c.line} pose={c.pose} size={56} tone="dark" />;
+          })}
         </div>
       </section>
 

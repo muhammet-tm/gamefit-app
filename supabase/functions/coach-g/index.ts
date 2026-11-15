@@ -17,6 +17,7 @@ import {
 import {
   buildAdaptationContext, MAX_RATINGS, RATING_WINDOW_DAYS, WORKOUT_WINDOW_DAYS,
 } from '../_shared/adaptation.ts';
+import { COACH_NAME } from '../_shared/coach.ts';
 
 const MODEL = 'claude-haiku-4-5-20251001';
 const FREE_MONTHLY_LIMIT = 10;
@@ -164,7 +165,7 @@ deficits, and encourage involving a parent/guardian or school coach.`
     // A function rather than a string because the adaptation block is read
     // later, once the request is known to be valid and a credit is reserved.
     // It sits directly after the profile context it complements.
-    const buildSystemPrompt = (adaptationContext: string) => `You are Coach G, an expert AI fitness coach inside the GameFit app.
+    const buildSystemPrompt = (adaptationContext: string) => `You are ${COACH_NAME}, an expert AI fitness coach inside the GameFit app.
 You give personalized, motivating fitness advice. Be concise, practical, and encouraging.
 
 Safety rules (non-negotiable):
@@ -295,7 +296,7 @@ Estimate portions realistically. If it is not food, use {"meal_name": "Not food"
       if (isPremium) {
         return json({
           error: 'Daily limit reached',
-          message: "You've reached today's fair-use limit for Coach G — it resets at midnight (GST). See you tomorrow!",
+          message: `You've reached today's fair-use limit for ${COACH_NAME}. It resets at midnight (GST). See you tomorrow!`,
         }, 429);
       }
       return json({

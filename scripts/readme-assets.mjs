@@ -75,7 +75,7 @@ await shot('leaderboard');
 // Coach: ask for something that exercises the table renderer
 await page.goto(`${BASE}/coach`);
 await page.getByRole('button', { name: /Chat/ }).click();
-await page.fill('input[placeholder*="Ask Coach G"]',
+await page.fill('input[placeholder$="anything..."]',
   'Give me a 3-day upper/lower split as a table with sets and reps.');
 await page.keyboard.press('Enter');
 await page.waitForSelector('table', { timeout: 60000 }).catch(() => {});

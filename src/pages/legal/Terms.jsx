@@ -1,5 +1,6 @@
 import React from 'react';
 import LegalLayout, { H, P, LI } from './LegalLayout';
+import { COACH_NAME } from '@/lib/coach';
 
 export default function Terms() {
   return (
@@ -26,7 +27,7 @@ export default function Terms() {
 
       <H>3. Not medical advice</H>
       <P>
-        GameFit and Coach G provide general fitness and nutrition information for healthy
+        GameFit and {COACH_NAME} provide general fitness and nutrition information for healthy
         adults. They are not medical, dietetic or physiotherapy services, and no content in
         the app is a diagnosis, treatment or prescription. Consult a qualified professional
         before starting an exercise program, especially if you have any medical condition,
