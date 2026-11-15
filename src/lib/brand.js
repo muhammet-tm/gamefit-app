@@ -10,78 +10,95 @@
 // `dangerouslySetInnerHTML`. The phase 7 security pass recorded zero such
 // sinks in this codebase and that property is worth more than the brevity.
 
-// Ignition husky (owner choice "B", 2026-09-24): orange fur and charcoal
-// linework, so no navy survives in the mark. Fur is deliberately the same
-// value as the dark theme's --gf-ember; ground and surface are the charcoal
-// --gf-bg-primary / --gf-bg-surface. The lens stays sky blue so the pupils
-// read against it.
+// The coach pup's head (owner picked mascot option 01, 2026-11-15): a
+// Siberian husky in slate and white with ice-blue eyes. It replaced the
+// goggled orange husky of 2026-09-24. The Ignition orange left the fur and now
+// lives on the pup's tee in the app and on FIT in the wordmark, so the mark
+// stops reading as a fox while the brand colour stays.
+//
+// The head is drawn in the coordinates of the animated rig
+// (src/components/brand/CoachPup.jsx, a 200x240 body grid) and placed on the
+// mark's 200x200 grid by one transform per rig. The numbers are the rig's own,
+// so the logo and the moving coach are the same face. If you redraw the head
+// in CoachPup.jsx, carry the change here (and to gamefit-web's Logo.astro).
 export const BRAND = {
-  fur: '#FF6B00',      // Ignition orange, = --gf-ember (dark)
-  line: '#141416',     // outline, ear interiors, nose, pupils
-  muzzle: '#FFFFFF',
-  lens: '#A8D9F2',     // goggle glass
-  frame: '#1E1E21',    // goggle frame, charcoal
+  fur: '#5E6672',      // slate
+  furDark: '#434A55',  // eye mask
+  face: '#F4F4F2',     // white mask
+  eye: '#7FC8F0',      // ice blue
+  ear: '#E9B8B0',      // inner ear
+  tongue: '#F07C86',
+  blush: '#F28C8C',
+  line: '#18181B',     // outline, pupils, nose
+  accent: '#FF6B00',   // Ignition orange, = --gf-ember (dark): FIT, the tee
   ground: '#141416',   // --gf-bg-primary, the app icon and splash ground
   surface: '#1E1E21',  // --gf-bg-surface
-  gold: '#F4B044',     // --gf-gold, reward color (no longer used by the mark)
+  gold: '#F4B044',     // --gf-gold, reward color (not used by the mark)
   text: '#F5F5F4',     // --gf-text-primary
 };
 
-// Drawn on a 200x200 grid. Full detail: catchlights in the eyes, a two-stroke
-// smile, an inner ear shadow. Correct from roughly 48px upward.
+// The head spans x45..155 and y13..129 on the rig grid (ear tips to chin,
+// outline included). Centred on (100,71) and scaled 1.6, it fills y7..193.
+const HEAD_ON_GRID = 'translate(100 100) scale(1.6) translate(-100 -71)';
+
+const EARS = [
+  { t: 'path', d: 'M56,66 L61,16 Q66,13 72,17 L94,44 Z', fill: BRAND.fur },
+  { t: 'path', d: 'M144,66 L139,16 Q134,13 128,17 L106,44 Z', fill: BRAND.fur },
+  { t: 'path', d: 'M64,56 L66,28 L84,44 Z', fill: BRAND.ear, stroke: 'none' },
+  { t: 'path', d: 'M136,56 L134,28 L116,44 Z', fill: BRAND.ear, stroke: 'none' },
+];
+const SKULL = [
+  { t: 'ellipse', cx: 100, cy: 80, rx: 53, ry: 47, fill: BRAND.fur },
+  // the white mask, unstroked: its edge is a colour change, not a line
+  { t: 'path', d: 'M50,86 C50,72 63,63 74,66 C83,69 88,76 92,68 L100,38 L108,68 C112,76 117,69 126,66 C137,63 150,72 150,86 C150,111 129,127 100,127 C71,127 50,111 50,86 Z', fill: BRAND.face, stroke: 'none' },
+];
+const NOSE = { t: 'path', d: 'M91,97 Q100,93 109,97 Q105,105 100,106 Q95,105 91,97 Z', fill: BRAND.line, stroke: 'none' };
+
+// Full detail: brow spots, catchlights, blush and the tongue in the grin.
+// Correct from roughly 48px upward.
 export const MASCOT_DETAILED = {
   stroke: BRAND.line,
-  strokeWidth: 7,
+  strokeWidth: 4,
+  transform: HEAD_ON_GRID,
   shapes: [
-    // ears: pointed triangles with a curved outer edge
-    { t: 'path', d: 'M44,76 C39,50 46,20 59,8 C74,18 90,42 98,60 Z', fill: BRAND.fur },
-    { t: 'path', d: 'M156,76 C161,50 154,20 141,8 C126,18 110,42 102,60 Z', fill: BRAND.fur },
-    { t: 'path', d: 'M56,66 C52,48 57,28 63,22 C72,32 82,48 88,58 Z', fill: BRAND.line, stroke: 'none' },
-    { t: 'path', d: 'M144,66 C148,48 143,28 137,22 C128,32 118,48 112,58 Z', fill: BRAND.line, stroke: 'none' },
-    // head, 144 wide; the chin tapers to a soft point at y193 rather than a
-    // round arc. Any edit here must land on the muzzle's bottom curve too, or
-    // fur peeks out below the white.
-    { t: 'path', d: 'M100,46 C60,46 28,78 28,116 C28,156 58,185 100,193 C142,185 172,156 172,116 C172,78 140,46 100,46 Z', fill: BRAND.fur },
-    // muzzle laid over the fur, unstroked: the edge is a colour change, not a line
-    { t: 'path', d: 'M34,130 C34,121 44,118 60,118 L140,118 C156,118 166,121 166,130 C166,160 140,185 100,193 C60,185 34,160 34,130 Z', fill: BRAND.muzzle, stroke: 'none' },
-    // goggle strap and bridge
-    { t: 'path', d: 'M40,92 L52,92', fill: 'none', stroke: BRAND.frame, strokeWidth: 10.5 },
-    { t: 'path', d: 'M148,92 L160,92', fill: 'none', stroke: BRAND.frame, strokeWidth: 10.5 },
-    { t: 'path', d: 'M97,90 L103,90', fill: 'none', stroke: BRAND.frame, strokeWidth: 12.6 },
-    // lenses
-    { t: 'rect', x: 52, y: 82, width: 46, height: 38, rx: 13, fill: BRAND.lens, stroke: BRAND.frame, strokeWidth: 10.5 },
-    { t: 'rect', x: 102, y: 82, width: 46, height: 38, rx: 13, fill: BRAND.lens, stroke: BRAND.frame, strokeWidth: 10.5 },
-    { t: 'circle', cx: 76, cy: 102, r: 9, fill: BRAND.line, stroke: 'none' },
-    { t: 'circle', cx: 124, cy: 102, r: 9, fill: BRAND.line, stroke: 'none' },
-    { t: 'circle', cx: 83, cy: 95, r: 5, fill: BRAND.muzzle, stroke: 'none' },
-    { t: 'circle', cx: 131, cy: 95, r: 5, fill: BRAND.muzzle, stroke: 'none' },
-    // nose and mouth
-    { t: 'path', d: 'M88,132 C88,129 112,129 112,132 C112,140 105,150 100,150 C95,150 88,140 88,132 Z', fill: BRAND.line, stroke: 'none' },
-    { t: 'path', d: 'M100,150 L100,158', fill: 'none', stroke: BRAND.line, strokeWidth: 5.6 },
-    { t: 'path', d: 'M100,158 C100,167 88,169 81,163', fill: 'none', stroke: BRAND.line, strokeWidth: 5.6 },
-    { t: 'path', d: 'M100,158 C100,167 112,169 119,163', fill: 'none', stroke: BRAND.line, strokeWidth: 5.6 },
+    ...EARS,
+    ...SKULL,
+    { t: 'ellipse', cx: 78, cy: 62, rx: 5, ry: 3.4, fill: BRAND.face, stroke: 'none' },
+    { t: 'ellipse', cx: 122, cy: 62, rx: 5, ry: 3.4, fill: BRAND.face, stroke: 'none' },
+    { t: 'circle', cx: 79, cy: 83, r: 12, fill: BRAND.furDark, stroke: 'none' },
+    { t: 'circle', cx: 121, cy: 83, r: 12, fill: BRAND.furDark, stroke: 'none' },
+    { t: 'circle', cx: 79, cy: 83, r: 10, fill: BRAND.eye, strokeWidth: 3 },
+    { t: 'circle', cx: 121, cy: 83, r: 10, fill: BRAND.eye, strokeWidth: 3 },
+    { t: 'circle', cx: 79, cy: 84, r: 5.5, fill: BRAND.line, stroke: 'none' },
+    { t: 'circle', cx: 121, cy: 84, r: 5.5, fill: BRAND.line, stroke: 'none' },
+    { t: 'circle', cx: 82.5, cy: 79.5, r: 3, fill: '#FFFFFF', stroke: 'none' },
+    { t: 'circle', cx: 124.5, cy: 79.5, r: 3, fill: '#FFFFFF', stroke: 'none' },
+    { t: 'ellipse', cx: 68, cy: 102, rx: 7, ry: 4, fill: BRAND.blush, opacity: 0.35, stroke: 'none' },
+    { t: 'ellipse', cx: 132, cy: 102, rx: 7, ry: 4, fill: BRAND.blush, opacity: 0.35, stroke: 'none' },
+    NOSE,
+    { t: 'path', d: 'M89,108 Q100,124 111,108 Z', fill: BRAND.line, stroke: 'none' },
+    { t: 'path', d: 'M95,115 Q100,121 105,115 Z', fill: BRAND.tongue, stroke: 'none' },
   ],
 };
 
-// Same silhouette, heavier line, and everything under half a pixel at 16px is
-// gone: no catchlights, no smile, no inner-ear shadow. The ears also grow,
-// because a 10-unit outline eats a thin triangle alive. Use at or below 48px.
+// Same head, heavier line, and everything under half a pixel at 16px is gone:
+// no brow spots, catchlights, blush or tongue. The eyes grow and lose their
+// ring, because a 3-unit ring is noise at favicon size. Use at or below 48px.
 export const MASCOT_SIMPLE = {
   stroke: BRAND.line,
-  strokeWidth: 10,
+  strokeWidth: 5.5,
+  transform: HEAD_ON_GRID,
   shapes: [
-    { t: 'path', d: 'M42,76 C37,48 45,16 59,4 C75,16 92,42 100,60 Z', fill: BRAND.fur },
-    { t: 'path', d: 'M158,76 C163,48 155,16 141,4 C125,16 108,42 100,60 Z', fill: BRAND.fur },
-    // chin point sits at y194, not 196ish like a scaled copy of the detailed
-    // rig: the 10-unit stroke reaches y199 from there, and one unit lower the
-    // outline clips flat against the 200-unit viewBox.
-    { t: 'path', d: 'M100,44 C58,44 24,78 24,118 C24,158 56,187 100,194 C144,187 176,158 176,118 C176,78 142,44 100,44 Z', fill: BRAND.fur },
-    { t: 'path', d: 'M30,132 C30,122 42,118 60,118 L140,118 C158,118 170,122 170,132 C170,162 142,187 100,194 C58,187 30,162 30,132 Z', fill: BRAND.muzzle, stroke: 'none' },
-    { t: 'rect', x: 48, y: 80, width: 48, height: 40, rx: 14, fill: BRAND.lens, stroke: BRAND.frame, strokeWidth: 11 },
-    { t: 'rect', x: 104, y: 80, width: 48, height: 40, rx: 14, fill: BRAND.lens, stroke: BRAND.frame, strokeWidth: 11 },
-    { t: 'circle', cx: 74, cy: 101, r: 11, fill: BRAND.line, stroke: 'none' },
-    { t: 'circle', cx: 126, cy: 101, r: 11, fill: BRAND.line, stroke: 'none' },
-    { t: 'path', d: 'M87,134 C87,130 113,130 113,134 C113,143 106,153 100,153 C94,153 87,143 87,134 Z', fill: BRAND.line, stroke: 'none' },
+    ...EARS,
+    ...SKULL,
+    { t: 'circle', cx: 79, cy: 84, r: 12.5, fill: BRAND.furDark, stroke: 'none' },
+    { t: 'circle', cx: 121, cy: 84, r: 12.5, fill: BRAND.furDark, stroke: 'none' },
+    { t: 'circle', cx: 79, cy: 84, r: 10, fill: BRAND.eye, stroke: 'none' },
+    { t: 'circle', cx: 121, cy: 84, r: 10, fill: BRAND.eye, stroke: 'none' },
+    { t: 'circle', cx: 79, cy: 85, r: 6, fill: BRAND.line, stroke: 'none' },
+    { t: 'circle', cx: 121, cy: 85, r: 6, fill: BRAND.line, stroke: 'none' },
+    NOSE,
+    { t: 'path', d: 'M88,108 Q100,126 112,108 Z', fill: BRAND.line, stroke: 'none' },
   ],
 };
 
@@ -138,13 +155,13 @@ export const WORDMARK_GLYPHS = [
 export const WORDMARK_TONES = {
   // FIT takes the accent: the fur's orange on dark, and the text-safe
   // --gf-ember-text on light (the raw orange is ~2.9:1 on white).
-  dark: { text: BRAND.text, accent: BRAND.fur },
+  dark: { text: BRAND.text, accent: BRAND.accent },
   light: { text: BRAND.ground, accent: '#B13A09' },
 };
 
 // Serialise a shape set to SVG markup. Used by the asset generator and by the
 // site's build step; the React component does not go through here.
-export function shapesToSvg({ stroke, strokeWidth, shapes }) {
+export function shapesToSvg({ stroke, strokeWidth, transform, shapes }) {
   const attr = (o) => Object.entries(o)
     .filter(([, v]) => v !== undefined)
     .map(([k, v]) => `${k.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}="${v}"`)
@@ -153,7 +170,8 @@ export function shapesToSvg({ stroke, strokeWidth, shapes }) {
     const { t, ...rest } = s;
     return `<${t} ${attr(rest)}/>`;
   }).join('');
-  return `<g stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round" stroke-linecap="round">${body}</g>`;
+  const place = transform ? ` transform="${transform}"` : '';
+  return `<g${place} stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round" stroke-linecap="round">${body}</g>`;
 }
 
 // Serialise the lettering. `tone` picks the dark- or light-ground pair.

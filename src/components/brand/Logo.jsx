@@ -44,6 +44,7 @@ export function Mascot({ size = 64, detail, title, className = '', ...rest }) {
       {...rest}
     >
       <g
+        transform={rig.transform}
         stroke={rig.stroke}
         strokeWidth={rig.strokeWidth}
         strokeLinejoin="round"

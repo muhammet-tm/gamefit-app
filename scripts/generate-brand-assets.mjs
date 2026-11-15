@@ -27,7 +27,7 @@ function mascot({ size, padding = 0.12, rig = MASCOT_DETAILED }) {
   return `<g transform="translate(${pad},${pad}) scale(${scale})">${shapesToSvg(rig)}</g>`;
 }
 
-// The app icon: mascot on a filled navy square. The fill is not optional —
+// The app icon: mascot on a filled charcoal square. The fill is not optional —
 // iOS and Android composite icons against wallpaper nobody controls, so a
 // transparent mark would sit on whatever the user picked.
 function iconSvg({ size = 1024, rounded = 0.2237, padding = 0.12, rig = MASCOT_DETAILED }) {
@@ -58,12 +58,12 @@ function ogSvg() {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="${BRAND.ground}"/>
   <circle cx="1050" cy="80" r="300" fill="#E53E3E" opacity="0.08"/>
-  <circle cx="120" cy="560" r="240" fill="${BRAND.fur}" opacity="0.07"/>
+  <circle cx="120" cy="560" r="240" fill="${BRAND.accent}" opacity="0.07"/>
   <rect x="86" y="171" width="288" height="288" rx="64" fill="${BRAND.surface}"/>
   <g transform="translate(86,171)">${mascot({ size: 288, padding: 0.1 })}</g>
   <g transform="translate(438,214) scale(${wmH / WORDMARK_HEIGHT})">${wordmarkToSvg('dark')}</g>
   <text x="440" y="372" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#A1A1AA">Fitness, Gamified.</text>
-  <text x="440" y="440" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#B9C4CC">Earn XP &#183; Keep streaks &#183; Evolve your avatar</text>
+  <text x="440" y="440" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#B9C4CC">Earn XP &#183; Keep streaks &#183; Climb the ranks</text>
   <text x="440" y="482" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#B9C4CC">Train with an AI coach</text>
 </svg>`;
 }
