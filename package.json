@@ -14,12 +14,13 @@
     "check:onboarding": "node scripts/check-onboarding-render.mjs",
     "typecheck": "tsc -p ./jsconfig.json",
     "preview": "vite preview",
-    "test:unit": "tsx --test tests/unit/adaptation.test.ts tests/unit/athletes.test.ts",
-    "verify": "npm run lint && npm run check:emoji && npm run check:avatar && npm run check:validation && npm run test:unit && npm run build && npm run test:e2e",
+    "test:unit": "tsx --test tests/unit/adaptation.test.ts tests/unit/athletes.test.ts tests/unit/kitbag.test.ts",
+    "verify": "npm run lint && npm run check:emoji && npm run check:avatar && npm run check:validation && npm run test:unit && npm run check:kitbag-sql && npm run build && npm run test:e2e",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:ci": "playwright test --reporter=github,html",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "check:kitbag-sql": "node scripts/check-kit-bag-sql.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.3",
@@ -99,6 +100,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "8.4.3",
+    "@electric-sql/pglite": "0.2.17",
     "@eslint/js": "^9.19.0",
     "@playwright/test": "^1.62.1",
     "@resvg/resvg-js": "^2.6.2",
