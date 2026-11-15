@@ -16,7 +16,7 @@ user on that day.
 |---|---|---|---|
 | `workout` | A workout was logged | `workouts.created_at` | The first signup |
 | `coach` | A Coach G request was accepted | `ai_request_logs.created_at` | The first signup |
-| `app_open` | The app was opened, or brought back to the foreground, while signed in | `activity_days` (new) | The day the migration is applied |
+| `app_open` | The app was opened, or brought back to the foreground, while signed in | `activity_days` (new) | The day the app update that reports opens goes live |
 
 Days are Asia/Dubai calendar days for every user, because that is the day boundary the streak and
 the leaderboard already use. Dubai is four hours ahead of Coordinated Universal Time (UTC) all
@@ -125,7 +125,7 @@ users behaved. A claim that the app enhances retention needs a comparison, such 
 condition without the game mechanics or a cited benchmark measured under the same definition.
 None exists in this system.
 
-App opens before the migration date were never recorded and cannot be recovered. For a cohort that
+App opens before the app update went live were never recorded and cannot be recovered. For a cohort that
 signed up earlier, the `any` definition understates its early days. The export marks such cohorts
 with `app_open_tracked = false`, and the `core` and `workout` definitions are unaffected. The
 start of recording is taken as the first app open by a counted account, so a tester who reaches
@@ -161,24 +161,31 @@ figure.
 
 ## Steps to turn it on
 
-The order matters. The database must have the new function before the new frontend is live.
-Otherwise every signed-in visit makes a request that fails, and no app opens are recorded.
+The database side is already in place. The project notes on `main` recorded on 15 November 2026
+that `20261111130001_retention_measurement.sql` is applied to the live database. The app update
+that reports opens is not live yet, because it is on this branch. Until the branch is merged,
+nothing calls `record_app_open()`, and no app open is recorded for anyone.
 
-1. Merge the branch into `main` locally with `git merge --no-ff feat/retention-measurement`. Do
-   not push yet. Pushing `main` is the release: on 11 November 2026 a merge to `main` on GitHub
-   redeployed Edge Functions automatically within seconds, and migrations may be applied the same
-   way. If the branch goes through a pull request instead, run steps 2 to 4 from the branch's own
-   checkout before merging the pull request, because merging it is then the release.
+Do not rename or edit the migration file. The live database records it by its version number, so
+a renamed file would be treated as a new migration and fail on tables that already exist. A
+change to the retention functions needs a new migration file.
 
-2. Apply the migration from the checkout that is linked to the Supabase project. The command
-   lists the migrations it is about to apply and asks for confirmation. It should list
-   `20261111130001_retention_measurement.sql` and nothing unexpected.
+1. Confirm that the migration is applied. Run this from the checkout that is linked to the
+   Supabase project, with this branch checked out. Version `20261111130001` should appear in
+   both the local and the remote column.
 
    ```bash
-   npx supabase db push
+   npx supabase migration list
    ```
 
-3. Confirm the permissions in production. Run this in the Supabase SQL editor.
+   As a second check, a dry run should report that there is nothing to apply.
+
+   ```bash
+   npx supabase db push --dry-run
+   ```
+
+2. Confirm the permissions in production, if this was not done when the migration was applied.
+   Run this in the Supabase SQL editor.
 
    ```sql
    select p.proname,
@@ -196,8 +203,9 @@ Otherwise every signed-in visit makes a request that fails, and no app opens are
    `service_role` must be false for `retention_activity`, `retention_scope`,
    `retention_tracking_since`, and `retention_validate`, and true for the rest.
 
-4. Flag the accounts that must not be counted. Run this once per account, with the reason `qa`,
-   `test`, or `staff`. The QA account used by the end-to-end tests is the first one to flag.
+3. Flag the accounts that must not be counted, before the app update goes live. Run this once
+   per account, with the reason `qa`, `test`, or `staff`. The QA account used by the end-to-end
+   tests is the first one to flag.
 
    ```sql
    insert into public.analytics_excluded_users (user_id, reason)
@@ -205,10 +213,15 @@ Otherwise every signed-in visit makes a request that fails, and no app opens are
    on conflict (user_id) do nothing;
    ```
 
-5. Push `main`. Vercel deploys the frontend.
+4. Merge the branch into `main`. Vercel deploys the frontend, and app opens start being
+   recorded from that day. The merge also puts the migration file into `main`, which lets
+   `npx supabase db push` run from `main` again. On 11 November 2026 a merge to `main` on GitHub
+   redeployed Edge Functions automatically within seconds, and migrations may be applied the same
+   way. That is harmless here, because this migration is already applied and this branch changes
+   no Edge Function.
 
-6. Confirm that app opens arrive. Sign in to the live app, then run this in the SQL editor. Today's
-   date in Dubai should appear with a count of at least 1.
+5. Confirm that app opens arrive. Sign in to the live app, then run this in the SQL editor.
+   Today's date in Dubai should appear with a count of at least 1.
 
    ```sql
    select day, count(*) as accounts
@@ -272,7 +285,8 @@ select * from public.retention_active_days(p_signup_from => '2026-11-15', p_sign
 
 ## How the arithmetic is tested
 
-`npm run test:unit` runs 80 tests. The retention tests load the project's migration files into
+The retention work has 80 unit tests, which run with the rest of the suite under
+`npm run test:unit`. They load the project's migration files into
 PGlite, a build of Postgres that runs inside the test process, so they exercise the SQL that
 produces the figures and do not rely on a copy of it.
 

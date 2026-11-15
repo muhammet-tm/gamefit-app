@@ -996,19 +996,23 @@ originals, cut-outs and generation record are in the owner's
   the items' dark outline colour before scaling so no green can bleed back.
 - `/avatar-gallery` has a Kit Bag bench: every athlete in all four pictures
   with any floor and wear item, plus the three finish effects.
-## Phase 14: retention measurement (branch `feat/retention-measurement`, 2026-11-11)
+## Phase 16: retention measurement (branch `feat/retention-measurement`, PR #8)
 
-**Not merged, migration not applied.** The owner steps are in
-`docs/RETENTION_MEASUREMENT.md`, which is also the methods reference for the
-book chapter: definitions, formulas with a worked example, and limits.
+**Migration live, app code not merged.** `main`'s notes recorded on 2026-11-15
+that `20261111130001_retention_measurement.sql` is applied to the live
+database. The session that built this branch did not apply it and has not
+queried the live database, so confirm with `npx supabase migration list` from
+a linked checkout. Until this branch is merged nothing calls
+`record_app_open()`, so no app open has been recorded for anyone. The owner
+steps are in `docs/RETENTION_MEASUREMENT.md`, which is also the methods
+reference for the book chapter: definitions, formulas with a worked example,
+and limits.
 
-**Apply the migration with `npx supabase db push` (dry run first) before the
-change reaches `main` on GitHub.** A local `git merge` is fine; the push, or
-merging a pull request, is the release. When PR #6 merged on 2026-11-11, three
-Edge Functions were redeployed automatically within nine seconds (most likely
-the Supabase GitHub integration), and migrations may be applied the same way.
+**Merging this branch is the whole release.** It ships the frontend that
+reports app opens, and it puts the migration file into `main`, which lets
+`npx supabase db push` run from `main` again (see "Exact next steps"). The
+migration is additive and already applied, so the merge changes no table.
 This branch changes no Edge Function.
-The migration is additive, so applying it early changes nothing users see.
 
 The paper claims to enhance retention and nothing measured it. This adds the
 measurement from the database alone, with no third-party service.
@@ -1030,9 +1034,9 @@ What was added:
 - `src/lib/activityDay.js` (the rule, import-free so Node can test it) and
   `src/lib/appOpen.js` (the wiring), started from `main.jsx`.
 - `scripts/export-retention.mjs` and `npm run export:retention`.
-- 80 tests in `tests/unit/` (94 together with Phase 13's adaptation tests)
-  under `npm run test:unit`, which runs in `npm run verify` and in the CI
-  "Lint, guards and build" job.
+- 80 tests in four files under `tests/unit/` (109 with the adaptation, athlete
+  and Kit Bag tests). `npm run test:unit` names its files one by one, so a new
+  test file runs only after it is added to that script.
 - `tests/app-open.spec.js`: the one browser test of the wiring. It signs in
   with every Supabase call stubbed and is Chromium-only for the same reason
   as the OTP test (WebKit does not honour cross-origin stubs).
@@ -1040,12 +1044,13 @@ What was added:
 
 Things that are easy to get wrong:
 
-1. **Apply the migration before the frontend deploys.** The reverse order makes
-   every signed-in visit request a function that does not exist: a 404 in the
-   console (which fails the authed "no console error" test) and no data.
-2. **`app_open` history starts on the day the migration is applied.** For a
-   cohort that signed up earlier, the `any` definition understates its early
-   days. Use `core` or `workout` for those, and read `app_open_tracked`.
+1. **Never rename or edit the migration file.** It is applied, and the live
+   history records it by version number. A change to the retention functions
+   is a new migration.
+2. **`app_open` history starts on the day this branch's frontend goes live**,
+   which is later than the day the migration was applied. For a cohort that
+   signed up earlier, the `any` definition understates its early days. Use
+   `core` or `workout` for those, and read `app_open_tracked`.
 3. **Unbounded retention is meaningless without its as-of day.** It can only
    rise as time passes. Accounts that have not reached day N are in neither
    the numerator nor the denominator (`eligible`), and a rate with nobody
@@ -1054,10 +1059,11 @@ Things that are easy to get wrong:
    `authenticated`.** Each function in the migration revokes explicitly, and
    `tests/unit/retention-access.test.mjs` reads the grants from the catalog.
    A new `retention_*` function fails that test until it is listed there.
-5. **The unit tests run the real migration files** in PGlite (Postgres as
-   WebAssembly, pinned exactly at 0.5.12), so they also prove the whole
-   migration chain applies to an empty database. PGlite is Postgres 18 and
-   production is 17.6; keep the SQL to features both have.
+5. **The unit tests run the real migration files** in PGlite, the same
+   package and version (0.2.17) that `npm run check:kitbag-sql` uses, so they
+   also prove the whole migration chain applies to an empty database. That
+   PGlite is Postgres 16.4 and production is 17.6; keep the SQL to features
+   both have. `check:kitbag-sql` applies this migration as well.
 6. **The export script does no arithmetic.** Every figure comes from
    `retention_report()`. Keep it that way, or a number in the paper stops
    tracing to one SQL function. The service role key comes from the
@@ -1065,29 +1071,26 @@ Things that are easy to get wrong:
 7. **Exports do not live in this repository.** The owner keeps them in the
    book chapter's working folder, in a `Retention data` subfolder, passed with
    `--out`. Do not write that personal path into any tracked file.
-8. **Flag the QA account** in `analytics_excluded_users` (owner step 4). The
-   authed end-to-end journeys sign in with it and now record an app open.
-   Accounts with `role = 'admin'` are excluded automatically.
+8. **Flag the QA account** in `analytics_excluded_users` before the merge (see
+   the document). The authed end-to-end journeys sign in with it and will
+   record an app open. Accounts with `role = 'admin'` are excluded
+   automatically.
 
-How this sits with the branches that landed first (rebased onto `main` at
-`ca80af1` on 2026-11-11):
+How this sits with what landed first (rebased onto `main` at `3f88ecd` on
+2026-11-15, after Phases 13, 14 and 15):
 
-- `20261111120001_coach_feedback.sql` (Phase 13) is already applied in
-  production, and this migration's version is later, so `db push` applies it
-  in order with no rename.
-- `test:unit` runs the glob `tests/unit/*.test.*`, which covers Phase 13's
-  `adaptation.test.ts` and this branch's `.mjs` tests. The PGlite harness also
-  applies `coach_feedback.sql`, so the unit step now checks that every
-  migration, including Phase 13's, applies to an empty database.
+- Three migrations are newer than `20260815120001`: coach feedback
+  (`20261111120001`), this one (`20261111130001`), and the Kit Bag
+  (`20261115120001`). `main`'s notes record all three as applied, so a push
+  from this branch has nothing to apply.
+- This branch adds no dependency. It uses the PGlite that came in with the
+  Kit Bag.
 - `feat/vercel-analytics` (PR #4, still open) sets the privacy page date to
   26 September 2026; keep the later date.
 
 What this does not show: that gamification improves retention. The figures
 describe behaviour. The claim needs a comparison (a control condition or a
 benchmark under the same definition), and the system has neither.
-
-This branch adds one dev-only dependency, `@electric-sql/pglite` (pinned
-exactly), and changes no other package.
 
 Found in passing and not fixed: `GameFitContext.jsx` filters the free
 "4 / 10" coach counter by the UTC month while the server keys it by the Dubai
@@ -1294,15 +1297,18 @@ phase.
 
 ## Exact next steps (owner-only actions — I cannot do these)
 
-**Before any `supabase db push`:** `main` does not yet contain
-`20261111130001_retention_measurement.sql`, which is already applied to the
-live database (it lives on `feat/retention-measurement`). A push from `main`
-fails with "Remote migration versions not found in local migrations
-directory" until that branch is merged. Do not answer it with `supabase
-migration repair --status reverted`: that marks a live migration as undone.
-Push from a checkout that has every applied migration (the Kit Bag push on
-2026-11-15 copied the retention file in, uncommitted, for the push only).
-Also run pushes from a linked checkout: the link lives in the git-ignored
+**Before any `supabase db push`:** the checkout must hold every migration
+that is already applied to the live database. From 2026-11-11 until
+`feat/retention-measurement` merged, `main` lacked
+`20261111130001_retention_measurement.sql` although it was live, and a push
+from `main` failed with "Remote migration versions not found in local
+migrations directory" (the Kit Bag push on 2026-11-15 copied the file in,
+uncommitted, for the push only). With that branch merged the file is in
+`main` and the trap is closed. If the error ever returns, find the missing
+file; do not answer it with `supabase migration repair --status reverted`,
+which marks a live migration as undone. Never rename a migration that has
+been applied: its version number is what the live history records. Also run
+pushes from a linked checkout: the link lives in the git-ignored
 `supabase/.temp`, which a new worktree does not have.
 
 From `LAUNCH_CHECKLIST.md` / `docs/STORE_SUBMISSION.md`, in rough order:
