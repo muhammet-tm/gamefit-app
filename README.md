@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/hero.png" alt="GameFit — your workouts, levelled up" width="100%">
+  <img src="docs/images/hero.png" alt="GameFit: your workouts, leveled up" width="100%">
 </p>
 
 <p align="center">
@@ -19,10 +19,11 @@
 
 ---
 
-GameFit turns training into an RPG. You log a workout, the server works out what
-it was worth, and you get XP, coins and a streak back. Enough of those and you
-climb the rank ladder, your avatar picks up better gear, and Coach Gus starts
-giving advice shaped by your actual training history rather than generic tips.
+GameFit turns training into a game. You log a workout, the server works out
+what it was worth, and you get XP, coins and a streak back. Enough of those and
+you climb from Beginner to Elite, your athlete earns the elite kit, the coins buy
+real gear in the Kit Bag, and Coach Gus, the husky who coaches you, gives advice
+shaped by your actual training history rather than generic tips.
 
 The interesting engineering problem here isn't the game layer. It's that a
 fitness game is trivially cheatable if the browser is allowed to decide how much
@@ -30,26 +31,34 @@ XP you earned. Everything below follows from refusing to let it.
 
 ## Screens
 
-| Dashboard | Coach Gus | Personal records | Avatar |
+| Dashboard | Coach Gus | Personal records | Athlete |
 |:---:|:---:|:---:|:---:|
-| <img src="docs/images/screens/dashboard.png" width="190" alt="Dashboard with rank, XP and streak"> | <img src="docs/images/screens/coach.png" width="190" alt="AI coach answering with a formatted table"> | <img src="docs/images/screens/records.png" width="190" alt="Personal records table"> | <img src="docs/images/screens/avatar.png" width="190" alt="Avatar customization"> |
-| Rank, streak and weekly goal at a glance | Answers render as real tables and charts | Best lift per exercise, with PR badges | Two rigs, five classes, five tiers |
+| <img src="docs/images/screens/dashboard.png" width="190" alt="Dashboard with rank, XP, streak and a line from the coach"> | <img src="docs/images/screens/coach.png" width="190" alt="AI coach answering with a formatted table"> | <img src="docs/images/screens/records.png" width="190" alt="Personal records table"> | <img src="docs/images/screens/avatar.png" width="190" alt="The player's athlete with rank and XP progress"> |
+| Rank, streak, weekly goal, and today's line from the coach | Answers render as real tables and charts | Best lift per exercise, with PR badges | Ten preset athletes, four pictures each |
 
 ## What it does
 
-**Progression.** Five rank tiers with Roman-numeral sub-ranks, Bronze through
-Apex. Daily streaks on an Asia/Dubai day boundary, a monthly streak calendar,
-badges, and a 14-day XP chart.
+**Progression.** Five ranks (Beginner, Novice, Intermediate, Advanced, and
+Elite), with Roman-numeral sub-ranks below Elite. Daily streaks on an
+Asia/Dubai day boundary, a monthly streak calendar, badges, and a 14-day XP
+chart.
 
-**Avatars.** Layered SVG, drawn at runtime rather than shipped as sprites: two
-body rigs × 5 classes × 5 gear tiers, plus skin tones, hairstyles and shop
-accessories. Both rigs share gear anchor points, so all 25 class/tier gear sets
-fit either body without redrawing a single pauldron.
+**Athletes.** You train as one of ten preset athletes across five disciplines
+(Lifter, Runner, Fighter, Gymnast, and Yogi), aged 22 to 52 and covering six
+skin tones. Each has four 2D pictures: relaxed, celebrating, elite kit (shown from
+the Elite rank) and a rest-day look once the weekly target is met.
 
-**Coach Gus.** Claude Haiku, called only from an Edge Function so the API key
+**Kit Bag.** Coins buy real sports gear in three slots: a floor item beside the
+athlete, a wearable item fitted from anchors measured on all 40 pictures, and a
+finish effect that plays when a workout ends. Purchases and equips go through
+one `kit_bag()` Postgres function; the client never sets what a player owns.
+
+**Coach Gus.** A husky drawn as an animated SVG rig with 20 poses, who greets
+you at sign-in, walks you through onboarding, and talks in the chat. Behind it,
+Claude Haiku, called only from an Edge Function so the API key
 never reaches a browser. Prompts carry your profile, get sanitised against
 injection, drop into a conservative mode for under-18 users, and are capped at
-10 requests a month on the free tier — counted in Postgres, not in localStorage.
+10 requests a month on the free tier, counted in Postgres, not in localStorage.
 
 **Personal records.** Self-reported best weight × reps per lift, with dates and
 PR badges. These award badges but deliberately no XP or coins: an unverifiable
@@ -150,7 +159,8 @@ server-only values.
 
 ```
 src/
-  components/avatar/     layered SVG avatar system (rigs, hair, class gear, tiers)
+  components/avatar/     athlete cast, Kit Bag catalog and placement anchors
+  components/brand/      logo, wordmark, and the Coach Gus pup rig
   components/gamefit/    app-specific UI (rank emblem, streak calendar, records…)
   components/ui/         Radix/shadcn primitives
   lib/                   GameFitContext, ranks, badges, validation, analytics
