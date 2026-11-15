@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Flame, ChevronLeft, ChevronRight, Trophy, Zap, Star, Gift } from 'lucide-react';
 import { supabase } from '@/api/supabase';
 import { useGameFit } from '@/lib/GameFitContext';
+import { pluralize } from '@/lib/plural';
 
 // Monthly streak calendar — flames mark active days, with the current streak
 // as the hero number and honest milestone rewards beneath (the 3- and 7-day
@@ -96,7 +97,7 @@ export default function StreakCalendar() {
               <div className="flex items-center gap-1 mt-0.5">
                 <Trophy size={11} color="var(--gf-text-secondary)" />
                 <span className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>
-                  Best: {user.best_streak} days
+                  Best: {pluralize(user.best_streak, 'day')}
                 </span>
               </div>
             )}
@@ -189,7 +190,7 @@ export default function StreakCalendar() {
       </div>
       {nextMilestone && (
         <p className="font-body text-xs text-center mt-3" style={{ color: 'var(--gf-text-secondary)' }}>
-          {nextMilestone.days - streak} more {nextMilestone.days - streak === 1 ? 'day' : 'days'} to unlock {nextMilestone.icon} {nextMilestone.label}
+          {pluralize(nextMilestone.days - streak, 'more day', 'more days')} to unlock {nextMilestone.icon} {nextMilestone.label}
         </p>
       )}
     </div>

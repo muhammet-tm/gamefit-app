@@ -6,6 +6,7 @@ import ActionSheet, { SelectTrigger } from '@/components/gamefit/ActionSheet';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import { useGameFit } from '@/lib/GameFitContext';
+import { pluralize } from '@/lib/plural';
 import { invokeFunction } from '@/api/supabase';
 import { validate, profileSchema } from '@/lib/validation';
 import { getRank } from '@/lib/ranks';
@@ -105,8 +106,8 @@ export default function Profile() {
   const stats = [
     { label: 'Total XP', value: user.total_xp.toLocaleString() },
     { label: 'Total Workouts', value: workouts.length },
-    { label: 'Best Streak', value: `${user.best_streak} days` },
-    { label: 'Current Streak', value: `${user.current_streak} days` },
+    { label: 'Best Streak', value: pluralize(user.best_streak, 'day') },
+    { label: 'Current Streak', value: pluralize(user.current_streak, 'day') },
     { label: 'All-Time Coins', value: user.coins },
   ];
 
