@@ -8,11 +8,17 @@ import {
 } from '@/components/avatar/palettes';
 import { ACCESSORY_LAYERS } from '@/components/avatar/layers/accessories';
 import AthleteAvatar from '@/components/avatar/AthleteAvatar';
-import { ATHLETES, disciplineOf } from '@/components/avatar/athletes';
+import { ATHLETES, ATHLETE_POSES, disciplineOf } from '@/components/avatar/athletes';
+import { itemsForSlot } from '@/components/avatar/kitbag';
+import FinishEffect from '@/components/gamefit/FinishEffect';
 
 const ACCESSORY_IDS = Object.keys(ACCESSORY_LAYERS);
 
 export default function AvatarGallery() {
+  const [kitWear, setKitWear] = useState('training_cap');
+  const [kitFloor, setKitFloor] = useState('kettlebell');
+  const [finishKind, setFinishKind] = useState('rank_confetti');
+  const [finishPlay, setFinishPlay] = useState(0);
   const [skin, setSkin] = useState('tan');
   const [body, setBody] = useState('male');
   const [hairStyle, setHairStyle] = useState('short');
@@ -49,6 +55,57 @@ export default function AvatarGallery() {
               <AthleteAvatar athleteId={a.id} tier={2} size={120} variant="bust" />
               <AthleteAvatar athleteId={a.id} tier={2} size={44} />
               <AthleteAvatar athleteId={a.id} tier={4} size={36} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Kit Bag bench: every picture of every athlete with the chosen floor
+          and wear items, to check placement across all 40 pictures. */}
+      <section className="mb-10" aria-label="Kit Bag bench">
+        <h2 className="font-heading font-black text-lg mb-1" style={{ color: '#FFFFFF' }}>Kit Bag</h2>
+        <p className="font-body text-sm mb-3" style={{ color: '#A1A1AA' }}>
+          Relaxed, celebrating, elite, rest. Wear items skip pictures where they would clash (existing headwear, hands at the chest).
+        </p>
+        <div className="flex flex-wrap gap-2 mb-2">
+          {itemsForSlot('wear').map(i => (
+            <button key={i.id} type="button" data-kit-wear={i.id} onClick={() => setKitWear(i.id)}
+              className="px-2 py-1 rounded text-xs font-body"
+              style={{ backgroundColor: kitWear === i.id ? '#F4B044' : '#28282C', color: kitWear === i.id ? '#141416' : '#A1A1AA' }}>
+              {i.label}
+            </button>
+          ))}
+          <span className="w-3" />
+          {itemsForSlot('floor').map(i => (
+            <button key={i.id} type="button" data-kit-floor={i.id} onClick={() => setKitFloor(i.id)}
+              className="px-2 py-1 rounded text-xs font-body"
+              style={{ backgroundColor: kitFloor === i.id ? '#F4B044' : '#28282C', color: kitFloor === i.id ? '#141416' : '#A1A1AA' }}>
+              {i.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          {itemsForSlot('finish').map(i => (
+            <button key={i.id} type="button" data-kit-finish={i.id}
+              onClick={() => { setFinishKind(i.id); setFinishPlay(n => n + 1); }}
+              className="px-2 py-1 rounded text-xs font-body" style={{ backgroundColor: '#28282C', color: '#A1A1AA' }}>
+              Play {i.label}
+            </button>
+          ))}
+        </div>
+        <div className="space-y-3">
+          {ATHLETES.map((a, n) => (
+            <div key={a.id} className="flex flex-wrap items-end gap-3" data-kit-athlete={a.id}>
+              <span className="w-16 font-body text-xs" style={{ color: '#A1A1AA' }}>{a.name}</span>
+              {ATHLETE_POSES.map(p => (
+                <span key={p} className="relative inline-block">
+                  <AthleteAvatar athleteId={a.id} pose={p} tier={2} size={120}
+                    kit={{ floor: kitFloor, wear: kitWear }} />
+                  {n === 0 && p === 'celebrate' && (
+                    <FinishEffect kind={finishKind} play={finishPlay} tier={2} />
+                  )}
+                </span>
+              ))}
             </div>
           ))}
         </div>

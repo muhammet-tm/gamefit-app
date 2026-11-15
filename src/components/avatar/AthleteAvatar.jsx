@@ -4,6 +4,7 @@ import {
   getAthlete, ATHLETES, athleteImage, athleteFace, athletePose, disciplineOf,
   ATHLETE_IMAGE_WIDTHS, ATHLETE_SOURCE,
 } from './athletes';
+import { placeItem, kitImage, toPercent } from './kitbag';
 
 // How long a tap shows the celebrating picture. It clears on a timer rather
 // than on a transition event: under prefers-reduced-motion there is no
@@ -41,11 +42,13 @@ const srcSetFor = (id, pose) =>
  * @param {string} variant     'auto' | 'portrait' | 'bust' | 'face'
  * @param {boolean} interactive tap, click, Enter, or Space shows the celebrating picture
  * @param {boolean} priority   load eagerly (the above-the-fold hero)
+ * @param {object} [kit]       equipped Kit Bag items, { floor, wear } item ids
+ *                             (normalize with normalizeKit first); not drawn on faces
  */
 export default function AthleteAvatar({
   athleteId, tier = 1, pose, moment = null, resting = false,
   size = 120, variant = 'auto', interactive = false, onActivate,
-  priority = false, frame = true, className = '', style,
+  priority = false, frame = true, kit = null, className = '', style,
 }) {
   const athlete = getAthlete(athleteId) || ATHLETES[0];
   const t = Math.min(Math.max(Number(tier) || 1, 1), 5);
@@ -138,21 +141,57 @@ export default function AthleteAvatar({
       }}
       {...interactiveProps}
     >
-      <img
-        src={athleteImage(athlete.id, basePose)} srcSet={srcSetFor(athlete.id, basePose)}
-        sizes={`${renderedWidth}px`} alt={interactive ? '' : altText}
-        loading={loading} decoding="async" draggable={false}
-        className="block object-cover select-none" style={imgBox}
-      />
-      {interactive && armed && basePose !== 'celebrate' && (
+      <span className="block select-none" style={imgBox}>
         <img
-          src={athleteImage(athlete.id, 'celebrate')} srcSet={srcSetFor(athlete.id, 'celebrate')}
-          sizes={`${renderedWidth}px`} alt="" aria-hidden="true"
-          decoding="async" draggable={false}
-          className="block object-cover select-none transition-opacity duration-200 motion-reduce:transition-none"
-          style={{ ...imgBox, opacity: reacting ? 1 : 0 }}
+          src={athleteImage(athlete.id, basePose)} srcSet={srcSetFor(athlete.id, basePose)}
+          sizes={`${renderedWidth}px`} alt={interactive ? '' : altText}
+          loading={loading} decoding="async" draggable={false}
+          className="absolute inset-0 block h-full w-full object-cover select-none"
         />
+        <KitLayer kit={kit} athleteId={athlete.id} pose={basePose} loading={loading} />
+      </span>
+      {interactive && armed && basePose !== 'celebrate' && (
+        <span
+          className="block select-none transition-opacity duration-200 motion-reduce:transition-none"
+          style={{ ...imgBox, opacity: reacting ? 1 : 0 }}
+          aria-hidden="true"
+        >
+          <img
+            src={athleteImage(athlete.id, 'celebrate')} srcSet={srcSetFor(athlete.id, 'celebrate')}
+            sizes={`${renderedWidth}px`} alt=""
+            decoding="async" draggable={false}
+            className="absolute inset-0 block h-full w-full object-cover select-none"
+          />
+          <KitLayer kit={kit} athleteId={athlete.id} pose="celebrate" loading="eager" />
+        </span>
       )}
     </span>
   );
+}
+
+/**
+ * The equipped floor and wear items for one picture, placed in the picture's
+ * own frame, so they move with it in every framing. Wear items that would
+ * clash with that picture (existing headwear, hands at the chest) are skipped.
+ */
+function KitLayer({ kit, athleteId, pose, loading }) {
+  if (!kit) return null;
+  const items = [];
+  for (const slot of ['floor', 'wear']) {
+    const id = kit[slot];
+    if (!id) continue;
+    const box = placeItem(id, athleteId, pose);
+    if (!box) continue;
+    items.push(
+      <img
+        key={slot}
+        src={kitImage(id)} alt="" aria-hidden="true"
+        loading={loading} decoding="async" draggable={false}
+        data-kit-item={id}
+        className="absolute block select-none pointer-events-none"
+        style={{ ...toPercent(box), height: 'auto', maxWidth: 'none' }}
+      />,
+    );
+  }
+  return items;
 }

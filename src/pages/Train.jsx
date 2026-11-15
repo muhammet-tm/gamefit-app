@@ -11,6 +11,7 @@ import { BADGES } from '@/lib/badges';
 import { DISCIPLINE_IDS, disciplineIcon } from '@/lib/disciplines';
 import Icon from '@/components/ui/Icon';
 import UserAvatar from '@/components/avatar/UserAvatar';
+import FinishEffect from '@/components/gamefit/FinishEffect';
 import BottomNav from '@/components/gamefit/BottomNav';
 import QuickStartTemplates from '@/components/gamefit/QuickStartTemplates';
 import ScreenHeader from '@/components/gamefit/ScreenHeader';
@@ -367,7 +368,13 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
             {/* The earned XP is the moment: one figure, as large as the screen
                 allows, in the reward color, with the avatar beside it. */}
             <div className="mt-6 flex items-center justify-center gap-3">
-              <UserAvatar user={user} size={78} moment="celebrate" priority />
+              {/* The equipped Kit Bag finish plays over the athlete here */}
+              <span className="relative inline-block">
+                <UserAvatar user={user} size={78} moment="celebrate" priority />
+                {user.equipped_kit?.finish && (
+                  <FinishEffect kind={user.equipped_kit.finish} tier={user.avatar_tier} autoPlay delay={250} />
+                )}
+              </span>
               <p className="flex items-baseline gap-2" aria-label={`Plus ${xp} XP`}>
                 <span className="font-heading text-[88px] font-extrabold leading-none tabular-nums tracking-[-0.04em]"
                   style={{ color: '#F4B044' }} aria-hidden="true">+{xpShown}</span>

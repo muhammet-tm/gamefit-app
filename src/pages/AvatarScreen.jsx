@@ -17,7 +17,7 @@ import { TIER_CONFIG, AVATAR_TIER_LEVELS } from '@/components/avatar/tiers';
 import { normalizeAvatarConfig } from '@/components/avatar/migrate';
 import RankEmblem from '@/components/gamefit/RankEmblem';
 import BottomNav from '@/components/gamefit/BottomNav';
-import AccessoryShop, { ACCESSORIES } from '@/components/gamefit/AccessoryShop';
+import KitBagShop from '@/components/gamefit/KitBagShop';
 
 const TABS = ['avatar', 'shop', 'connect'];
 
@@ -32,11 +32,10 @@ const HEALTH_APPS = [
 
 
 export default function AvatarScreen() {
-  const { user, workouts, updateUser, purchaseAccessory, equipAccessory } = useGameFit();
+  const { user, workouts, updateUser, kitBag } = useGameFit();
   const [activeTab, setActiveTab] = useState('avatar');
   const [connectedApps, setConnectedApps] = useState(() => user.connected_apps || []);
   const [connectingApp, setConnectingApp] = useState(null);
-  const [shopError, setShopError] = useState('');
 
   const handleConnect = async (app) => {
     // Disconnect is checked BEFORE the comingSoon gate, and the order matters.
@@ -79,24 +78,7 @@ export default function AvatarScreen() {
   const avatarCfg = normalizeAvatarConfig(user.avatar_config, { gender: user.gender });
   const athlete = athleteForConfig(avatarCfg);
 
-  const ownedAccessories = user.owned_accessories || [];
-  const equippedAccessory = user.equipped_accessory || null;
-  const equippedItem = ACCESSORIES.find(a => a.id === equippedAccessory);
-
-  // The server checks the price and coin balance atomically — the UI just
-  // asks and shows the result.
-  const handleBuyAccessory = async (item) => {
-    if (user.coins < item.cost) return;
-    setShopError('');
-    const res = await purchaseAccessory(item.id);
-    if (!res.ok) setShopError(res.error || 'Purchase failed. Please try again.');
-  };
-
-  const handleEquipAccessory = async (id) => {
-    setShopError('');
-    const res = await equipAccessory(id);
-    if (!res.ok) setShopError(res.error || 'Could not equip. Please try again.');
-  };
+  const kit = user.equipped_kit || {};
 
   const level = user.current_level;
   const currentLevelXP = getCurrentLevelXP(level);
@@ -247,18 +229,13 @@ export default function AvatarScreen() {
 
       {activeTab === 'shop' && (
         <div className="px-5 pt-5 pb-6">
-          {shopError && (
-            <div className="mb-3 px-4 py-3 rounded-xl text-sm font-body"
-              style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#E5614A', border: '1px solid rgba(239,68,68,0.3)' }}>
-              {shopError}
-            </div>
-          )}
-          <AccessoryShop
+          <KitBagShop
+            athlete={athlete}
+            tier={currentTier}
             coins={user.coins}
-            ownedAccessories={ownedAccessories}
-            equippedAccessory={equippedAccessory}
-            onBuy={handleBuyAccessory}
-            onEquip={handleEquipAccessory}
+            owned={user.owned_accessories || []}
+            equipped={kit}
+            onAction={kitBag}
           />
         </div>
       )}
@@ -280,20 +257,10 @@ export default function AvatarScreen() {
                   <span>{tierCfg.label}</span>
                 </div>
 
-                {/* The athlete, with the equipped shop item as a badge */}
+                {/* The athlete, wearing the equipped Kit Bag items */}
                 <div className="relative z-10 mt-2">
                   <AthleteAvatar athleteId={athlete.id} tier={currentTier} size={160}
-                    interactive priority />
-                  {equippedItem && (
-                    <motion.div
-                      className="absolute -top-3 -right-3 w-9 h-9 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: 'var(--gf-bg-surface)', border: '1.5px solid var(--gf-border)' }}
-                      initial={{ scale: 0 }} animate={{ scale: 1 }} key={equippedItem.id}
-                      transition={{ type: 'spring', stiffness: 300 }}>
-                      <equippedItem.Icon size={19} strokeWidth={2} style={{ color: equippedItem.tint }}
-                        aria-label={`Equipped: ${equippedItem.label}`} />
-                    </motion.div>
-                  )}
+                    kit={kit} interactive priority />
                 </div>
 
                 <div className="text-center mt-3 z-10">
@@ -307,7 +274,6 @@ export default function AvatarScreen() {
                   <p className="font-body text-sm font-semibold" style={{ color: 'var(--gf-text-primary)' }}>
                     {athlete.name} <span style={{ color: 'var(--gf-text-secondary)' }}>· {disciplineOf(athlete)}</span>
                   </p>
-                  {equippedItem && <p className="font-body text-sm" style={{ color: 'var(--gf-ember-text)' }}>{equippedItem.label}</p>}
                   <p className="font-body text-xs mt-1" style={{ color: tierCfg.color }}>
                     {currentTier === 1 && 'Reach Level 3 to move up to Novice.'}
                     {currentTier === 2 && 'Intermediate unlocks at Level 5.'}

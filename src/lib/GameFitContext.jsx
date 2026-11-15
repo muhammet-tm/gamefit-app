@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 import { getLevelForXP, getAvatarTier, LEVEL_THRESHOLDS } from './mockData';
 import { supabase, getMe, updateProfile, callRpc } from '@/api/supabase';
 import { normalizeAvatarConfig, isLegacyConfig } from '@/components/avatar/migrate';
+import { normalizeKit } from '@/components/avatar/kitbag';
 import { track, identify, resetAnalytics } from '@/lib/analytics';
 
 const GameFitContext = createContext(null);
@@ -36,7 +37,7 @@ const FRESH_USER = {
   weekly_goal: 3,
   badges: [],
   owned_accessories: [],
-  equipped_accessory: null,
+  equipped_kit: {},
   calorie_goal: null,
   role: 'user',
 };
@@ -128,7 +129,7 @@ export function GameFitProvider({ children }) {
           best_streak: me.best_streak ?? 0,
           badges: me.badges || [],
           owned_accessories: me.owned_accessories || [],
-          equipped_accessory: me.equipped_accessory || null,
+          equipped_kit: normalizeKit(me.equipped_kit, me.owned_accessories),
           weekly_workout_count: weeklyCount,
           last_workout_date: rows[0]?.created_at ?? null,
           ai_requests_this_month: aiCountRes.count ?? 0,
@@ -281,33 +282,23 @@ export function GameFitProvider({ children }) {
     }
   }, [user]);
 
-  // Buy or equip a shop accessory — the server checks the price and balance
-  // atomically, so double-spends and free items are impossible.
-  const purchaseAccessory = useCallback(async (accessoryId) => {
+  // The Kit Bag: buy an item (it is equipped in its slot at once), equip one
+  // already owned, or take a slot's item off. The server checks price,
+  // balance and ownership atomically, so double-spends and free items are
+  // impossible; the client only shows the result.
+  const kitBag = useCallback(async (action, itemId = null, slot = null) => {
     try {
-      const res = await callRpc('purchase_accessory', {
-        p_action: 'purchase',
-        p_accessory_id: accessoryId,
+      const res = await callRpc('kit_bag', {
+        p_action: action,
+        p_item_id: itemId,
+        p_slot: slot,
       });
       setUser(prev => ({
         ...prev,
         coins: res.coins,
         owned_accessories: res.owned_accessories,
-        equipped_accessory: res.equipped_accessory,
+        equipped_kit: normalizeKit(res.equipped_kit, res.owned_accessories),
       }));
-      return { ok: true };
-    } catch (err) {
-      return { ok: false, error: err.message };
-    }
-  }, []);
-
-  const equipAccessory = useCallback(async (accessoryId) => {
-    try {
-      const res = await callRpc('purchase_accessory', {
-        p_action: accessoryId ? 'equip' : 'unequip',
-        p_accessory_id: accessoryId,
-      });
-      setUser(prev => ({ ...prev, equipped_accessory: res.equipped_accessory }));
       return { ok: true };
     } catch (err) {
       return { ok: false, error: err.message };
@@ -344,7 +335,7 @@ export function GameFitProvider({ children }) {
       isAuthenticated, loading,
       unreadCount, toggleTheme, addWorkout, claimLevelUp,
       markNotificationRead, markAllRead, updateUser,
-      purchaseAccessory, equipAccessory,
+      kitBag,
       login, logout, incrementAIRequests, applyServerBadges,
       LEVEL_THRESHOLDS,
     }}>

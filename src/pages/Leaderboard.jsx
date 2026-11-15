@@ -8,6 +8,7 @@ import { useGameFit } from '@/lib/GameFitContext';
 import { callRpc } from '@/api/supabase';
 import AthleteAvatar from '@/components/avatar/AthleteAvatar';
 import { athleteForConfig } from '@/components/avatar/athletes';
+import { normalizeKit } from '@/components/avatar/kitbag';
 import RankEmblem from '@/components/gamefit/RankEmblem';
 import { getRank } from '@/lib/ranks';
 import { normalizeAvatarConfig } from '@/components/avatar/migrate';
@@ -27,7 +28,10 @@ const PODIUM = {
 // Podium places get the portrait card; list rows get the round face.
 function EntryAvatar({ entry, size }) {
   const athlete = athleteForConfig(normalizeAvatarConfig(entry.avatar_config));
-  return <AthleteAvatar athleteId={athlete.id} tier={entry.avatar_tier || 1} size={size} />;
+  // equipped_kit comes from the server (only kit_bag() writes it), so other
+  // players' gear is drawn as stored, after dropping anything unknown.
+  return <AthleteAvatar athleteId={athlete.id} tier={entry.avatar_tier || 1} size={size}
+    kit={normalizeKit(entry.equipped_kit)} />;
 }
 
 function RowSkeleton({ i }) {

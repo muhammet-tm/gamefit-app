@@ -15,7 +15,7 @@ import { athleteForConfig } from './athletes';
 export default function UserAvatar({
   user, tier, size = 120, className = '', style,
   interactive = false, onActivate, moment = null, resting = false,
-  variant = 'auto', priority = false,
+  variant = 'auto', priority = false, showKit = true,
 }) {
   const cfg = normalizeAvatarConfig(user?.avatar_config, { gender: user?.gender });
   const athlete = athleteForConfig(cfg);
@@ -30,6 +30,7 @@ export default function UserAvatar({
       interactive={interactive}
       onActivate={onActivate}
       priority={priority}
+      kit={showKit ? user?.equipped_kit : null}
       className={className}
       style={style}
     />
