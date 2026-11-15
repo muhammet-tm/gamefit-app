@@ -1,0 +1,431 @@
+{
+ "omar": {
+  "idle": {
+   "cx": 860,
+   "top": 256,
+   "eyes": 403,
+   "chin": 531,
+   "faceW": 190,
+   "score": 1.0,
+   "hide": []
+  },
+  "celebrate": {
+   "cx": 812,
+   "top": 185,
+   "eyes": 338,
+   "chin": 471,
+   "faceW": 198,
+   "score": "hand",
+   "hide": [
+    "head"
+   ]
+  },
+  "elite": {
+   "cx": 834,
+   "top": 146,
+   "eyes": 305,
+   "chin": 443,
+   "faceW": 205,
+   "score": 0.759,
+   "hide": []
+  },
+  "rest": {
+   "cx": 824,
+   "top": 165,
+   "eyes": 338,
+   "chin": 475,
+   "faceW": 190,
+   "score": "hand",
+   "hide": [
+    "chest"
+   ]
+  }
+ },
+ "aisha": {
+  "idle": {
+   "cx": 819,
+   "top": 190,
+   "eyes": 365,
+   "chin": 494,
+   "faceW": 170,
+   "score": 1.0,
+   "hide": [
+    "head"
+   ]
+  },
+  "celebrate": {
+   "cx": 823,
+   "top": 210,
+   "eyes": 385,
+   "chin": 514,
+   "faceW": 170,
+   "score": 0.899,
+   "hide": [
+    "head",
+    "chest"
+   ]
+  },
+  "elite": {
+   "cx": 817,
+   "top": 130,
+   "eyes": 319,
+   "chin": 458,
+   "faceW": 184,
+   "score": 0.892,
+   "hide": [
+    "head"
+   ]
+  },
+  "rest": {
+   "cx": 824,
+   "top": 198,
+   "eyes": 384,
+   "chin": 496,
+   "faceW": 175,
+   "score": "hand",
+   "hide": [
+    "head"
+   ]
+  }
+ },
+ "nadia": {
+  "idle": {
+   "cx": 831,
+   "top": 175,
+   "eyes": 365,
+   "chin": 477,
+   "faceW": 190,
+   "score": 1.0,
+   "hide": [
+    "head"
+   ]
+  },
+  "celebrate": {
+   "cx": 845,
+   "top": 351,
+   "eyes": 522,
+   "chin": 622,
+   "faceW": 171,
+   "score": "hand",
+   "hide": [
+    "head"
+   ]
+  },
+  "elite": {
+   "cx": 843,
+   "top": 163,
+   "eyes": 353,
+   "chin": 465,
+   "faceW": 190,
+   "score": 0.55,
+   "hide": [
+    "head"
+   ]
+  },
+  "rest": {
+   "cx": 800,
+   "top": 118,
+   "eyes": 300,
+   "chin": 480,
+   "faceW": 175,
+   "score": "hand",
+   "hide": [
+    "chest"
+   ]
+  }
+ },
+ "daniel": {
+  "idle": {
+   "cx": 831,
+   "top": 140,
+   "eyes": 304,
+   "chin": 469,
+   "faceW": 200,
+   "score": 1.0,
+   "hide": []
+  },
+  "celebrate": {
+   "cx": 858,
+   "top": 208,
+   "eyes": 365,
+   "chin": 524,
+   "faceW": 192,
+   "score": 0.711,
+   "hide": []
+  },
+  "elite": {
+   "cx": 836,
+   "top": 140,
+   "eyes": 311,
+   "chin": 482,
+   "faceW": 208,
+   "score": 0.702,
+   "hide": [
+    "chest"
+   ]
+  },
+  "rest": {
+   "cx": 839,
+   "top": 104,
+   "eyes": 268,
+   "chin": 433,
+   "faceW": 200,
+   "score": 0.677,
+   "hide": [
+    "head"
+   ]
+  }
+ },
+ "kofi": {
+  "idle": {
+   "cx": 827,
+   "top": 156,
+   "eyes": 371,
+   "chin": 500,
+   "faceW": 190,
+   "score": 1.0,
+   "hide": []
+  },
+  "celebrate": {
+   "cx": 823,
+   "top": 140,
+   "eyes": 355,
+   "chin": 484,
+   "faceW": 190,
+   "score": 0.809,
+   "hide": []
+  },
+  "elite": {
+   "cx": 830,
+   "top": 238,
+   "eyes": 444,
+   "chin": 568,
+   "faceW": 182,
+   "score": 0.733,
+   "hide": []
+  },
+  "rest": {
+   "cx": 842,
+   "top": 182,
+   "eyes": 388,
+   "chin": 512,
+   "faceW": 182,
+   "score": 0.393,
+   "hide": [
+    "head"
+   ]
+  }
+ },
+ "yara": {
+  "idle": {
+   "cx": 819,
+   "top": 206,
+   "eyes": 406,
+   "chin": 512,
+   "faceW": 185,
+   "score": 1.0,
+   "hide": [
+    "training_cap"
+   ]
+  },
+  "celebrate": {
+   "cx": 827,
+   "top": 234,
+   "eyes": 434,
+   "chin": 540,
+   "faceW": 185,
+   "score": 0.915,
+   "hide": [
+    "chest",
+    "training_cap"
+   ]
+  },
+  "elite": {
+   "cx": 824,
+   "top": 201,
+   "eyes": 409,
+   "chin": 519,
+   "faceW": 192,
+   "score": 0.888,
+   "hide": [
+    "training_cap"
+   ]
+  },
+  "rest": {
+   "cx": 832,
+   "top": 181,
+   "eyes": 389,
+   "chin": 499,
+   "faceW": 192,
+   "score": 0.76,
+   "hide": [
+    "head",
+    "training_cap"
+   ]
+  }
+ },
+ "mei": {
+  "idle": {
+   "cx": 837,
+   "top": 150,
+   "eyes": 290,
+   "chin": 440,
+   "faceW": 185,
+   "score": 1.0,
+   "hide": []
+  },
+  "celebrate": {
+   "cx": 837,
+   "top": 385,
+   "eyes": 511,
+   "chin": 646,
+   "faceW": 166,
+   "score": 0.891,
+   "hide": []
+  },
+  "elite": {
+   "cx": 837,
+   "top": 182,
+   "eyes": 322,
+   "chin": 472,
+   "faceW": 185,
+   "score": 0.956,
+   "hide": []
+  },
+  "rest": {
+   "cx": 841,
+   "top": 199,
+   "eyes": 329,
+   "chin": 469,
+   "faceW": 172,
+   "score": 0.986,
+   "hide": []
+  }
+ },
+ "rami": {
+  "idle": {
+   "cx": 837,
+   "top": 231,
+   "eyes": 371,
+   "chin": 512,
+   "faceW": 200,
+   "score": 1.0,
+   "hide": []
+  },
+  "celebrate": {
+   "cx": 833,
+   "top": 402,
+   "eyes": 528,
+   "chin": 655,
+   "faceW": 180,
+   "score": 0.78,
+   "hide": []
+  },
+  "elite": {
+   "cx": 837,
+   "top": 263,
+   "eyes": 403,
+   "chin": 544,
+   "faceW": 200,
+   "score": 0.87,
+   "hide": []
+  },
+  "rest": {
+   "cx": 849,
+   "top": 322,
+   "eyes": 480,
+   "chin": 589,
+   "faceW": 186,
+   "score": "hand",
+   "hide": [
+    "head"
+   ]
+  }
+ },
+ "sara": {
+  "idle": {
+   "cx": 831,
+   "top": 106,
+   "eyes": 306,
+   "chin": 444,
+   "faceW": 165,
+   "score": 1.0,
+   "hide": []
+  },
+  "celebrate": {
+   "cx": 819,
+   "top": 383,
+   "eyes": 563,
+   "chin": 687,
+   "faceW": 148,
+   "score": 0.773,
+   "hide": [
+    "head"
+   ]
+  },
+  "elite": {
+   "cx": 820,
+   "top": 85,
+   "eyes": 293,
+   "chin": 436,
+   "faceW": 172,
+   "score": 0.975,
+   "hide": [
+    "chest"
+   ]
+  },
+  "rest": {
+   "cx": 834,
+   "top": 139,
+   "eyes": 331,
+   "chin": 464,
+   "faceW": 158,
+   "score": 0.865,
+   "hide": [
+    "chest"
+   ]
+  }
+ },
+ "arjun": {
+  "idle": {
+   "cx": 831,
+   "top": 246,
+   "eyes": 375,
+   "chin": 512,
+   "faceW": 185,
+   "score": 1.0,
+   "hide": []
+  },
+  "celebrate": {
+   "cx": 834,
+   "top": 390,
+   "eyes": 510,
+   "chin": 637,
+   "faceW": 172,
+   "score": 0.79,
+   "hide": [
+    "head"
+   ]
+  },
+  "elite": {
+   "cx": 828,
+   "top": 276,
+   "eyes": 410,
+   "chin": 552,
+   "faceW": 192,
+   "score": 0.816,
+   "hide": [
+    "chest"
+   ]
+  },
+  "rest": {
+   "cx": 837,
+   "top": 105,
+   "eyes": 245,
+   "chin": 393,
+   "faceW": 200,
+   "score": 0.891,
+   "hide": []
+  }
+ }
+}
