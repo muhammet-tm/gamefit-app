@@ -13,7 +13,7 @@
 GameFit is a mobile-first fitness app that reframes working out as an RPG.
 A user logs a workout, the server computes what it was worth, and they get
 XP, coins, and a streak day back. Enough of that and they climb a five-tier
-rank ladder, their layered SVG avatar gains gear, and an AI coach ("Coach G")
+rank ladder, their layered SVG avatar gains gear, and an AI coach ("Coach Gus", formerly "Coach G")
 gives advice shaped by their actual training history. A premium subscription
 unlocks unlimited AI coaching.
 
@@ -43,7 +43,7 @@ live until this one is judged ready for the domain cutover.
 |---|---|---|
 | Frontend | Vite + React 18 | `base44-app` package name is a holdover from the Base44 era, harmless |
 | UI | Tailwind CSS, Radix primitives via shadcn, framer-motion, recharts, canvas-confetti | Dark-first design system, CSS custom properties (`--gf-*`) |
-| Markdown rendering | react-markdown + remark-gfm | Renders Coach G's answers with real tables/bold instead of literal `**` |
+| Markdown rendering | react-markdown + remark-gfm | Renders Coach Gus's answers with real tables/bold instead of literal `**` |
 | Hosting | Vercel | Auto-deploys `main`; SPA rewrite in `vercel.json` so client routes don't 404 on direct load |
 | Database | Supabase Postgres | Row-Level Security + column-level `GRANT`/`REVOKE` |
 | Auth | Supabase Auth | Email/password + Google OAuth (system browser + deep link on native) |
@@ -149,7 +149,7 @@ Tables, from `supabase/migrations/`:
 | `profiles` | One row per auth user. User-editable fields (name, age, height, weight, goals, avatar config) plus server-owned economy/premium/role fields | Read own row; write only the granted columns |
 | `workouts` | Logged workout history with the XP/coins/level snapshot at time of logging | Read own rows; no direct writes |
 | `meal_logs` | Nutrition entries, optionally with a photo and AI-scored health rating | Full CRUD on own rows |
-| `ai_request_logs` | One row per Coach G request, used to enforce the 10/month free cap | Read own rows; no direct writes |
+| `ai_request_logs` | One row per Coach Gus request, used to enforce the 10/month free cap | Read own rows; no direct writes |
 | `coin_transactions` | Append-only ledger for non-workout coin movements (purchases, adjustments) | Read own rows; no direct writes |
 | `accessories` | Shop catalog (id, label, cost, category) — server-side source of truth for prices | Read-only |
 | `personal_records` | Self-reported best weight × reps per exercise, with date | Read + delete own rows; insert only via `log_pr` |
@@ -186,7 +186,7 @@ versioned (currently v3, `{version, class, body, skin_tone, hair}`) and
 `scripts/render-avatars.mjs`, which rasterizes contact sheets for every
 combination using `@resvg/resvg-js`.
 
-### Coach G (AI coaching)
+### Coach Gus (AI coaching)
 Claude Haiku, called only from the `coach-g` Edge Function so the Anthropic
 key never reaches a browser. The system prompt carries the user's profile
 (age, weight, height, BMI, goal, experience, gender) pulled server-side —
@@ -250,7 +250,7 @@ OAuth; other integrations show "Soon" rather than a fake "Connected" state.
 | `/onboarding` | 10-step onboarding | See §6 |
 | `/dashboard` | Home | Rank, XP progress, streak, quick actions |
 | `/train` | Workout logging | Timer flow + `CompletionScreen` (confetti, count-up XP/coins, badge unlocks) |
-| `/coach` | Coach G | Plan / Nutrition / Chat tabs |
+| `/coach` | Coach Gus | Plan / Nutrition / Chat tabs |
 | `/leaderboard` | Leaderboard | All-Time and This Week, own rank pinned with a percentile |
 | `/marketplace` | Coin shop | Cosmetic accessories |
 | `/avatar` | Avatar customization | Avatar / Shop / Connect tabs; body, class, skin, hair pickers |

@@ -171,7 +171,10 @@ test.describe('crawler files', () => {
     // Guards the three facts the old marketing copy got wrong.
     expect(body).toMatch(/Claude/);
     expect(body).not.toMatch(/OpenAI|GPT-4/);
-    expect(body).toMatch(/2D SVG/);
+    // The avatars became 2D pictures of preset athletes in phase 14; the
+    // coach pup is the drawn SVG now. Either way, nothing here is 3D.
+    expect(body).toMatch(/2D pictures/);
+    expect(body).not.toMatch(/\b3D\b/);
   });
 });
 

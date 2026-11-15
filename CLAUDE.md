@@ -1046,13 +1046,21 @@ figure onboarding used to draw, and the faceless chat.
   `vite.config.js`) and in `supabase/functions/_shared/coach.ts` (the
   `coach-g` system prompt and limit message, the Premium welcome email).
   `tests/unit/coach.test.ts` fails if the two differ or if a listed file
-  spells the name out. It is still "Coach G": the owner asked for a better
-  name and has not picked one. Renaming is those two lines, then a deploy of
-  `coach-g` and `stripe-webhook`. The function's folder name stays `coach-g`;
-  it is an endpoint path, not something users see.
-- Not carried over yet: the marketing site's `Logo.astro` (separate repo)
-  still draws the phase 9 husky; `store-assets/` and the site's screens
-  predate the Home tip card.
+  spells the name out. **The coach is Coach Gus** (owner's pick, 2026-11-15;
+  it was "Coach G"). Renaming again is those two lines, then
+  `npx supabase functions deploy coach-g stripe-webhook`: merging to main
+  did NOT redeploy either function on 2026-11-15 (versions 36 and 33 stayed
+  put), so the server half needs that deploy every time. The function's
+  folder name stays `coach-g`; it is an endpoint path, not something users
+  see. README and docs/PROJECT_OVERVIEW use the new name; dated docs (audits,
+  rollout notes) and applied migrations keep the old one as history.
+- Carried over the same day: the marketing site's `Logo.astro` draws the pup
+  head from the same shape data (exported from `brand.js`, not retyped), the
+  site's favicons, apple-touch icon and OG image are this repo's files, and
+  `store-assets/` plus the site's `public/screens/` were recaptured with the
+  Home tip card. `llms.txt` now describes the athlete cast, Beginner to Elite,
+  the Kit Bag and Coach Gus; `tests/seo.spec.js` checks for "2D pictures"
+  and for no "3D" instead of the old "2D SVG" avatar claim.
 
 ## Known limitations (disclosed, not hidden)
 
