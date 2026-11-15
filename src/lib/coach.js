@@ -1,8 +1,10 @@
 // The AI coach's identity, in one place. The coach is the pup: the same name
 // is used in the chat, onboarding, notifications, legal pages and the
-// server prompt (supabase/functions/coach-g/index.ts keeps its own copy,
-// because Edge Functions cannot import from src/).
-export const COACH_NAME = 'Coach G';
+// server prompt (supabase/functions/_shared/coach.ts keeps its own copy,
+// because Edge Functions cannot import from src/). Owner's pick on
+// 2026-11-15; it was "Coach G" before. The Edge Function folder is still
+// named coach-g: that is an endpoint path, not something people see.
+export const COACH_NAME = 'Coach Gus';
 
 /**
  * What the coach says on Home, from the player's state. Pure, so it can be

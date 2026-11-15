@@ -21,7 +21,7 @@
 
 GameFit turns training into an RPG. You log a workout, the server works out what
 it was worth, and you get XP, coins and a streak back. Enough of those and you
-climb the rank ladder, your avatar picks up better gear, and Coach G starts
+climb the rank ladder, your avatar picks up better gear, and Coach Gus starts
 giving advice shaped by your actual training history rather than generic tips.
 
 The interesting engineering problem here isn't the game layer. It's that a
@@ -30,7 +30,7 @@ XP you earned. Everything below follows from refusing to let it.
 
 ## Screens
 
-| Dashboard | Coach G | Personal records | Avatar |
+| Dashboard | Coach Gus | Personal records | Avatar |
 |:---:|:---:|:---:|:---:|
 | <img src="docs/images/screens/dashboard.png" width="190" alt="Dashboard with rank, XP and streak"> | <img src="docs/images/screens/coach.png" width="190" alt="AI coach answering with a formatted table"> | <img src="docs/images/screens/records.png" width="190" alt="Personal records table"> | <img src="docs/images/screens/avatar.png" width="190" alt="Avatar customization"> |
 | Rank, streak and weekly goal at a glance | Answers render as real tables and charts | Best lift per exercise, with PR badges | Two rigs, five classes, five tiers |
@@ -46,7 +46,7 @@ body rigs × 5 classes × 5 gear tiers, plus skin tones, hairstyles and shop
 accessories. Both rigs share gear anchor points, so all 25 class/tier gear sets
 fit either body without redrawing a single pauldron.
 
-**Coach G.** Claude Haiku, called only from an Edge Function so the API key
+**Coach Gus.** Claude Haiku, called only from an Edge Function so the API key
 never reaches a browser. Prompts carry your profile, get sanitised against
 injection, drop into a conservative mode for under-18 users, and are capped at
 10 requests a month on the free tier — counted in Postgres, not in localStorage.

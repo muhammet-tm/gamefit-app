@@ -254,7 +254,7 @@ export default function Onboarding() {
   const steps = [
     // 0 — Gender
     {
-      mascotText: `Hi, I'm ${COACH_NAME}, your coach. Let's get some basic info down.`,
+      mascotText: `Hi, I'm ${COACH_NAME}. Let's get some basic info down.`,
       pose: 'wave',
       content: (
         <div className="w-full">

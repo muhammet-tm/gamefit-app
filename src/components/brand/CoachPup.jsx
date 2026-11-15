@@ -235,7 +235,7 @@ export default function CoachPup({
     timer.current = setTimeout(() => setReacting(false), REACTION_MS);
     onActivate?.();
   };
-  const label = title ?? `${COACH_NAME}, your coach`;
+  const label = title ?? COACH_NAME;
   const a11y = interactive
     ? { role: 'button', tabIndex: 0, 'aria-label': `${label}. Tap to cheer`, onClick: activate,
       onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } } }
