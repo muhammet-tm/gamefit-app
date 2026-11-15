@@ -4,7 +4,7 @@ import { COACH_NAME } from '@/lib/coach';
 
 export default function Privacy() {
   return (
-    <LegalLayout title="Privacy Policy" updated="11 November 2026">
+    <LegalLayout title="Privacy Policy" updated="15 November 2026">
       <P>
         GameFit ("we", "us") is a gamified fitness application operated from the United Arab
         Emirates. This policy explains what personal data we collect, why, and the rights you
@@ -34,7 +34,7 @@ export default function Privacy() {
         sell your personal data.
       </P>
       <P>
-        We also use the dates on which accounts were active (a workout logged, a Coach G
+        We also use the dates on which accounts were active (a workout logged, a {COACH_NAME}
         request, or the app opened) to measure how many people continue to use GameFit over
         time. This is calculated for groups of accounts, never for one person. The resulting
         totals and percentages may appear in published research about GameFit. No name, email

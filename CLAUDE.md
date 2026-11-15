@@ -719,12 +719,13 @@ workout-complete screen without writing to the live leaderboard, intercept
 `**/rest/v1/rpc/log_workout` in Chromium and fulfill it with a stub, and
 assert the stub was hit exactly once before trusting the screenshot.
 
-## Phase 13: adaptive coach loop (branch `feat/adaptive-coach-loop`, NOT deployed)
+## Phase 13: adaptive coach loop (deployed 2026-11-15; live check outstanding)
 
-**Status on 2026-11-11: committed on the branch only.** The migration has not
-been applied, the `coach-g` function has not been redeployed, and nothing is
-merged. Production behaves exactly as before until the owner runs the steps
-at the end of this section.
+**Status on 2026-11-15: steps 1 to 3 below are done.** The branch is merged,
+`coach_feedback` exists on the live database (an anonymous read returns
+`42501` permission denied, not `PGRST205` not found), and the owner deployed
+`coach-g` (version 37) on 2026-11-15. Step 4, the live check with a "Too Hard"
+rating, has not been run.
 
 **Why.** The published paper says Coach G has an adaptive feedback loop: the
 user rates a plan or answer as too easy, just right or too hard, and later
@@ -996,106 +997,6 @@ originals, cut-outs and generation record are in the owner's
   the items' dark outline colour before scaling so no green can bleed back.
 - `/avatar-gallery` has a Kit Bag bench: every athlete in all four pictures
   with any floor and wear item, plus the three finish effects.
-## Phase 16: retention measurement (branch `feat/retention-measurement`, PR #8)
-
-**Migration live, app code not merged.** `main`'s notes recorded on 2026-11-15
-that `20261111130001_retention_measurement.sql` is applied to the live
-database. The session that built this branch did not apply it and has not
-queried the live database, so confirm with `npx supabase migration list` from
-a linked checkout. Until this branch is merged nothing calls
-`record_app_open()`, so no app open has been recorded for anyone. The owner
-steps are in `docs/RETENTION_MEASUREMENT.md`, which is also the methods
-reference for the book chapter: definitions, formulas with a worked example,
-and limits.
-
-**Merging this branch is the whole release.** It ships the frontend that
-reports app opens, and it puts the migration file into `main`, which lets
-`npx supabase db push` run from `main` again (see "Exact next steps"). The
-migration is additive and already applied, so the merge changes no table.
-This branch changes no Edge Function.
-
-The paper claims to enhance retention and nothing measured it. This adds the
-measurement from the database alone, with no third-party service.
-
-**An active day** is an Asia/Dubai calendar day on which the server recorded a
-logged workout (`workouts.created_at`), an accepted Coach G request
-(`ai_request_logs.created_at`), or an app open (`activity_days`, new). Workouts
-and coach requests are read from their own tables, never copied, so history
-goes back to the first signup. Meal logs are excluded because the client can
-write that table's timestamps.
-
-What was added:
-
-- `supabase/migrations/20261111130001_retention_measurement.sql`:
-  `activity_days` (user, Dubai date, source; no time of day), the zero-argument
-  `record_app_open()` RPC, `analytics_excluded_users`, and four service-role
-  reporting functions: `retention_cohorts`, `retention_active_days`,
-  `retention_weekly_engagement`, `retention_report`.
-- `src/lib/activityDay.js` (the rule, import-free so Node can test it) and
-  `src/lib/appOpen.js` (the wiring), started from `main.jsx`.
-- `scripts/export-retention.mjs` and `npm run export:retention`.
-- 80 tests in four files under `tests/unit/` (109 with the adaptation, athlete
-  and Kit Bag tests). `npm run test:unit` names its files one by one, so a new
-  test file runs only after it is added to that script.
-- `tests/app-open.spec.js`: the one browser test of the wiring. It signs in
-  with every Supabase call stubbed and is Chromium-only for the same reason
-  as the OTP test (WebKit does not honour cross-origin stubs).
-- A privacy page paragraph and list item for the new data.
-
-Things that are easy to get wrong:
-
-1. **Never rename or edit the migration file.** It is applied, and the live
-   history records it by version number. A change to the retention functions
-   is a new migration.
-2. **`app_open` history starts on the day this branch's frontend goes live**,
-   which is later than the day the migration was applied. For a cohort that
-   signed up earlier, the `any` definition understates its early days. Use
-   `core` or `workout` for those, and read `app_open_tracked`.
-3. **Unbounded retention is meaningless without its as-of day.** It can only
-   rise as time passes. Accounts that have not reached day N are in neither
-   the numerator nor the denominator (`eligible`), and a rate with nobody
-   eligible is null, not zero.
-4. **Supabase grants every new `public` function to `anon` and
-   `authenticated`.** Each function in the migration revokes explicitly, and
-   `tests/unit/retention-access.test.mjs` reads the grants from the catalog.
-   A new `retention_*` function fails that test until it is listed there.
-5. **The unit tests run the real migration files** in PGlite, the same
-   package and version (0.2.17) that `npm run check:kitbag-sql` uses, so they
-   also prove the whole migration chain applies to an empty database. That
-   PGlite is Postgres 16.4 and production is 17.6; keep the SQL to features
-   both have. `check:kitbag-sql` applies this migration as well.
-6. **The export script does no arithmetic.** Every figure comes from
-   `retention_report()`. Keep it that way, or a number in the paper stops
-   tracing to one SQL function. The service role key comes from the
-   environment only and is never printed.
-7. **Exports do not live in this repository.** The owner keeps them in the
-   book chapter's working folder, in a `Retention data` subfolder, passed with
-   `--out`. Do not write that personal path into any tracked file.
-8. **Flag the QA account** in `analytics_excluded_users` before the merge (see
-   the document). The authed end-to-end journeys sign in with it and will
-   record an app open. Accounts with `role = 'admin'` are excluded
-   automatically.
-
-How this sits with what landed first (rebased onto `main` at `3f88ecd` on
-2026-11-15, after Phases 13, 14 and 15):
-
-- Three migrations are newer than `20260815120001`: coach feedback
-  (`20261111120001`), this one (`20261111130001`), and the Kit Bag
-  (`20261115120001`). `main`'s notes record all three as applied, so a push
-  from this branch has nothing to apply.
-- This branch adds no dependency. It uses the PGlite that came in with the
-  Kit Bag.
-- `feat/vercel-analytics` (PR #4, still open) sets the privacy page date to
-  26 September 2026; keep the later date.
-
-What this does not show: that gamification improves retention. The figures
-describe behaviour. The claim needs a comparison (a control condition or a
-benchmark under the same definition), and the system has neither.
-
-Found in passing and not fixed: `GameFitContext.jsx` filters the free
-"4 / 10" coach counter by the UTC month while the server keys it by the Dubai
-month, which disagree for four hours at each month's start.
-
 ## Phase 16: the coach pup (branch `feat/coach-pup`, 2026-11-15)
 
 The owner picked mascot option 01 of the mascot study: a full-body Siberian
@@ -1162,11 +1063,115 @@ figure onboarding used to draw, and the faceless chat.
   the Kit Bag and Coach Gus; `tests/seo.spec.js` checks for "2D pictures"
   and for no "3D" instead of the old "2D SVG" avatar claim.
 
+## Phase 17: retention measurement (merged 2026-11-15)
+
+**Live since 2026-11-15.** The migration
+`20261111130001_retention_measurement.sql` was already applied to the live
+database, and the app code merged to `main` on 2026-11-15, so app opens are
+recorded from that day. Opens before it were never recorded and cannot be
+recovered. The merge came from `feat/retention-measurement-r2`, a second
+rebase onto `main` after the coach pup landed; PR #8 was closed, not merged,
+and its GitHub branch is the older copy. `docs/RETENTION_MEASUREMENT.md` holds
+the owner steps and is the methods reference for the book chapter:
+definitions, formulas with a worked example, and limits.
+
+**The merge was the whole release.** It shipped the frontend that reports app
+opens and put the migration file into `main`, so `npx supabase db push` runs
+from `main` again (see "Exact next steps"). No table and no Edge Function
+changed.
+
+**Owner steps still open:** the permission check, flagging the QA account,
+and confirming that opens arrive (steps 2, 3 and 5 in the document). Flagging
+after the merge is safe: `retention_scope()` applies `analytics_excluded_users`
+when the figures are computed, not when an open is recorded, so a flagged
+account drops out of every figure, including the tracking start date.
+
+The paper claims to enhance retention and nothing measured it. This adds the
+measurement from the database alone, with no third-party service.
+
+**An active day** is an Asia/Dubai calendar day on which the server recorded a
+logged workout (`workouts.created_at`), an accepted coach request
+(`ai_request_logs.created_at`), or an app open (`activity_days`, new). Workouts
+and coach requests are read from their own tables, never copied, so history
+goes back to the first signup. Meal logs are excluded because the client can
+write that table's timestamps.
+
+What was added:
+
+- `supabase/migrations/20261111130001_retention_measurement.sql`:
+  `activity_days` (user, Dubai date, source; no time of day), the zero-argument
+  `record_app_open()` RPC, `analytics_excluded_users`, and four service-role
+  reporting functions: `retention_cohorts`, `retention_active_days`,
+  `retention_weekly_engagement`, `retention_report`.
+- `src/lib/activityDay.js` (the rule, import-free so Node can test it) and
+  `src/lib/appOpen.js` (the wiring), started from `main.jsx`.
+- `scripts/export-retention.mjs` and `npm run export:retention`.
+- 80 tests in four files under `tests/unit/` (109 with the adaptation, athlete
+  and Kit Bag tests). `npm run test:unit` names its files one by one, so a new
+  test file runs only after it is added to that script.
+- `tests/app-open.spec.js`: the one browser test of the wiring. It signs in
+  with every Supabase call stubbed and is Chromium-only for the same reason
+  as the OTP test (WebKit does not honour cross-origin stubs).
+- A privacy page paragraph and list item for the new data.
+
+Things that are easy to get wrong:
+
+1. **Never rename or edit the migration file.** It is applied, and the live
+   history records it by version number. A change to the retention functions
+   is a new migration.
+2. **`app_open` history starts on the day this branch's frontend goes live**,
+   which is later than the day the migration was applied. For a cohort that
+   signed up earlier, the `any` definition understates its early days. Use
+   `core` or `workout` for those, and read `app_open_tracked`.
+3. **Unbounded retention is meaningless without its as-of day.** It can only
+   rise as time passes. Accounts that have not reached day N are in neither
+   the numerator nor the denominator (`eligible`), and a rate with nobody
+   eligible is null, not zero.
+4. **Supabase grants every new `public` function to `anon` and
+   `authenticated`.** Each function in the migration revokes explicitly, and
+   `tests/unit/retention-access.test.mjs` reads the grants from the catalog.
+   A new `retention_*` function fails that test until it is listed there.
+5. **The unit tests run the real migration files** in PGlite, the same
+   package and version (0.2.17) that `npm run check:kitbag-sql` uses, so they
+   also prove the whole migration chain applies to an empty database. That
+   PGlite is Postgres 16.4 and production is 17.6; keep the SQL to features
+   both have. `check:kitbag-sql` applies this migration as well.
+6. **The export script does no arithmetic.** Every figure comes from
+   `retention_report()`. Keep it that way, or a number in the paper stops
+   tracing to one SQL function. The service role key comes from the
+   environment only and is never printed.
+7. **Exports do not live in this repository.** The owner keeps them in the
+   book chapter's working folder, in a `Retention data` subfolder, passed with
+   `--out`. Do not write that personal path into any tracked file.
+8. **Flag the QA account** in `analytics_excluded_users` (see the document). The authed end-to-end journeys sign in with it and will
+   record an app open. Accounts with `role = 'admin'` are excluded
+   automatically.
+
+How this sits with what landed first (rebased onto `main` at `3f88ecd` on
+2026-11-15, after Phases 13, 14 and 15):
+
+- Three migrations are newer than `20260815120001`: coach feedback
+  (`20261111120001`), this one (`20261111130001`), and the Kit Bag
+  (`20261115120001`). `main`'s notes record all three as applied, so a push
+  from this branch has nothing to apply.
+- This branch adds no dependency. It uses the PGlite that came in with the
+  Kit Bag.
+- `feat/vercel-analytics` (PR #4, still open) sets the privacy page date to
+  26 September 2026; keep the later date.
+
+What this does not show: that gamification improves retention. The figures
+describe behaviour. The claim needs a comparison (a control condition or a
+benchmark under the same definition), and the system has neither.
+
+Found in passing and not fixed: `GameFitContext.jsx` filters the free
+"4 / 10" coach counter by the UTC month while the server keys it by the Dubai
+month, which disagree for four hours at each month's start.
+
 ## Known limitations (disclosed, not hidden)
 
-- **The adaptive coach loop is built but not deployed.** See phase 13 for the
-  four owner steps. Until then ratings are still discarded and the coach still
-  sees profile fields only.
+- **The adaptive coach loop is deployed but not checked live.** Step 4 of
+  phase 13 (a "Too Hard" rating, then one row in `coach_feedback`) is the
+  owner's to run.
 - **iOS builds need a Mac** — user is on Windows. `docs/STORE_SUBMISSION.md`
   recommends Codemagic's free tier (cloud Mac builds from the GitHub repo).
 - **Captcha: the client half is built, the dashboard toggle is the last step.**

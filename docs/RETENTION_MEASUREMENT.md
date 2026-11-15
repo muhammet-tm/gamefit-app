@@ -15,7 +15,7 @@ user on that day.
 | Source | Event | Where it is stored | Available from |
 |---|---|---|---|
 | `workout` | A workout was logged | `workouts.created_at` | The first signup |
-| `coach` | A Coach G request was accepted | `ai_request_logs.created_at` | The first signup |
+| `coach` | A coach request was accepted | `ai_request_logs.created_at` | The first signup |
 | `app_open` | The app was opened, or brought back to the foreground, while signed in | `activity_days` (new) | The day the app update that reports opens goes live |
 
 Days are Asia/Dubai calendar days for every user, because that is the day boundary the streak and
@@ -94,7 +94,7 @@ user is the number of workouts logged that week divided by the number of account
 week. Coach requests per active user per week is calculated the same way. A week still in progress
 on the as-of day is omitted. When nobody was active in a week, the ratio is empty.
 
-`retention_report()` adds one figure over the whole period: all Coach G requests up to the as-of
+`retention_report()` adds one figure over the whole period: all coach requests up to the as-of
 day divided by the number of accounts that were active at least once.
 
 In each of these ratios, the numerator counts only the accounts in the denominator. Under the
@@ -163,8 +163,8 @@ figure.
 
 The database side is already in place. The project notes on `main` recorded on 15 November 2026
 that `20261111130001_retention_measurement.sql` is applied to the live database. The app update
-that reports opens is not live yet, because it is on this branch. Until the branch is merged,
-nothing calls `record_app_open()`, and no app open is recorded for anyone.
+that reports opens merged to `main` on 15 November 2026, so app opens are recorded from that day.
+Steps 1 to 3 and step 5 below are still the owner's to run.
 
 Do not rename or edit the migration file. The live database records it by its version number, so
 a renamed file would be treated as a new migration and fail on tables that already exist. A
@@ -203,9 +203,11 @@ change to the retention functions needs a new migration file.
    `service_role` must be false for `retention_activity`, `retention_scope`,
    `retention_tracking_since`, and `retention_validate`, and true for the rest.
 
-3. Flag the accounts that must not be counted, before the app update goes live. Run this once
-   per account, with the reason `qa`, `test`, or `staff`. The QA account used by the end-to-end
-   tests is the first one to flag.
+3. Flag the accounts that must not be counted. Run this once per account, with the reason `qa`,
+   `test`, or `staff`. The QA account used by the end-to-end tests is the first one to flag.
+   Flagging after an account has already opened the app is safe: the exclusion is applied when
+   the figures are computed, so the account drops out of every figure, including the date
+   recording started.
 
    ```sql
    insert into public.analytics_excluded_users (user_id, reason)
@@ -213,8 +215,8 @@ change to the retention functions needs a new migration file.
    on conflict (user_id) do nothing;
    ```
 
-4. Merge the branch into `main`. Vercel deploys the frontend, and app opens start being
-   recorded from that day. The merge also puts the migration file into `main`, which lets
+4. Merge the branch into `main` (done on 15 November 2026). Vercel deploys the frontend, and
+   app opens start being recorded from that day. The merge also puts the migration file into `main`, which lets
    `npx supabase db push` run from `main` again. On 11 November 2026 a merge to `main` on GitHub
    redeployed Edge Functions automatically within seconds, and migrations may be applied the same
    way. That is harmless here, because this migration is already applied and this branch changes

@@ -71,7 +71,7 @@ export const WORKOUTS = [
   ['admin', '2026-03-17T06:00:00Z'],
 ];
 
-// Coach G requests. [user, UTC time]
+// Coach requests. [user, UTC time]
 export const COACH_REQUESTS = [
   ['alice', '2026-03-15T20:00:00Z'], //          16 Mar 00:00   day 14 (UTC date says day 13)
   ['bilal', '2026-03-24T10:00:00Z'], //          24 Mar 14:00   day 21

@@ -41,10 +41,10 @@ import { fileURLToPath } from 'node:url';
 export const DEFINITIONS = [
   {
     key: 'any',
-    label: 'App open, logged workout, or Coach G request',
+    label: 'App open, logged workout, or coach request',
     sources: ['app_open', 'workout', 'coach'],
   },
-  { key: 'core', label: 'Logged workout or Coach G request', sources: ['workout', 'coach'] },
+  { key: 'core', label: 'Logged workout or coach request', sources: ['workout', 'coach'] },
   { key: 'workout', label: 'Logged workout only', sources: ['workout'] },
 ];
 
