@@ -6,6 +6,7 @@ import ScreenHeader from '@/components/gamefit/ScreenHeader';
 import ScreenTransition from '@/components/gamefit/ScreenTransition';
 import { callRpc } from '@/api/supabase';
 import { useGameFit } from '@/lib/GameFitContext';
+import { pluralize } from '@/lib/plural';
 import BottomNav from '@/components/gamefit/BottomNav';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -174,7 +175,7 @@ export default function MonthlySummary() {
                     <div className="flex-1">
                       <p className="font-body font-semibold text-sm" style={{ color: 'var(--gf-text-primary)' }}>{type}</p>
                       <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>
-                        {data.count} sessions · {data.duration} min
+                        {pluralize(data.count, 'session')} · {data.duration} min
                       </p>
                     </div>
                     <span className="font-heading font-black text-base" style={{ color: 'var(--gf-gold-text)' }}>
@@ -198,7 +199,7 @@ export default function MonthlySummary() {
                   +{stats.bestDay.xp} XP
                 </p>
                 <p className="font-body text-xs" style={{ color: 'var(--gf-text-secondary)' }}>
-                  {stats.bestDay.duration} minutes
+                  {pluralize(stats.bestDay.duration, 'minute')}
                 </p>
               </div>
             </div>
