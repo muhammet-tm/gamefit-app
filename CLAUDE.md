@@ -1048,10 +1048,12 @@ figure onboarding used to draw, and the faceless chat.
   `coach-g` system prompt and limit message, the Premium welcome email).
   `tests/unit/coach.test.ts` fails if the two differ or if a listed file
   spells the name out. **The coach is Coach Gus** (owner's pick, 2026-11-15;
-  it was "Coach G"). Renaming again is those two lines, then
-  `npx supabase functions deploy coach-g stripe-webhook`: merging to main
-  did NOT redeploy either function on 2026-11-15 (versions 36 and 33 stayed
-  put), so the server half needs that deploy every time. The function's
+  it was "Coach G"). Renaming again is those two lines and a merge to
+  `main`, which now redeploys the functions (see "Edge Functions deploy on
+  every push to main" under Open issues). On 2026-11-15 the rename's merge did
+  NOT redeploy them, and the owner deployed by hand (coach-g 37,
+  stripe-webhook 34); that was before `main` held every applied migration,
+  which is the likely reason. The function's
   folder name stays `coach-g`; it is an endpoint path, not something users
   see. README and docs/PROJECT_OVERVIEW use the new name; dated docs (audits,
   rollout notes) and applied migrations keep the old one as history.
@@ -1174,9 +1176,9 @@ now take the Dubai month from one definition each side
 `src/lib/activityDay.js`), and `tests/unit/calendar.test.ts` checks they agree
 for every hour of 2026 and 2027. The same branch refunds the credit when a meal
 photo analysis returns unusable JSON (422), and stops the plan button counting a
-credit for a request the server refused or refunded. The function half needs
-`npx supabase functions deploy coach-g`; until then the browser and the server
-disagree only from 00:00 to 04:00 Dubai time on the 1st of a month.
+credit for a request the server refused or refunded. Merged as `8f909b5`; the
+push redeployed `coach-g` as version 39, and its downloaded source contains the
+fix (`calendar.ts`, the third `refundCredit()`, no `getMonth()`).
 
 ## Known limitations (disclosed, not hidden)
 
@@ -1211,6 +1213,24 @@ disagree only from 00:00 to 04:00 Dubai time on the 1st of a month.
   QA test account needs cleanup before public launch.
 
 ## Open issues / things to watch
+
+- **Edge Functions deploy on every push to main (observed 2026-11-15).**
+  Pushing `8f909b5` redeployed `coach-g`, `create-checkout`, `strava-auth` and
+  `stripe-webhook` about 40 seconds later, all with one timestamp
+  (19:27:23 UTC); the push of `a53aadf` before it did the same. Those are the
+  four functions listed in `supabase/config.toml`; `delete-account`, which is
+  not listed there, stayed at version 2. This is the Supabase GitHub
+  integration (the 2026-11-11 notes saw the same thing). Earlier on
+  2026-11-15 a merge that changed `coach-g` did not redeploy it. The likely
+  cause, not confirmed in the dashboard: until `a53aadf`, `main` lacked an
+  applied migration, and the integration applies migrations before functions,
+  so its run failed at the migration step. Consequences: a function change
+  goes live with the merge, and a migration merged to `main` probably does too,
+  so dry-run every migration before merging it. To check what is live, use
+  `npx supabase functions list` (versions) and `npx supabase functions
+  download <name> --workdir <scratch folder>` (source); download writes into
+  `<workdir>/supabase/functions`, so never point it at a checkout, and copy
+  `supabase/.temp/project-ref` into the scratch folder first.
 
 - **Regenerating the marketing site's screenshots is now one command**
   (resolved 2026-08-14). `gamefit-web/scripts/capture-screens.mjs` logs in
