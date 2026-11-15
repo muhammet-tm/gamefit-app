@@ -718,12 +718,37 @@ workout-complete screen without writing to the live leaderboard, intercept
 `**/rest/v1/rpc/log_workout` in Chromium and fulfill it with a stub, and
 assert the stub was hit exactly once before trusting the screenshot.
 
-## Phase 13: adaptive coach loop (branch `feat/adaptive-coach-loop`, NOT deployed)
+## Phase 13: adaptive coach loop (merged and deployed 2026-11-11, PR #6)
 
-**Status on 2026-11-11: committed on the branch only.** The migration has not
-been applied, the `coach-g` function has not been redeployed, and nothing is
-merged. Production behaves exactly as before until the owner runs the steps
-at the end of this section.
+**Status: live.** The steps at the end of this section have been run; they are
+kept as the record of what a release of this kind involves.
+
+- Migration `20261111120001_coach_feedback.sql` applied with `supabase db push`
+  (the dry run listed that one file only). An anonymous REST request to
+  `coach_feedback` returned 404 before and 401 after, with a made-up table
+  name still returning 404 as the control.
+- PR #6 merged as `ca80af1` after all six checks passed; Vercel published it.
+  A scan of the live JavaScript chunks found the rating save and the new
+  privacy sentence, both absent before the merge.
+- `coach-g` is at version 36 and answers 401 without a session.
+- **Not yet verified: the signed-in path.** Nobody has rated a plan on the live
+  app and confirmed a row in `coach_feedback` and an adapted answer. That
+  needs a logged-in user; do it before quoting the loop as tested. How well
+  the model follows the instruction is also unmeasured.
+
+**Merging to `main` redeploys Edge Functions by itself.** Nine seconds after
+PR #6 merged, `create-checkout`, `strava-auth` and `stripe-webhook` all showed
+a new version with one shared timestamp, and `coach-g` had already moved from
+34 to 35 before the manual deploy made it 36. Nobody ran a deploy command for
+those. The likely cause is the Supabase GitHub integration (the PR check list
+shows a "Supabase Preview" entry); this was not confirmed in the dashboard.
+`delete-account` was not touched. Consequences: a function change cannot be
+held back behind a frontend change by ordering manual steps, so anything that
+must not go live with the merge needs a flag; and a migration in a merged PR
+may be applied the same way, so run `supabase db push --dry-run` before
+merging, not after. After such a merge, check the others still answer as
+expected without credentials: `stripe-webhook` 400 (missing signature),
+`create-checkout` 401, `strava-auth` 401. They did on 11 November.
 
 **Why.** The published paper says Coach G has an adaptive feedback loop: the
 user rates a plan or answer as too easy, just right or too hard, and later
