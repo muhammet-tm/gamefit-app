@@ -6,7 +6,7 @@ import {
   PieChart, Pie, Cell, Legend,
 } from 'recharts';
 
-// Renders Coach G's Markdown answers with the GameFit design system:
+// Renders the coach's Markdown answers with the GameFit design system:
 // real bold/headings/lists, scrollable tables, and native charts for
 // ```chart fenced blocks ({"type":"bar"|"pie","title":...,"data":[{label,value}]}).
 

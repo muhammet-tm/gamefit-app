@@ -8,7 +8,8 @@ import { track } from '@/lib/analytics';
 import { signInWithGoogle } from '@/lib/platform';
 import GoogleIcon from '@/components/GoogleIcon';
 import Turnstile from '@/components/Turnstile';
-import { Mascot, Wordmark } from '@/components/brand/Logo';
+import { Wordmark } from '@/components/brand/Logo';
+import CoachPup from '@/components/brand/CoachPup';
 
 const FITNESS_GOALS = ['Lose Weight', 'Build Muscle', 'Improve Endurance', 'Stay Active', 'General Fitness'];
 
@@ -121,10 +122,10 @@ export default function Login() {
             meant the sign-in screen showed a near-miss of the brand while the
             favicon in the same tab showed the real one.
 
-            The mascot is decorative: the wordmark below already names the
-            heading, and two accessible names would announce "GameFit" twice. */}
+            The coach pup is decorative: the wordmark below already names the
+            heading, and a second accessible name would be read out too. */}
         <div className="flex flex-col items-center mb-8">
-          <Mascot size={92} className="mb-4" />
+          <CoachPup pose="wave" size={84} settle={2400} decorative className="mb-3" />
           <h1>
             <Wordmark height={34} title="GameFit" />
           </h1>

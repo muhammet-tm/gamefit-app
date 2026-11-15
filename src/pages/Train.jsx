@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Play, Square, Check, Flame } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import CoachLine from '@/components/brand/CoachLine';
+import { completionLine } from '@/lib/coach';
 import { useGameFit } from '@/lib/GameFitContext';
 import { calcXP, calcCoins, getLevelForXP, getCurrentLevelXP, getNextLevelXP } from '@/lib/mockData';
 import { getRank } from '@/lib/ranks';
@@ -328,6 +330,12 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
   const toGo = Math.max(ceil - after, 0);
   const rank = getRank(level);
   const nextRank = level >= 10 ? null : getRank(level + 1);
+  // "Close" means the last 15% of the level, so the line means the same
+  // thing at level 2 and level 9 even though the XP spans differ.
+  const coach = completionLine({
+    saveError, streak, badge: newBadges[0]?.label, nextRank: nextRank?.display,
+    toGo, near: toGo / span <= 0.15,
+  });
 
   useEffect(() => {
     if (saveError || REDUCED_MOTION) return;
@@ -431,8 +439,10 @@ function CompletionScreen({ xp, coins, streak, newBadges, saveError, duration, e
           </>
         )}
 
+        <CoachLine text={coach.line} pose={coach.pose} size={60} tone="dark" className="mt-6" />
+
         <button onClick={onDone}
-          className="gf-cta mt-8 h-14 w-full rounded-2xl font-heading font-bold text-base">
+          className="gf-cta mt-6 h-14 w-full rounded-2xl font-heading font-bold text-base">
           Back to Dashboard
         </button>
       </motion.div>
