@@ -4,6 +4,7 @@ import { supabase, getMe, updateProfile, callRpc } from '@/api/supabase';
 import { normalizeAvatarConfig, isLegacyConfig } from '@/components/avatar/migrate';
 import { normalizeKit } from '@/components/avatar/kitbag';
 import { track, identify, resetAnalytics } from '@/lib/analytics';
+import { dubaiMonth } from '@/lib/activityDay';
 
 const GameFitContext = createContext(null);
 
@@ -88,7 +89,7 @@ export function GameFitProvider({ children }) {
           supabase.from('workouts').select('*')
             .order('created_at', { ascending: false }).limit(20),
           supabase.from('ai_request_logs').select('id', { count: 'exact', head: true })
-            .eq('month_key', new Date().toISOString().slice(0, 7)),
+            .eq('month_key', dubaiMonth()),
         ]);
 
         const rows = workoutsRes.data ?? [];

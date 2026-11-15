@@ -1163,9 +1163,20 @@ What this does not show: that gamification improves retention. The figures
 describe behaviour. The claim needs a comparison (a control condition or a
 benchmark under the same definition), and the system has neither.
 
-Found in passing and not fixed: `GameFitContext.jsx` filters the free
-"4 / 10" coach counter by the UTC month while the server keys it by the Dubai
-month, which disagree for four hours at each month's start.
+Found in passing, fixed on 2026-11-15 (branch `fix/coach-credits`). The note
+written here said the counter used the UTC month and the server the Dubai
+month. Reading the code showed both used UTC: the server built `month_key`
+from `getFullYear()`/`getMonth()`, which read the runtime's time zone (UTC on
+Supabase), so the two agreed only because of a server setting, and the free
+month turned four hours after every other Dubai-day count in the app. Both
+now take the Dubai month from one definition each side
+(`supabase/functions/_shared/calendar.ts`, `dubaiMonth` in
+`src/lib/activityDay.js`), and `tests/unit/calendar.test.ts` checks they agree
+for every hour of 2026 and 2027. The same branch refunds the credit when a meal
+photo analysis returns unusable JSON (422), and stops the plan button counting a
+credit for a request the server refused or refunded. The function half needs
+`npx supabase functions deploy coach-g`; until then the browser and the server
+disagree only from 00:00 to 04:00 Dubai time on the 1st of a month.
 
 ## Known limitations (disclosed, not hidden)
 
