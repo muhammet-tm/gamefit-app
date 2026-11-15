@@ -947,7 +947,7 @@ sources and the generation pipeline live outside this repo, in the owner's
   the athlete bench and the onboarding reveal cover the celebrate image.
 - The fantasy accessory shop was replaced by the Kit Bag (phase 15).
 
-## Phase 15: the Kit Bag (branch `feat/kit-bag`, 2026-11-15)
+## Phase 15: the Kit Bag (migration applied and merged 2026-11-15)
 
 Real sports gear replaces the fantasy accessories, in three slots with one
 item equipped per slot: **floor** (kettlebell, boxing gloves, water bottle,
@@ -1131,12 +1131,18 @@ phase.
 
 ## Exact next steps (owner-only actions — I cannot do these)
 
-First, the Kit Bag (phase 15): run `npx supabase db push --dry-run`, check it
-lists only `20261115120001_kit_bag.sql` (plus the coach-feedback migration if
-that is still undeployed), run `npx supabase db push`, then merge
-`feat/kit-bag` to `main` straight away.
+**Before any `supabase db push`:** `main` does not yet contain
+`20261111130001_retention_measurement.sql`, which is already applied to the
+live database (it lives on `feat/retention-measurement`). A push from `main`
+fails with "Remote migration versions not found in local migrations
+directory" until that branch is merged. Do not answer it with `supabase
+migration repair --status reverted`: that marks a live migration as undone.
+Push from a checkout that has every applied migration (the Kit Bag push on
+2026-11-15 copied the retention file in, uncommitted, for the push only).
+Also run pushes from a linked checkout: the link lives in the git-ignored
+`supabase/.temp`, which a new worktree does not have.
 
-Then, from `LAUNCH_CHECKLIST.md` / `docs/STORE_SUBMISSION.md`, in rough order:
+From `LAUNCH_CHECKLIST.md` / `docs/STORE_SUBMISSION.md`, in rough order:
 
 1. **Web launch prep**: switch Stripe to live mode, create PostHog + Sentry
    accounts and add the env keys, cut over `gamefit.online` DNS from Base44
